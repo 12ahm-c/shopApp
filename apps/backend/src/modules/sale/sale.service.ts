@@ -5,6 +5,8 @@ import { User } from "../user/user.model";
 import { getNextInvoiceNumber } from "../../utils/counter.util";
 import { serializeSale } from "../../utils/serializer";
 import { AppError } from "../../utils/AppError";
+import { notificationService } from "../notification/notification.service";
+import { emitStockAlert } from "../../socket/notification.socket";
 import type { CreateSaleInput, SaleListQuery } from "./sale.validation";
 import type { AuthUser } from "../../types";
 
@@ -117,6 +119,27 @@ export const saleService = {
 
       await session.commitTransaction();
 
+      const lowStockProducts = await Product.find({
+        _id: { $in: input.items.map((i) => i.productId) },
+        $expr: { $lte: ["$quantity", "$alertThreshold"] }
+      }).lean();
+
+      if (lowStockProducts.length > 0) {
+        const admins = await User.find({ role: "admin" }).lean();
+        for (const admin of admins) {
+          for (const prod of lowStockProducts) {
+            const notif = await notificationService.createNotification(
+              admin._id.toString(),
+              "low_stock",
+              `Stock faible : ${prod.name}`,
+              `Il reste ${prod.quantity} unités de ${prod.name}. Seuil: ${prod.alertThreshold}.`,
+              { productId: prod._id.toString() }
+            );
+            emitStockAlert(notif);
+          }
+        }
+      }
+
       return {
         sale: serializeSale(sale),
         stockUpdates
@@ -211,6 +234,17 @@ export const saleService = {
       await logActivity(user.userId, userName, "delete_invoice", details, sale.totalAmount);
 
       await session.commitTransaction();
+
+      const admins = await User.find({ role: "admin" }).lean();
+      for (const admin of admins) {
+        await notificationService.createNotification(
+          admin._id.toString(),
+          "invoice_deleted",
+          "Facture annulée",
+          `Facture #${sale.invoiceNumber} de ${sale.totalAmount} MRU a été annulée par ${userName}.`,
+          { saleId: sale._id.toString(), invoiceNumber: sale.invoiceNumber }
+        );
+      }
 
       return {
         deletedSale: serializeSale(sale),

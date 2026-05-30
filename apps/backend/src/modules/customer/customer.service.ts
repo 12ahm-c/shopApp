@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import { Customer, type CustomerDocument } from "./customer.model";
 import { AppError } from "../../utils/AppError";
 import { serializeCustomer } from "../../utils/serializer";
+import { User } from "../user/user.model";
+import { notificationService } from "../notification/notification.service";
 import type { CreateCustomerInput, CustomerListQuery, DebtInput } from "./customer.validation";
 
 const ensureObjectId = (id: string): void => {
@@ -111,6 +113,17 @@ export const customerService = {
     customer.totalDebt = newTotalDebt;
     customer.transactions.push(transaction);
     await customer.save();
+
+    const admins = await User.find({ role: "admin" }).lean();
+    for (const admin of admins) {
+      await notificationService.createNotification(
+        admin._id.toString(),
+        "debt_updated",
+        `Dette mise à jour : ${customer.name}`,
+        `${customer.name} - ${input.type === "increase" ? "Augmentation" : "Diminution"} de ${input.amount} MRU. Nouvelle dette: ${newTotalDebt} MRU.`,
+        { customerId: customer._id.toString(), amount: input.amount, type: input.type, newTotalDebt }
+      );
+    }
 
     return {
       customer: serializeCustomer(customer),

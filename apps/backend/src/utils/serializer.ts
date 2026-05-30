@@ -88,3 +88,28 @@ export const serializeSupplier = (supplier: SupplierDocument) => ({
   })),
   createdAt: supplier.createdAt.toISOString()
 });
+
+import type { ActivityLogDocument } from "../modules/activityLog/activityLog.model";
+import type { NotificationDocument } from "../modules/notification/notification.model";
+
+export const serializeActivityLog = (log: ActivityLogDocument) => ({
+  _id: log._id.toString(),
+  userId: log.userId.toString(),
+  userName: log.userName,
+  action: log.action,
+  details: log.details,
+  amount: log.amount,
+  timestamp: log.timestamp.toISOString()
+});
+
+export const serializeNotification = (notif: NotificationDocument) => ({
+  _id: notif._id.toString(),
+  userId: notif.userId.toString(),
+  type: notif.type,
+  title: notif.title,
+  body: notif.body,
+  isRead: notif.isRead,
+  readAt: notif.readAt ? notif.readAt.toISOString() : null,
+  data: notif.data,
+  createdAt: notif.createdAt.toISOString()
+});
