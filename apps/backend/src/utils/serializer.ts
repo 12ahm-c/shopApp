@@ -3,6 +3,9 @@ import type { ProductDocument } from "../modules/product/product.model";
 import type { CustomerDocument } from "../modules/customer/customer.model";
 import type { SupplierDocument } from "../modules/supplier/supplier.model";
 import type { SaleDocument } from "../modules/sale/sale.model";
+import type { StoreSettingsDocument } from "../modules/storeSettings/settings.model";
+import type { ActivityLogDocument } from "../modules/activityLog/activityLog.model";
+import type { NotificationDocument } from "../modules/notification/notification.model";
 
 export const serializeUser = (
   user: UserDocument,
@@ -89,8 +92,17 @@ export const serializeSupplier = (supplier: SupplierDocument) => ({
   createdAt: supplier.createdAt.toISOString()
 });
 
-import type { ActivityLogDocument } from "../modules/activityLog/activityLog.model";
-import type { NotificationDocument } from "../modules/notification/notification.model";
+export const serializeSettings = (settings: StoreSettingsDocument) => ({
+  _id: settings._id.toString(),
+  storeName: settings.storeName,
+  storeAddress: settings.storeAddress,
+  storePhone: settings.storePhone,
+  logoUrl: settings.logoUrl,
+  currency: settings.currency,
+  invoiceFooter: settings.invoiceFooter,
+  theme: settings.theme,
+  language: settings.language
+});
 
 export const serializeActivityLog = (log: ActivityLogDocument) => ({
   _id: log._id.toString(),
