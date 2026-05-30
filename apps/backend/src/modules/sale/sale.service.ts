@@ -54,7 +54,7 @@ export const saleService = {
         const updated = await Product.findOneAndUpdate(
           { _id: item.productId, quantity: { $gte: item.quantity } },
           { $inc: { quantity: -item.quantity } },
-          { new: true, session }
+          { returnDocument: "after", session }
         );
 
         if (!updated) {
@@ -104,7 +104,7 @@ export const saleService = {
             employeeId: new Types.ObjectId(user.userId),
             employeeName: userDoc.name,
             customerId: input.customerId ? new Types.ObjectId(input.customerId) : undefined,
-            customerName: input.customerName,
+            customerName: input.customerName ?? "Walk-in",
             items: itemsData,
             totalAmount,
             paymentMethod: input.paymentMethod,
@@ -213,7 +213,7 @@ export const saleService = {
         const updated = await Product.findOneAndUpdate(
           { _id: item.productId },
           { $inc: { quantity: item.quantity } },
-          { new: true, session }
+          { returnDocument: "after", session }
         );
 
         if (updated) {

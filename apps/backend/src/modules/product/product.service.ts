@@ -70,7 +70,7 @@ export const productService = {
   async updateProduct(id: string, input: UpdateProductInput) {
     ensureObjectId(id);
     try {
-      const product = await Product.findByIdAndUpdate(id, { $set: input }, { new: true, runValidators: true });
+      const product = await Product.findByIdAndUpdate(id, { $set: input }, { returnDocument: "after", runValidators: true });
       if (!product) throw new AppError(404, "NOT_FOUND", "Product does not exist");
       return serializeProduct(product);
     } catch (error) {

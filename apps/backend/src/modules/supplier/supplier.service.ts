@@ -79,7 +79,7 @@ export const supplierService = {
   async updateSupplier(id: string, input: UpdateSupplierInput) {
     ensureObjectId(id);
     try {
-      const supplier = await Supplier.findByIdAndUpdate(id, { $set: input }, { new: true, runValidators: true });
+      const supplier = await Supplier.findByIdAndUpdate(id, { $set: input }, { returnDocument: "after", runValidators: true });
       if (!supplier) throw new AppError(404, "NOT_FOUND", "Supplier does not exist");
       return serializeSupplier(supplier);
     } catch (error) {

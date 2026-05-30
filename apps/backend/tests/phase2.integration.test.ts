@@ -162,11 +162,11 @@ describeWithDb("Phase 2 — Products, Customers, Suppliers", () => {
       trackProduct(name2);
       trackProduct(name3);
 
-      await productService.createProduct({ name: name1, category: "A", price: 100, quantity: 10, alertThreshold: 5 });
-      await productService.createProduct({ name: name2, category: "B", price: 200, quantity: 2, alertThreshold: 5 });
-      await productService.createProduct({ name: name3, category: "A", price: 300, quantity: 0, alertThreshold: 5 });
+      await productService.createProduct({ name: name1, category: "CatA", price: 100, quantity: 10, alertThreshold: 5 });
+      await productService.createProduct({ name: name2, category: "CatB", price: 200, quantity: 2, alertThreshold: 5 });
+      await productService.createProduct({ name: name3, category: "CatA", price: 300, quantity: 0, alertThreshold: 5 });
 
-      const catA = await productService.getProducts({ page: 1, limit: 20, category: "A", lowStock: false });
+      const catA = await productService.getProducts({ page: 1, limit: 20, category: "CatA", lowStock: false });
       expect(catA.data.length).toBe(2);
 
       const lowStock = await productService.getProducts({ page: 1, limit: 20, lowStock: true });
