@@ -1,4 +1,7 @@
 import type { UserDocument } from "../types";
+import type { ProductDocument } from "../modules/product/product.model";
+import type { CustomerDocument } from "../modules/customer/customer.model";
+import type { SupplierDocument } from "../modules/supplier/supplier.model";
 
 export const serializeUser = (
   user: UserDocument,
@@ -23,3 +26,45 @@ export const serializeUser = (
 
   return dto;
 };
+
+export const serializeProduct = (product: ProductDocument) => ({
+  _id: product._id.toString(),
+  name: product.name,
+  category: product.category,
+  price: product.price,
+  quantity: product.quantity,
+  alertThreshold: product.alertThreshold,
+  createdAt: product.createdAt.toISOString(),
+  updatedAt: product.updatedAt.toISOString()
+});
+
+export const serializeCustomer = (customer: CustomerDocument) => ({
+  _id: customer._id.toString(),
+  name: customer.name,
+  phone: customer.phone ?? null,
+  totalDebt: customer.totalDebt,
+  transactions: customer.transactions.map((t) => ({
+    date: t.date.toISOString(),
+    amount: t.amount,
+    type: t.type,
+    note: t.note ?? null,
+    newTotalDebt: t.newTotalDebt
+  })),
+  createdAt: customer.createdAt.toISOString()
+});
+
+export const serializeSupplier = (supplier: SupplierDocument) => ({
+  _id: supplier._id.toString(),
+  name: supplier.name,
+  phone: supplier.phone ?? null,
+  address: supplier.address ?? null,
+  totalDebt: supplier.totalDebt,
+  transactions: supplier.transactions.map((t) => ({
+    date: t.date.toISOString(),
+    amount: t.amount,
+    type: t.type,
+    note: t.note ?? null,
+    newTotalDebt: t.newTotalDebt
+  })),
+  createdAt: supplier.createdAt.toISOString()
+});
