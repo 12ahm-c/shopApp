@@ -39,7 +39,7 @@ npm run dev:backend
 Local dependencies:
 
 ```text
-MongoDB: mongodb://localhost:27017/shopmanager
+MongoDB: MongoDB Atlas via MONGODB_URI, database `shopAPP`
 Redis (optional, for caching): redis://localhost:6379
 ```
 

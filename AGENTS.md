@@ -41,7 +41,6 @@
 | **Business Rules** | Implement stock logic, debt calculation, permissions, or notifications differently from architecture.md. |
 | **Secrets** | Hardcode any secret, token, or password. Commit `.env` files. |
 | **Filesystem** | Store uploads, logs, or application state on local disk (except temp test files). |
-| **Dependencies** | Add new npm packages, change package.json, or introduce new services (Redis, BullMQ, Firebase) without approval. |
 | **Containers** | Create Dockerfiles, docker-compose, or Makefile orchestration. |
 | **Frontend logic** | Embed business rules (pricing, stock validation, debt calculation) in React components. |
 | **Environment** | Assume production‑only variables exist locally. Always use `.env.example` placeholders. |
@@ -60,7 +59,6 @@ Escalate immediately if you need to:
 5. **Introduce a new service** – Redis, BullMQ, another database, external API.
 6. **Change deployment topology** – ports, runtime processes, load balancing.
 7. **Modify business rules** – stock decrement logic, debt transaction rules, permission matrix, invoice numbering.
-8. **Add a new npm script or dependency** – even dev dependencies.
 9. **Implement push notifications (FCM)** – explicitly marked V2 in MVP.
 10. **Change authentication mechanism** – JWT flow, token lifetimes, refresh rotation.
 

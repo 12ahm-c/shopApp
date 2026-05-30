@@ -18,7 +18,7 @@ ShopManager separates responsibilities to keep the system stateless, scalable, a
 | `frontend` | React + Vite SPA, served on `:5173` (dev) or built static files | `npm run dev:frontend` |
 | `backend`  | Express REST API + cron jobs (daily summary, low stock, cleanup) on `:3001` | `npm run dev:backend` |
 | `realtime` | Socket.IO server for live notifications on `:3002` | `npm run dev:realtime` |
-| `mongodb`  | MongoDB Atlas (or local service) – external | `mongod` (local) |
+| `mongodb`  | MongoDB Atlas database `shopAPP` – external | Atlas only |
 | `redis`    | Redis for cache, rate limiting, JWT deny‑list – external | `redis-server` (local) |
 
 **Root local startup (all core services):**
@@ -32,7 +32,8 @@ Rules:
 
 · All runtimes are stateless – no uploads, sessions, or durable app state stored on local filesystems.
 · Backend API and workers must remain isolated (different processes).
-· Local MongoDB and Redis are external services reached via localhost.
+· MongoDB is always MongoDB Atlas. Do not run or configure a local MongoDB instance for development or testing.
+· Redis remains an optional external service for local development.
 
 ---
 
@@ -42,7 +43,7 @@ Rules:
 Browser -> frontend http://localhost:5173
 Browser / frontend -> backend REST http://localhost:3001/v1
 Browser -> realtime ws://localhost:3002
-backend -> MongoDB :27017, Redis :6379, Firebase FCM
+backend -> MongoDB Atlas `shopAPP`, Redis :6379, Firebase FCM
 realtime -> Redis :6379, shared auth state (JWT verified)
 ```
 
@@ -78,7 +79,7 @@ Redis responsibilities:
 6. MongoDB Strategy
 
 Environment Database Notes
-Local MongoDB Community (mongod) or Atlas free tier Use MONGODB_URI=mongodb://localhost:27017/shopmanager
+Local MongoDB Atlas database `shopAPP` Use MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-host>/shopAPP
 Staging MongoDB Atlas M2 (or shared) Isolated from production data
 Production MongoDB Atlas M10+ (or dedicated) Replica set required for transactions & high availability
 
@@ -99,7 +100,7 @@ Production launch prerequisites:
 7. Environments
 
 Environment Purpose Rules
-Local Developer and AI reproducibility npm run dev, .env.local, local MongoDB/Redis, sandbox Firebase credentials.
+Local Developer and AI reproducibility npm run dev, .env.local, MongoDB Atlas `shopAPP`, optional local Redis, sandbox Firebase credentials.
 Staging Production‑like validation Managed services (Atlas, Upstash, Firebase), isolated data, production‑shaped secrets, real‑time push enabled but sandbox FCM.
 Production Live store operation Managed secrets, full HTTPS/WSS, monitoring, backup/restore, rollback plan.
 
@@ -204,7 +205,7 @@ FIREBASE_FCM_API_KEY
 Local development URLs (fixed):
 
 ```text
-MongoDB:      mongodb://localhost:27017/shopmanager
+MongoDB:      MongoDB Atlas via MONGODB_URI, database `shopAPP`
 Redis:        redis://localhost:6379
 Frontend:     http://localhost:5173
 Backend API:  http://localhost:3001/v1
