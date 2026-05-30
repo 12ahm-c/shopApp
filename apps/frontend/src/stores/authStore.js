@@ -9,12 +9,14 @@ const useAuthStore = create((set) => ({
   login: (userData, token) => set({ 
     user: userData, 
     role: userData.role, 
-    token 
+    store: userData.store ?? null,
+    token
   }),
   
   logout: () => set({ 
     user: null, 
     role: null, 
+    store: null,
     token: null 
   }),
 }));

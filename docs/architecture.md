@@ -647,7 +647,7 @@ dashboard:employee:{id} 5 min Ventes du jour
 Variables d’environnement :
 
 · NODE_ENV, PORT
-· MONGODB_URL, REDIS_URL
+· MONGODB_URI, REDIS_URL
 · JWT_SECRET, JWT_REFRESH_SECRET
 · FIREBASE_*
 

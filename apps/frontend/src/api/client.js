@@ -21,6 +21,15 @@ export async function apiClient(endpoint, options = {}) {
       ...options,
       headers,
     });
+
+    if (response.status === 204) {
+      return {
+        success: true,
+        data: null,
+        error: null,
+        meta: null
+      };
+    }
     
     const data = await response.json();
     

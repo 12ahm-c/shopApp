@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../stores/authStore';
-import { mockAuthApi } from '../api/mocks/auth';
+import { authApi } from '../api/auth';
 import { Loader2 } from 'lucide-react';
 
 export default function Login() {
@@ -21,18 +21,16 @@ export default function Login() {
     setError('');
     
     try {
-      // Use the mock API for now as per Phase 1 instructions
-      const res = await mockAuthApi.login(phone, password);
-      login(res.data.user, res.data.token);
+      const res = await authApi.login(phone, password);
+      login(res.data.user, res.data.accessToken);
       
-      // Redirect based on role
       if (res.data.user.role === 'admin') {
-        navigate('/admin/employees'); // Dashboard is later, go to employees
+        navigate('/admin');
       } else {
-        navigate('/profile'); // POS is later, go to profile
+        navigate('/pos');
       }
     } catch (err) {
-      setError(err.message || 'Erreur de connexion');
+      setError(err.message || t('login.error'));
     } finally {
       setLoading(false);
     }
@@ -52,7 +50,7 @@ export default function Login() {
               {t('welcome')}
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Connectez-vous pour accéder à votre espace
+              {t('login.subtitle')}
             </p>
           </div>
 
@@ -71,7 +69,7 @@ export default function Login() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="+222..."
+                placeholder="numero telephone"
                 required
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
               />
@@ -95,7 +93,7 @@ export default function Login() {
               disabled={loading}
               className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 flex items-center justify-center gap-2"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('login')}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('login.action')}
             </button>
           </form>
           
