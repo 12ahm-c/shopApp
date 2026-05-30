@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { Notification, type NotificationDocument, type NotificationType } from "./notification.model";
 import { serializeNotification } from "../../utils/serializer";
 import { AppError } from "../../utils/AppError";
@@ -58,6 +58,17 @@ export const notificationService = {
     );
 
     return { updatedCount: result.modifiedCount };
+  },
+
+  async hasRecentNotification(userId: string, type: string, productId: string, since: Date): Promise<boolean> {
+    const collection = mongoose.connection.collection("notifications");
+    const count = await collection.countDocuments({
+      userId: new Types.ObjectId(userId),
+      type,
+      "data.productId": productId,
+      createdAt: { $gte: since }
+    });
+    return count > 0;
   },
 
   async createNotification(
