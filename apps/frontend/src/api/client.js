@@ -1,6 +1,7 @@
 import useAuthStore from '../stores/authStore';
 
-const BASE_URL = '/v1'; // Will be prefixed by Vite proxy in real setup
+const API_URL = import.meta.env.VITE_API_URL || '';
+const BASE_URL = `${API_URL}/v1`;
 
 /**
  * Standard API Client
