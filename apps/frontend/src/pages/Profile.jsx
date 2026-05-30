@@ -13,6 +13,7 @@ export default function Profile() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,11 +28,12 @@ export default function Profile() {
       const response = await authApi.updateProfile(payload, user);
       login(response.data, token);
       setSuccess(true);
+      setError('');
       setPassword('');
       
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      console.error(err);
+      setError(err?.response?.data?.error?.message || err?.message || t('login.error'));
     } finally {
       setLoading(false);
     }
@@ -69,6 +71,11 @@ export default function Profile() {
             {success && (
               <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-sm font-medium border border-emerald-100 dark:border-emerald-900/30 animate-in fade-in">
                 {t('profile.success')}
+              </div>
+            )}
+            {error && (
+              <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-medium border border-red-100 dark:border-red-900/30">
+                {error}
               </div>
             )}
 

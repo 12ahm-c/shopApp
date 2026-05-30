@@ -20,7 +20,7 @@ export const getNextInvoiceNumber = async (): Promise<number> => {
   const result = await Counter.findByIdAndUpdate(
     INVOICE_COUNTER_KEY,
     { $inc: { seq: 1 } },
-    { new: true, upsert: true }
+    { returnDocument: "after", upsert: true }
   );
   return result!.seq;
 };

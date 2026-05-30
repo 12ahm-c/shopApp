@@ -1,7 +1,7 @@
 import { apiClient } from './client';
 import { mockEmployeeApi } from './mocks/employee';
 
-const USE_MOCK_EMPLOYEES = true;
+const USE_MOCK_EMPLOYEES = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 const createQueryString = (params = {}) => {
   const searchParams = new URLSearchParams();

@@ -105,7 +105,7 @@ export default function POS() {
           unitPrice: i.unitPrice
         })),
         customerId: selectedCustomer?._id,
-        customerName: selectedCustomer?.name,
+        customerName: selectedCustomer?.name || "Walk-in",
         paymentMethod
       };
 

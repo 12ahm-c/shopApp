@@ -41,7 +41,7 @@ export default function ProductDetail() {
       await productApi.deleteProduct(id);
       navigate('/products');
     } catch (err) {
-      setDeleteError(err?.response?.data?.error?.message || 'Failed to delete product');
+      setDeleteError(err?.response?.data?.error?.message || err?.message || 'Failed to delete product');
       setDeleting(false);
     }
   };

@@ -78,7 +78,7 @@ export default function CustomerDetail() {
           {customer.transactions.length === 0 ? (
             <div className="p-8 text-center text-slate-500">Aucune transaction trouvée.</div>
           ) : (
-            customer.transactions.map((tx, index) => (
+            [...customer.transactions].reverse().map((tx, index) => (
               <div key={index} className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.type === 'increase' ? 'bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'}`}>
@@ -102,7 +102,7 @@ export default function CustomerDetail() {
                 </div>
               </div>
             ))
-          ).reverse()}
+          )}
         </div>
       </div>
     </div>

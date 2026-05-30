@@ -2,7 +2,7 @@
 import { apiClient } from './client';
 import { mockCustomerApi } from './mocks/customer';
 
-const USE_MOCK_CUSTOMERS = true;
+const USE_MOCK_CUSTOMERS = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 const realCustomerApi = {
   getCustomers: (params = {}) => {

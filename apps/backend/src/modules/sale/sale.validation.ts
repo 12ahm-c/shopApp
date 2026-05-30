@@ -9,7 +9,7 @@ export const createSaleItemSchema = z.object({
 export const createSaleSchema = z.object({
   items: z.array(createSaleItemSchema).min(1, "At least one item is required"),
   customerId: z.string().regex(/^[a-f0-9]{24}$/, "Invalid customerId").optional(),
-  customerName: z.string().trim().min(1).max(100),
+  customerName: z.string().trim().min(1).max(100).optional(),
   paymentMethod: z.enum(["cash", "card", "bankily"])
 });
 

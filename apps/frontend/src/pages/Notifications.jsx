@@ -75,14 +75,22 @@ export default function Notifications() {
 
   const handleMarkRead = async (id) => {
     setActionState({ status: 'loading', id });
-    await notificationApi.markAsRead(id);
+    try {
+      await notificationApi.markAsRead(id);
+    } catch {
+      // Silently fail — user can retry
+    }
     setActionState({ status: 'idle', id: null });
     loadNotifications();
   };
 
   const handleMarkAllRead = async () => {
     setActionState({ status: 'loading', id: 'all' });
-    await notificationApi.markAllAsRead();
+    try {
+      await notificationApi.markAllAsRead();
+    } catch {
+      // Silently fail — user can retry
+    }
     setActionState({ status: 'idle', id: null });
     loadNotifications();
   };

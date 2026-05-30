@@ -3,7 +3,7 @@ import { mockSaleApi } from './mocks/sale';
 import { saleApi } from './sale';
 import useAuthStore from '../stores/authStore';
 
-const USE_MOCK_INVOICES = true;
+const USE_MOCK_INVOICES = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 const realInvoiceApi = {
   getInvoices: (params = {}) => saleApi.getSales(params),

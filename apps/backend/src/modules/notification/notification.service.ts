@@ -37,7 +37,7 @@ export const notificationService = {
     const notification = await Notification.findOneAndUpdate(
       { _id: notificationId, userId: new Types.ObjectId(userId) },
       { isRead: true, readAt: new Date() },
-      { new: true }
+      { returnDocument: "after" }
     );
 
     if (!notification) {

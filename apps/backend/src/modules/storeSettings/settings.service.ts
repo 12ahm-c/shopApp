@@ -15,7 +15,7 @@ export const settingsService = {
     const settings = await StoreSettings.findOneAndUpdate(
       {},
       { $set: input },
-      { new: true, upsert: true, runValidators: true }
+      { returnDocument: "after", upsert: true, runValidators: true }
     );
     return serializeSettings(settings);
   }

@@ -69,7 +69,7 @@ export default function ProductForm() {
       }
       navigate('/products');
     } catch (err) {
-      setError(err?.response?.data?.error?.message || 'Failed to save product');
+      setError(err?.response?.data?.error?.message || err?.message || 'Failed to save product');
       setSaving(false);
     }
   };

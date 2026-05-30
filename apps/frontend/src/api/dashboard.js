@@ -2,7 +2,7 @@ import { apiClient } from './client';
 import { mockDashboardApi } from './mocks/dashboard';
 import useAuthStore from '../stores/authStore';
 
-const USE_MOCK_DASHBOARD = true;
+const USE_MOCK_DASHBOARD = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 const realDashboardApi = {
   getAdminDashboard: () => apiClient('/dashboard/admin'),

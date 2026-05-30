@@ -2,7 +2,7 @@ import { apiClient } from './client';
 import { mockNotificationApi } from './mocks/notification';
 import useAuthStore from '../stores/authStore';
 
-const USE_MOCK_NOTIFICATIONS = true;
+const USE_MOCK_NOTIFICATIONS = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 const createQueryString = (params = {}) => {
   const searchParams = new URLSearchParams();

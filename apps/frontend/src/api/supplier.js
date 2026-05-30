@@ -2,7 +2,7 @@
 import { apiClient } from './client';
 import { mockSupplierApi } from './mocks/supplier';
 
-const USE_MOCK_SUPPLIERS = true;
+const USE_MOCK_SUPPLIERS = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 const realSupplierApi = {
   getSuppliers: (params = {}) => {
