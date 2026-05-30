@@ -1,316 +1,166 @@
-# Phase 2 — Product Catalog & Customer Base
+# Phase 4 — Activity Logs & Notifications — Tasks
 
-**Source:** backend-plan.md §Phase 2
-**Endpoints:** API-Contract.md §§ 4, 7, 8
-**Models:** architecture.md §§ 7.2 (products), 7.4 (customers), 7.5 (suppliers)
+## A. Activity Log Module
 
----
+### A1. ActivityLog Model
+- **File:** `backend/src/modules/activityLog/activityLog.model.ts`
+- **Fields:** `userId` (ObjectId ref User), `userName` (string), `action` (enum: `sale | delete_invoice | login | logout`), `details` (string), `amount` (number, optional), `timestamp` (Date, default `Date.now`)
+- **Indexes:** `userId`, `timestamp`
 
-## Overview
+### A2. ActivityLog Validation
+- **File:** `backend/src/modules/activityLog/activityLog.validation.ts`
+- Schemas: `activityLogListQuerySchema` — `page`, `limit`, `from`, `to`, `action` (optional enum filter), `userId` (optional ObjectId, admin only)
+- Export types: `ActivityLogListQuery`
 
-Build three new modules following the same pattern as Phase 1:
-- **Product** – admin CRUD + employee read/search
-- **Customer** – admin CRUD + debt management
-- **Supplier** – admin CRUD + debt management (mirrors customer)
+### A3. ActivityLog Service
+- **File:** `backend/src/modules/activityLog/activityLog.service.ts`
+- `listLogs(query, user)` — Admin sees all, employee sees own only. Apply `from`/`to` date filters, `action` filter, `userId` filter (admin only). Return `{ data, meta }` with pagination.
 
-All new files go under `apps/backend/src/modules/<name>/`.
+### A4. ActivityLog Controller
+- **File:** `backend/src/modules/activityLog/activityLog.controller.ts`
+- `list` handler — extracts query from `req.validated.query`, calls service, returns result.
 
----
+### A5. ActivityLog Routes
+- **File:** `backend/src/modules/activityLog/activityLog.routes.ts`
+- `GET /` — `requireAuth`, `validate(querySchema, "query")`, controller list
+- Auth: both admin and employee, but service differentiates access
 
-## Task 1 — Product Model & Validation
-
-**Files to create:**
-- `apps/backend/src/modules/product/product.model.ts`
-- `apps/backend/src/modules/product/product.validation.ts`
-
-**Model (products collection):**
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| name | String | yes | unique, trim, min 2 max 100 |
-| category | String | yes | trim, min 2 max 50 |
-| price | Number | yes | int >= 0 |
-| quantity | Number | yes | int >= 0 |
-| alertThreshold | Number | no | int >= 0, default 5 |
-| createdAt | Date | auto | timestamps: true |
-| updatedAt | Date | auto | timestamps: true |
-
-Indexes: `name` (unique), `name` (text for search), `category`.
-
-**Validation schemas (Zod):**
-- `createProductSchema` – name, category, price, quantity, alertThreshold (optional)
-- `updateProductSchema` – all optional, at least one field required
-- `productListQuerySchema` – page, limit, category (optional), lowStock (coerce boolean), search (optional)
-
-Export inferred types as `CreateProductInput`, `UpdateProductInput`, `ProductListQuery`.
+### A6. ActivityLog Serializer
+- **Add to:** `backend/src/utils/serializer.ts`
+- `serializeActivityLog(log)` — return DTO matching API Contract §14.6
 
 ---
 
-## Task 2 — Product Service
+## B. Notification Module
 
-**File to create:** `apps/backend/src/modules/product/product.service.ts`
+### B1. Notification Model
+- **File:** `backend/src/modules/notification/notification.model.ts`
+- **Fields:** `userId` (ObjectId ref User), `type` (enum: `low_stock | daily_summary | debt_updated | invoice_deleted`), `title` (string), `body` (string), `isRead` (boolean, default false), `readAt` (Date, nullable), `data` (Mixed/object), `createdAt` (Date)
+- **Indexes:** `userId`, `createdAt`, `isRead`
 
-Implement `productService` object with:
+### B2. Notification Validation
+- **File:** `backend/src/modules/notification/notification.validation.ts`
+- Schemas: `notificationListQuerySchema` — `page`, `limit`, `unreadOnly` (boolean), `type` (optional enum)
+- Export types: `NotificationListQuery`
 
-| Method | Input | Returns |
-|--------|-------|---------|
-| `createProduct(input)` | CreateProductInput | Product DTO (201) |
-| `getProducts(query)` | ProductListQuery | `{ data: ProductDTO[], meta }` |
-| `getProductById(id)` | string | Product DTO |
-| `updateProduct(id, input)` | string, UpdateProductInput | Product DTO |
-| `deleteProduct(id)` | string | void (204) |
+### B3. Notification Service
+- **File:** `backend/src/modules/notification/notification.service.ts`
+- `listNotifications(query, userId)` — list user's notifications with filters. Meta includes `unreadCount`.
+- `markAsRead(notificationId, userId)` — set `isRead: true`, `readAt: now`. Return `{ _id, isRead, readAt }`.
+- `markAllAsRead(userId)` — update all unread for user. Return `{ updatedCount }`.
+- `createNotification(userId, type, title, body, data)` — insert and emit via socket.
 
-**Critical rules:**
-- `deleteProduct` must check that the product does **not** appear in any sale. Use `Sale.countDocuments({ "items.productId": id })`. If count > 0, throw `AppError(409, "INVALID_STATE", ...)`. *(Sale model belongs to Phase 3 – check the collection name / model once it exists. For now you can check against the `sales` collection directly with mongoose.)*
-- `getProducts` query: build a `filter` object. If `search` is provided, add `{ name: { $regex: query.search, $options: "i" } }`. If `category` is provided, add `{ category }`. If `lowStock === true`, add `{ $expr: { $lte: ["$quantity", "$alertThreshold"] } }`. Sort by `createdAt: -1`.
-- `createProduct` must catch duplicate name (code 11000) → `AppError(409, "DUPLICATE", ...)`.
+### B4. Notification Controller
+- **File:** `backend/src/modules/notification/notification.controller.ts`
+- `list`, `markRead`, `markAllRead` handlers
 
----
+### B5. Notification Routes
+- **File:** `backend/src/modules/notification/notification.routes.ts`
+- `GET /` — `requireAuth`, `validate(querySchema, "query")`, controller list
+- `PATCH /:id/read` — `requireAuth`, controller markRead
+- `PATCH /read-all` — `requireAuth`, controller markAllRead
 
-## Task 3 — Product Controller & Routes
-
-**Files to create:**
-- `apps/backend/src/modules/product/product.controller.ts`
-- `apps/backend/src/modules/product/product.routes.ts`
-
-**Controller** – thin layer following employee controller pattern:
-- `create`, `list`, `getById`, `update`, `delete` handlers.
-
-**Routes:**
-```
-POST   /v1/products     -> admin
-GET    /v1/products     -> both   (query)
-GET    /v1/products/:id -> both
-PUT    /v1/products/:id -> admin
-DELETE /v1/products/:id -> admin
-```
-
-Use `requireAuth`, `requireRole("admin")` where needed, `validate(...)` middleware.
-
-Register routes in `apps/backend/src/app.ts`:
-```ts
-import { productRoutes } from "./modules/product/product.routes";
-// ...
-app.use("/v1/products", productRoutes);
-```
+### B6. Notification Serializer
+- **Add to:** `backend/src/utils/serializer.ts`
+- `serializeNotification(notif)` — return DTO matching API Contract §14.7
 
 ---
 
-## Task 4 — Customer Model & Validation
+## C. Socket.IO Integration
 
-**Files to create:**
-- `apps/backend/src/modules/customer/customer.model.ts`
-- `apps/backend/src/modules/customer/customer.validation.ts`
+### C1. Socket Server
+- **File:** `backend/src/socket/socket.server.ts`
+- Initialize Socket.IO server with CORS config
+- Authenticate connections via JWT token in handshake (`socket.auth.token` or `handshake.query.token`)
+- Join rooms: `user:{userId}`, and `admin` if user role is admin
+- Export `io` instance and `setupSocket` function
 
-**Model (customers collection):**
+### C2. Notification Socket
+- **File:** `backend/src/socket/notification.socket.ts`
+- Export helper `emitNotification(userId, notification)` that emits `notification:new` to room `user:{userId}`
+- Export helper `emitStockAlert(notification)` that emits `stock:alert` to room `admin`
 
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| name | String | yes | trim, min 2 max 100 |
-| phone | String | no | unique if provided, trim |
-| totalDebt | Number | no | int, default 0 |
-| transactions | [Transaction] | no | default [] |
-| createdAt | Date | auto | timestamps: true |
-
-**Transaction sub‑schema** (`{ _id: false }`):
-- `date` (Date, required)
-- `amount` (Number, required, int)
-- `type` (String, enum: "increase" | "decrease", required)
-- `note` (String, optional, max 200)
-- `newTotalDebt` (Number, required, int)
-
-Indexes: `phone` (sparse unique – only if phone is provided).
-
-**Validation schemas:**
-- `createCustomerSchema` – name (required), phone (optional with transform/normalize), initialDebt (optional, default 0)
-- `debtSchema` – amount (required, int > 0), type (enum increase/decrease), note (optional max 200)
-- `customerListQuerySchema` – page, limit, hasDebt (coerce boolean), search (optional)
+### C3. Server Bootstrap
+- **In:** `backend/src/server.ts`
+- Instantiate Socket.IO on the same HTTP server
+- Call `setupSocket(server)` after database connection
 
 ---
 
-## Task 5 — Customer Service
+## D. Notification Triggers
 
-**File to create:** `apps/backend/src/modules/customer/customer.service.ts`
+### D1. Low Stock After Sale
+- **Modify:** `backend/src/modules/sale/sale.service.ts`
+- After successful sale creation, check each sold product's updated quantity. If `quantity <= alertThreshold`, create a low_stock notification for all admin users and emit `stock:alert`.
 
-Implement `customerService` object with:
+### D2. Debt Update Notification
+- **Modify:** `backend/src/modules/customer/customer.service.ts`
+- After successful debt update, create a `debt_updated` notification for admin(s) with customer details. Emit `notification:new`.
 
-| Method | Input | Returns |
-|--------|-------|---------|
-| `createCustomer(input)` | CreateCustomerInput | Customer DTO (201) |
-| `getCustomers(query)` | CustomerListQuery | `{ data: CustomerDTO[], meta }` |
-| `getCustomerById(id)` | string | `{ customer, recentSales }` |
-| `updateDebt(id, input)` | string, DebtInput | `{ customer, transaction }` |
-| `deleteCustomer(id)` | string | void (204) |
+### D3. Invoice Deletion Notification
+- **Modify:** `backend/src/modules/sale/sale.service.ts`
+- After successful sale cancellation, create a `invoice_deleted` notification for admin(s). Emit `notification:new`.
 
-**Critical rules:**
-- `createCustomer`: if `initialDebt > 0`, prepend an "increase" transaction.
-- `getCustomerById`: return customer DTO + `recentSales` (empty array for now – Phase 3 populates). `ensureObjectId` guard.
-- `updateDebt`: atomically update `totalDebt` and push a transaction. Use `findOneAndUpdate` with `$inc` and `$push`. Validate that decrease does not exceed current debt (read current debt first or use a pipeline).
-- `deleteCustomer`: check customer has no sales (`Sale.countDocuments({ customerId: id })`). Fail with `INVALID_STATE` if > 0.
-- Duplicate phone → `AppError(409, "DUPLICATE", ...)`.
+### D4. Login/Logout Activity via Auth
+- **Verify:** `backend/src/modules/auth/auth.service.ts`
+- Ensure login and logout actions write activity logs (confirm existing pattern is complete).
 
 ---
 
-## Task 6 — Customer Controller & Routes
+## E. App Wiring
 
-**Files to create:**
-- `apps/backend/src/modules/customer/customer.controller.ts`
-- `apps/backend/src/modules/customer/customer.routes.ts`
+### E1. Register ActivityLog Routes
+- **In:** `backend/src/app.ts`
+- Add `app.use("/v1/activity-logs", activityLogRoutes);`
 
-**Controller handlers:** `create`, `list`, `getById`, `updateDebt`, `delete`.
+### E2. Register Notification Routes
+- **In:** `backend/src/app.ts`
+- Add `app.use("/v1/notifications", notificationRoutes);`
 
-**Routes (all admin):**
-```
-POST   /v1/customers           -> admin
-GET    /v1/customers           -> admin (query)
-GET    /v1/customers/:id       -> admin
-PUT    /v1/customers/:id/debt  -> admin
-DELETE /v1/customers/:id       -> admin
-```
-
-Register in `app.ts`:
-```ts
-import { customerRoutes } from "./modules/customer/customer.routes";
-// ...
-app.use("/v1/customers", customerRoutes);
-```
+### E3. Install socket.io Package
+- Run: `npm install socket.io`
+- Run: `npm install -D @types/socket.io` (if types not included)
 
 ---
 
-## Task 7 — Supplier Module
+## F. Tests
 
-**Files to create:**
-- `apps/backend/src/modules/supplier/supplier.model.ts`
-- `apps/backend/src/modules/supplier/supplier.validation.ts`
-- `apps/backend/src/modules/supplier/supplier.service.ts`
-- `apps/backend/src/modules/supplier/supplier.controller.ts`
-- `apps/backend/src/modules/supplier/supplier.routes.ts`
+### F1. Activity Log Integration Tests
+- **File:** `backend/tests/phase4-activity.integration.test.ts`
+- Admin can list all activity logs with pagination
+- Employee sees only own activity logs
+- Filtering by action, date range works
+- Filtering by userId works for admin only
 
-**Model (suppliers collection)** – same shape as customers plus an optional `address` field:
+### F2. Notification Integration Tests
+- **File:** `backend/tests/phase4-notification.integration.test.ts`
+- User can list own notifications
+- Unread filter works
+- Mark single notification as read
+- Mark all notifications as read
+- Meta includes unreadCount
 
-| Field | Type | Notes |
-|-------|------|-------|
-| name | String | required |
-| phone | String | optional, sparse unique |
-| address | String | optional |
-| totalDebt | Number | default 0 |
-| transactions | [Transaction] | same sub‑schema as customer |
-| createdAt | Date | auto |
-
-**Validation schemas:**
-- `createSupplierSchema` – name, phone (optional), address (optional), initialDebt (optional)
-- `updateSupplierSchema` – name, phone, address (all optional)
-- `debtSchema` – same as customer debt schema
-- `supplierListQuerySchema` – page, limit, hasDebt, search
-
-**Service** – mirrors customer service exactly:
-- `createSupplier` – same logic as createCustomer
-- `getSuppliers` – same query pattern
-- `getSupplierById` – returns supplier + `recentPurchases` (empty array for now)
-- `updateSupplier` – update name/phone/address
-- `updateDebt` – same atomic logic as customer debt
-- `deleteSupplier` – fails if `totalDebt > 0` (per API-Contract §8.6)
-
-**Routes (all admin):**
-```
-POST   /v1/suppliers           -> admin
-GET    /v1/suppliers           -> admin (query)
-GET    /v1/suppliers/:id       -> admin
-PUT    /v1/suppliers/:id       -> admin
-PUT    /v1/suppliers/:id/debt  -> admin
-DELETE /v1/suppliers/:id       -> admin
-```
-
-Register in `app.ts`:
-```ts
-import { supplierRoutes } from "./modules/supplier/supplier.routes";
-// ...
-app.use("/v1/suppliers", supplierRoutes);
-```
+### F3. Socket.IO Tests
+- **File:** `backend/tests/phase4-socket.test.ts` (optional, can be manual)
+- Verify rooms are joined on authentication
+- Verify `notification:new` event is emitted when notification created
 
 ---
 
-## Task 8 — Serializers (DTOs)
+## G. Critical Compliance Checklist
 
-**File to edit:** `apps/backend/src/utils/serializer.ts`
-
-Add three new serializer functions:
-
-```ts
-export const serializeProduct = (product: ProductDocument) => ({ ... });
-export const serializeCustomer = (customer: CustomerDocument) => ({ ... });
-export const serializeSupplier = (supplier: SupplierDocument) => ({ ... });
-```
-
-Each serializer returns a plain object matching the DTO shapes in API-Contract.md Appendix A. Convert `_id` to string, dates to ISO strings. Exclude `__v`, `passwordHash`, or any internal fields.
-
----
-
-## Task 9 — Integration Tests
-
-**File to create:** `apps/backend/tests/phase2.integration.test.ts`
-
-Follow the pattern from `phase1.integration.test.ts`:
-- Use the same `describeWithDb` guard, `uniqueDigits`, `phone()`, `createTestUser` helpers.
-- Import the real service functions (not HTTP) for unit-style tests.
-- Use `supertest` + `createApp()` for endpoint-level tests.
-
-**Test scenarios:**
-
-1. **Product CRUD** – create, list with filters, get by id, update, delete.
-2. **Product duplicate name** – expect `DUPLICATE`.
-3. **Product list filters** – category filter, lowStock flag, search.
-4. **Customer CRUD** – create with initialDebt, list, get by id.
-5. **Customer debt** – increase debt, decrease debt, validate decrease > debt fails.
-6. **Customer deletion blocked** – simulate by creating a customer then trying to delete (will pass for now since no sales exist in test – verify the service throws `INVALID_STATE` only when sales exist).
-7. **Supplier CRUD** – create, list, get by id, update.
-8. **Supplier debt** – increase and decrease.
-9. **Supplier deletion blocked** – fails if outstanding debt.
-10. **Endpoint auth enforcement** – non-admin gets `403` on product create/customer endpoints.
-
----
-
-## Task 10 — Wire Routes in App
-
-**File to edit:** `apps/backend/src/app.ts`
-
-Add imports and mount the three new route groups:
-```ts
-import { productRoutes } from "./modules/product/product.routes";
-import { customerRoutes } from "./modules/customer/customer.routes";
-import { supplierRoutes } from "./modules/supplier/supplier.routes";
-
-app.use("/v1/products", productRoutes);
-app.use("/v1/customers", customerRoutes);
-app.use("/v1/suppliers", supplierRoutes);
-```
-
----
-
-## Verification
-
-After all tasks are done, run:
-
-```bash
-cd apps/backend
-npm run typecheck    # tsc --noEmit
-npm run lint         # tsc --noEmit (alias)
-npm run test         # jest --runInBand
-npm run build        # tsc
-```
-
-All new and existing tests must pass. No type errors or lint warnings.
-
----
-
-## Handoff to Frontend
-
-Once verified, provide frontend team with:
-
-1. Example responses for:
-   - `GET /v1/products?category=Épicerie&lowStock=true`
-   - `POST /v1/products` (create)
-   - `PUT /v1/customers/:id/debt` (increase)
-2. Auth/role requirements per endpoint.
-3. Test credentials for an admin account.
-4. Note that `recentSales` / `recentPurchases` arrays are empty until Phase 3.
+- [ ] ActivityLog DTO matches API Contract §14.6 exactly
+- [ ] Notification DTO matches API Contract §14.7 exactly
+- [ ] GET /activity-logs query params match API Contract §10.1
+- [ ] GET /notifications query params match API Contract §11.1
+- [ ] GET /notifications meta includes `unreadCount`
+- [ ] PATCH /notifications/:id/read returns `{ _id, isRead, readAt }` shape
+- [ ] PATCH /notifications/read-all returns `{ updatedCount }` shape
+- [ ] Admin sees all activity logs, employee sees own only
+- [ ] Notifications belong to specific user, never cross-user
+- [ ] FCM push notifications are NOT implemented (MVP exclusion)
+- [ ] Socket.IO rooms: `user:{userId}`, `admin`
+- [ ] Socket.IO events: `notification:new`, `stock:alert`
+- [ ] Low stock check is idempotent (cron checks every hour, not duplicate per sale — but the after-sale trigger fires once)
+- [ ] All responses use `{ success, data, error, meta }` envelope
+- [ ] `npm run test`, `npm run typecheck`, `npm run build` pass

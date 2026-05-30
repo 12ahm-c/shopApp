@@ -8,6 +8,8 @@ import { customerRoutes } from "./modules/customer/customer.routes";
 import { supplierRoutes } from "./modules/supplier/supplier.routes";
 import { saleRoutes } from "./modules/sale/sale.routes";
 import { invoiceRoutes } from "./modules/sale/invoice.routes";
+import { activityLogRoutes } from "./modules/activityLog/activityLog.routes";
+import { notificationRoutes } from "./modules/notification/notification.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 
 export const createApp = () => {
@@ -28,6 +30,8 @@ export const createApp = () => {
   app.use("/v1/suppliers", supplierRoutes);
   app.use("/v1/sales", saleRoutes);
   app.use("/v1/invoices", invoiceRoutes);
+  app.use("/v1/activity-logs", activityLogRoutes);
+  app.use("/v1/notifications", notificationRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

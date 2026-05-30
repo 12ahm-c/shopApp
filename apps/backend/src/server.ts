@@ -1,13 +1,18 @@
+import { createServer } from "http";
 import { createApp } from "./app";
 import { connectDatabase } from "./config/database";
 import { env } from "./config/env";
+import { setupSocket } from "./socket/socket.server";
 import { log } from "./utils/logger";
 
 const start = async (): Promise<void> => {
   await connectDatabase();
   const app = createApp();
+  const httpServer = createServer(app);
 
-  app.listen(env.port, () => {
+  setupSocket(httpServer);
+
+  httpServer.listen(env.port, () => {
     log("info", "Backend API listening", { port: env.port });
   });
 };
