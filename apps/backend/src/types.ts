@@ -42,6 +42,16 @@ export interface UserDocument {
   validatePassword(password: string): Promise<boolean>;
 }
 
+export type PaymentMethod = "cash" | "card" | "bankily";
+
+export interface SaleItem {
+  productId: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
 declare global {
   namespace Express {
     interface Request {

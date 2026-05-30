@@ -6,6 +6,8 @@ import { userRoutes } from "./modules/user/user.routes";
 import { productRoutes } from "./modules/product/product.routes";
 import { customerRoutes } from "./modules/customer/customer.routes";
 import { supplierRoutes } from "./modules/supplier/supplier.routes";
+import { saleRoutes } from "./modules/sale/sale.routes";
+import { invoiceRoutes } from "./modules/sale/invoice.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 
 export const createApp = () => {
@@ -24,6 +26,8 @@ export const createApp = () => {
   app.use("/v1/products", productRoutes);
   app.use("/v1/customers", customerRoutes);
   app.use("/v1/suppliers", supplierRoutes);
+  app.use("/v1/sales", saleRoutes);
+  app.use("/v1/invoices", invoiceRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

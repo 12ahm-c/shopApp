@@ -1,7 +1,8 @@
-import type { UserDocument } from "../types";
+import type { UserDocument, SaleItem } from "../types";
 import type { ProductDocument } from "../modules/product/product.model";
 import type { CustomerDocument } from "../modules/customer/customer.model";
 import type { SupplierDocument } from "../modules/supplier/supplier.model";
+import type { SaleDocument } from "../modules/sale/sale.model";
 
 export const serializeUser = (
   user: UserDocument,
@@ -51,6 +52,25 @@ export const serializeCustomer = (customer: CustomerDocument) => ({
     newTotalDebt: t.newTotalDebt
   })),
   createdAt: customer.createdAt.toISOString()
+});
+
+export const serializeSale = (sale: SaleDocument) => ({
+  _id: sale._id.toString(),
+  invoiceNumber: sale.invoiceNumber,
+  employeeId: sale.employeeId.toString(),
+  employeeName: sale.employeeName,
+  customerId: sale.customerId?.toString() ?? null,
+  customerName: sale.customerName,
+  items: sale.items.map((item: SaleItem) => ({
+    productId: item.productId,
+    name: item.name,
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+    total: item.total
+  })),
+  totalAmount: sale.totalAmount,
+  paymentMethod: sale.paymentMethod,
+  createdAt: sale.createdAt.toISOString()
 });
 
 export const serializeSupplier = (supplier: SupplierDocument) => ({
