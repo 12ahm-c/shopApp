@@ -33,6 +33,7 @@ export default function ActivityLogs() {
     to: '',
     userId: ''
   });
+  const [page, setPage] = useState(1);
   const [logsState, setLogsState] = useState({
     status: 'loading',
     data: [],
@@ -45,13 +46,13 @@ export default function ActivityLogs() {
   });
 
   const requestParams = useMemo(() => ({
-    page: 1,
+    page,
     limit: 20,
     action: filters.action,
     from: toStartOfDay(filters.from),
     to: toEndOfDay(filters.to),
     userId: isAdmin ? filters.userId : ''
-  }), [filters, isAdmin]);
+  }), [filters, page, isAdmin]);
 
   const loadLogs = useCallback(async () => {
     setLogsState((current) => ({ ...current, status: 'loading', error: null }));
@@ -112,6 +113,7 @@ export default function ActivityLogs() {
       ...current,
       [name]: value
     }));
+    setPage(1); // Reset page on filter change
   };
 
   const resetFilters = () => {
@@ -121,6 +123,7 @@ export default function ActivityLogs() {
       to: '',
       userId: ''
     });
+    setPage(1);
   };
 
   return (
@@ -268,6 +271,30 @@ export default function ActivityLogs() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {logsState.status === 'success' && logsState.meta && (
+          <div className="flex items-center justify-between border-t border-slate-200 p-4 dark:border-slate-800">
+            <span className="text-sm text-slate-500">
+              Page {logsState.meta.page} sur {Math.ceil(logsState.meta.total / logsState.meta.limit) || 1}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                Précédent
+              </button>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page >= Math.ceil(logsState.meta.total / logsState.meta.limit)}
+                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                Suivant
+              </button>
+            </div>
           </div>
         )}
       </section>

@@ -16,6 +16,7 @@ export interface SaleDocument extends Document {
   customerName: string;
   items: SaleItem[];
   totalAmount: number;
+  paidAmount: number;
   paymentMethod: "cash" | "card" | "bankily";
   isDeleted: boolean;
   createdAt: Date;
@@ -42,6 +43,7 @@ const saleSchema = new Schema<SaleDocument>(
     customerName: { type: String, required: true, trim: true, maxlength: 100 },
     items: { type: [saleItemSchema], required: true, validate: (v: SaleItem[]) => v.length > 0 },
     totalAmount: { type: Number, required: true, min: 0 },
+    paidAmount: { type: Number, required: true, min: 0 },
     paymentMethod: { type: String, enum: ["cash", "card", "bankily"], required: true },
     isDeleted: { type: Boolean, default: false }
   },

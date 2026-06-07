@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react';
 import { settingsApi } from '../../api/settings';
-import { Loader2, Save, Store } from 'lucide-react';
+import { Loader2, Save, Store, LogOut, Moon, Sun } from 'lucide-react';
 import { formatPhoneNumber } from '../../lib/utils';
+import useSettingsStore from '../../stores/settingsStore';
+import useAuthStore from '../../stores/authStore';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Settings() {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const { updateSettings } = useSettingsStore();
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     let isActive = true;
@@ -34,6 +42,7 @@ export default function Settings() {
     try {
       const res = await settingsApi.updateSettings(settings);
       setSettings(res.data);
+      updateSettings(res.data);
       setMessage('Settings updated successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch {
@@ -41,6 +50,11 @@ export default function Settings() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   if (loading) {
@@ -127,6 +141,22 @@ export default function Settings() {
               </select>
             </label>
 
+            <label className="block space-y-2">
+              <span className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                {settings?.theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                {t('settings_theme')}
+              </span>
+              <select 
+                name="theme" 
+                value={settings.theme || 'light'} 
+                onChange={handleChange} 
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+              >
+                <option value="light">{t('settings_theme_light')}</option>
+                <option value="dark">{t('settings_theme_dark')}</option>
+              </select>
+            </label>
+
             <label className="block space-y-2 md:col-span-2">
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Invoice Footer</span>
               <textarea 
@@ -153,6 +183,17 @@ export default function Settings() {
             </button>
           </div>
         </form>
+
+        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/20 dark:hover:bg-red-900/40 dark:text-red-400 rounded-xl shadow-sm font-medium transition-all"
+          >
+            <LogOut className="w-5 h-5" />
+            {t('logout')}
+          </button>
+        </div>
       </div>
     </div>
   );

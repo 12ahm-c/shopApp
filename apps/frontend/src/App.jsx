@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './stores/authStore';
 import useLanguageStore from './stores/languageStore';
+import useSettingsStore from './stores/settingsStore';
 
 import Login from './pages/Login';
 import Profile from './pages/Profile';
@@ -16,6 +17,7 @@ import Customers from './pages/admin/Customers';
 import CustomerDetail from './pages/admin/CustomerDetail';
 import Suppliers from './pages/admin/Suppliers';
 import SupplierDetail from './pages/admin/SupplierDetail';
+import Expenses from './pages/admin/Expenses';
 import ProductsList from './pages/products/ProductsList';
 import ProductForm from './pages/products/ProductForm';
 import ProductDetail from './pages/products/ProductDetail';
@@ -38,6 +40,11 @@ function RootRedirect() {
 
 export default function App() {
   const { language, dir } = useLanguageStore();
+  const fetchSettings = useSettingsStore(state => state.fetchSettings);
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -101,6 +108,10 @@ export default function App() {
           <Route 
             path="/admin/suppliers/:id" 
             element={<RoleGuard allowedRoles={['admin']}><SupplierDetail /></RoleGuard>} 
+          />
+          <Route 
+            path="/admin/expenses" 
+            element={<RoleGuard allowedRoles={['admin']}><Expenses /></RoleGuard>} 
           />
 
           {/* Product Routes */}

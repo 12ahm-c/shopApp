@@ -6,9 +6,10 @@ import { saleApi } from '../../api/sale';
 import useCartStore from '../../stores/cartStore';
 import { formatPhoneNumber } from '../../lib/utils';
 import { 
-  Search, Plus, Minus, Trash2, ShoppingCart, CreditCard, Banknote, 
-  Smartphone, User, CheckCircle2, Loader2, RefreshCcw, Package, ReceiptText
+  Search, Plus, Minus, Trash2, ShoppingCart, 
+  User, CheckCircle2, Loader2, RefreshCcw, Package, ReceiptText
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const currencyFormatter = new Intl.NumberFormat('fr-FR');
 
@@ -44,8 +45,14 @@ export default function POS() {
   const { 
     cartItems, addItem, removeItem, deleteItem, 
     selectedCustomer, setCustomer, paymentMethod, setPaymentMethod, 
-    clearCart, getTotalAmount 
+    clearCart, getTotalAmount, setUnitPrice
   } = useCartStore();
+
+  const { t } = useTranslation();
+
+  const totalAmount = getTotalAmount();
+  const [manualPaidAmount, setManualPaidAmount] = useState('');
+  const paidAmount = manualPaidAmount === '' ? totalAmount : Number(manualPaidAmount);
 
   // Checkout State
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -105,8 +112,9 @@ export default function POS() {
           unitPrice: i.unitPrice
         })),
         customerId: selectedCustomer?._id,
-        customerName: selectedCustomer?.name || "Walk-in",
-        paymentMethod
+        customerName: selectedCustomer?.name || (customerSearch.trim() !== '' ? customerSearch : "Walk-in"),
+        paymentMethod,
+        paidAmount
       };
 
       const res = await saleApi.createSale(payload);
@@ -206,7 +214,7 @@ export default function POS() {
           </div>
         </article>
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3 print:hidden">
           <button
             type="button"
             onClick={handleNewSale}
@@ -222,6 +230,13 @@ export default function POS() {
             <ReceiptText className="h-5 w-5" />
             Voir le detail
           </Link>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          >
+            Imprimer la facture
+          </button>
         </div>
       </div>
     );
@@ -333,7 +348,7 @@ export default function POS() {
                 onFocus={() => setShowCustomerDropdown(true)}
                 className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               />
-              {showCustomerDropdown && customers.length > 0 && (
+              {showCustomerDropdown && customerSearch && (
                 <div className="absolute z-10 w-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-xl overflow-hidden">
                   {customers.map(c => (
                     <button
@@ -343,12 +358,23 @@ export default function POS() {
                         setCustomerSearch('');
                         setShowCustomerDropdown(false);
                       }}
-                      className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex justify-between items-center"
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex justify-between items-center border-b border-slate-100 dark:border-slate-800/50"
                     >
                       <span className="font-medium text-sm text-slate-900 dark:text-white">{c.name}</span>
                       <span className="text-xs text-slate-500">{formatPhoneNumber(c.phone)}</span>
                     </button>
                   ))}
+                  <button
+                    onClick={() => {
+                      setCustomer({ name: customerSearch });
+                      setCustomerSearch('');
+                      setShowCustomerDropdown(false);
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 text-blue-600 dark:text-blue-400"
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="font-medium text-sm">Use name: "{customerSearch}"</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -375,7 +401,15 @@ export default function POS() {
                   </button>
                 </div>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">{item.unitPrice} MRU</span>
+                  <div className="flex items-center gap-1">
+                    <input 
+                      type="number" 
+                      value={item.unitPrice} 
+                      onChange={(e) => setUnitPrice(item.productId, Number(e.target.value))}
+                      className="w-20 px-2 py-1 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-transparent border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 focus:border-blue-500 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">MRU</span>
+                  </div>
                   <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-0.5">
                     <button 
                       onClick={() => removeItem(item.productId)}
@@ -413,40 +447,39 @@ export default function POS() {
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <button
-              onClick={() => setPaymentMethod('cash')}
-              className={`py-2 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
-                paymentMethod === 'cash' 
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
-              }`}
-            >
-              <Banknote className="w-5 h-5" />
-              <span className="text-xs font-medium">Cash</span>
-            </button>
-            <button
-              onClick={() => setPaymentMethod('card')}
-              className={`py-2 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
-                paymentMethod === 'card' 
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
-              }`}
-            >
-              <CreditCard className="w-5 h-5" />
-              <span className="text-xs font-medium">Card</span>
-            </button>
-            <button
-              onClick={() => setPaymentMethod('bankily')}
-              className={`py-2 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
-                paymentMethod === 'bankily' 
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
-              }`}
-            >
-              <Smartphone className="w-5 h-5" />
-              <span className="text-xs font-medium">Bankily</span>
-            </button>
+          <div className="space-y-4 mb-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Méthode de paiement</label>
+              <select
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-900 dark:text-white"
+              >
+                <option value="cash">Cash</option>
+                <option value="card">Carte Bancaire</option>
+                <option value="bankily">Bankily</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Montant payé (MRU)</label>
+              <input
+                type="number"
+                min="0"
+                value={manualPaidAmount}
+                onChange={(e) => {
+                  if (Number(e.target.value) < 0) return;
+                  setManualPaidAmount(e.target.value);
+                }}
+                placeholder={totalAmount.toString()}
+                className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-900 dark:text-white font-medium"
+              />
+              {paidAmount < totalAmount && (
+                <p className="mt-1.5 text-xs text-amber-600 dark:text-amber-400 font-medium">
+                  Reste à payer : {totalAmount - paidAmount} MRU (sera enregistré comme dette)
+                </p>
+              )}
+            </div>
           </div>
 
           <button
@@ -457,12 +490,10 @@ export default function POS() {
             {isCheckingOut ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Processing...
+                Traitement...
               </>
             ) : (
-              <>
-                Checkout {cartItems.length > 0 && `(${cartItems.length})`}
-              </>
+              `${t('checkout')} (${cartItems.length})`
             )}
           </button>
         </div>

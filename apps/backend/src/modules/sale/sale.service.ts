@@ -2,6 +2,7 @@ import mongoose, { Types } from "mongoose";
 import { Sale, type SaleDocument } from "./sale.model";
 import { Product } from "../product/product.model";
 import { User } from "../user/user.model";
+import { Customer } from "../customer/customer.model";
 import { getNextInvoiceNumber } from "../../utils/counter.util";
 import { serializeSale } from "../../utils/serializer";
 import { AppError } from "../../utils/AppError";
@@ -96,6 +97,29 @@ export const saleService = {
       }
 
       const totalAmount = itemsData.reduce((sum, item) => sum + item.total, 0);
+      const paidAmount = input.paidAmount ?? totalAmount;
+
+      if (paidAmount < totalAmount && !input.customerId) {
+        throw new AppError(422, "VALIDATION_ERROR", "Cannot have unpaid amount without a customer");
+      }
+
+      const debtAmount = totalAmount - paidAmount;
+
+      if (debtAmount > 0 && input.customerId) {
+        const customer = await Customer.findById(input.customerId).session(session);
+        if (!customer) throw new AppError(404, "NOT_FOUND", "Customer not found");
+
+        const newTotalDebt = customer.totalDebt + debtAmount;
+        customer.totalDebt = newTotalDebt;
+        customer.transactions.push({
+          date: new Date(),
+          amount: debtAmount,
+          type: "increase",
+          note: `Dette impayée sur facture #${invoiceNumber}`,
+          newTotalDebt
+        });
+        await customer.save({ session });
+      }
 
       const [sale] = await Sale.create(
         [
@@ -107,6 +131,7 @@ export const saleService = {
             customerName: input.customerName ?? "Walk-in",
             items: itemsData,
             totalAmount,
+            paidAmount,
             paymentMethod: input.paymentMethod,
             isDeleted: false
           }
@@ -227,6 +252,23 @@ export const saleService = {
 
       sale.isDeleted = true;
       await sale.save({ session });
+
+      const debtAmount = sale.totalAmount - sale.paidAmount;
+      if (debtAmount > 0 && sale.customerId) {
+        const customer = await Customer.findById(sale.customerId).session(session);
+        if (customer) {
+          const newTotalDebt = Math.max(0, customer.totalDebt - debtAmount);
+          customer.totalDebt = newTotalDebt;
+          customer.transactions.push({
+            date: new Date(),
+            amount: debtAmount,
+            type: "decrease",
+            note: `Annulation dette facture #${sale.invoiceNumber}`,
+            newTotalDebt
+          });
+          await customer.save({ session });
+        }
+      }
 
       const userDoc = await User.findById(user.userId).session(session).lean();
       const userName = userDoc?.name ?? "Unknown";

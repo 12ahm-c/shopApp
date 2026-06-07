@@ -384,7 +384,8 @@ Request body
   ],
   "customerId": "65f... (optional, if known customer)",
   "customerName": "string (required if no customerId, max 100)",
-  "paymentMethod": "cash | card | bankily"
+  "paymentMethod": "cash | card | bankily",
+  "paidAmount": "integer (optional, defaults to totalAmount)"
 }
 ```
 
@@ -955,9 +956,82 @@ Success response (200)
 
 ---
 
-12. Store Settings
+12. Expenses
 
-12.1 GET /settings
+Admin only. Employees cannot access these endpoints.
+
+12.1 POST /expenses
+
+Auth: Bearer | Role: admin
+Description: Create a new expense.
+
+Request body
+
+```json
+{
+  "title": "string (required, max 100)",
+  "amount": "integer (required, > 0)",
+  "category": "string (salary, rent, utility, other)",
+  "date": "timestamp (optional, default current time)",
+  "note": "string (optional)"
+}
+```
+
+Success response (201) — Expense DTO.
+
+---
+
+12.2 GET /expenses
+
+Auth: Bearer | Role: admin
+Description: List expenses with pagination and filters.
+
+Query params
+
+Name Type Required Default Description
+page int no 1 
+limit int no 20 
+from timestamp no — 
+to timestamp no — 
+category string no — 
+
+Success response (200) — list of Expense DTO.
+
+---
+
+12.3 PUT /expenses/:id
+
+Auth: Bearer | Role: admin
+Description: Update an expense.
+
+Request body (all fields optional)
+
+```json
+{
+  "title": "string",
+  "amount": "integer",
+  "category": "string",
+  "date": "timestamp",
+  "note": "string"
+}
+```
+
+Success response (200) — updated Expense DTO.
+
+---
+
+12.4 DELETE /expenses/:id
+
+Auth: Bearer | Role: admin
+Description: Delete an expense.
+
+Success response (204) — no body.
+
+---
+
+13. Store Settings
+
+13.1 GET /settings
 
 Auth: Bearer | Role: admin (full), employee (read-only)
 Description: Get store configuration.
@@ -966,7 +1040,7 @@ Success response (200) — StoreSettings DTO.
 
 ---
 
-12.2 PUT /settings
+13.2 PUT /settings
 
 Auth: Bearer | Role: admin
 Description: Update store settings.
@@ -990,9 +1064,9 @@ Success response (200) — updated StoreSettings DTO.
 
 ---
 
-13. Dashboard
+14. Dashboard
 
-13.1 GET /dashboard/admin
+14.1 GET /dashboard/admin
 
 Auth: Bearer | Role: admin
 Description: Aggregated dashboard data for admin.
@@ -1025,7 +1099,7 @@ Success response (200)
 
 ---
 
-13.2 GET /dashboard/employee
+14.2 GET /dashboard/employee
 
 Auth: Bearer | Role: employee
 Description: Aggregated dashboard data for employee.
@@ -1053,9 +1127,9 @@ Success response (200)
 
 ---
 
-14. Appendix A — Shared DTOs
+15. Appendix A — Shared DTOs
 
-14.1 User
+15.1 User
 
 ```json
 {
@@ -1077,7 +1151,7 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-14.2 Product
+15.2 Product
 
 ```json
 {
@@ -1094,7 +1168,7 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-14.3 Sale (Invoice)
+15.3 Sale (Invoice)
 
 ```json
 {
@@ -1121,6 +1195,7 @@ For employee responses, salary is included. For admin responses to non-admin req
     }
   ],
   "totalAmount": 980,
+  "paidAmount": 980,
   "paymentMethod": "cash",
   "createdAt": "2025-06-16T14:32:11.000Z"
 }
@@ -1128,7 +1203,7 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-14.4 Customer
+15.4 Customer
 
 ```json
 {
@@ -1158,7 +1233,7 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-14.5 Supplier
+15.5 Supplier
 
 ```json
 {
@@ -1182,7 +1257,7 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-14.6 ActivityLog
+15.6 ActivityLog
 
 ```json
 {
@@ -1198,7 +1273,7 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-14.7 Notification
+15.7 Notification
 
 ```json
 {
@@ -1216,7 +1291,24 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-14.8 StoreSettings
+15.8 Expense
+
+```json
+{
+  "_id": "65f2a1b3c4d5e6f7a8b9c0d1",
+  "title": "Achat fournitures",
+  "amount": 2500,
+  "category": "other",
+  "date": "2025-06-16T10:00:00.000Z",
+  "note": "Cahiers et stylos",
+  "createdBy": "65f2a1b3c4d5e6f7a8b9c0d1",
+  "createdAt": "2025-06-16T10:05:00.000Z"
+}
+```
+
+---
+
+15.9 StoreSettings
 
 ```json
 {
@@ -1234,7 +1326,7 @@ For employee responses, salary is included. For admin responses to non-admin req
 
 ---
 
-15. Appendix B — Error Codes
+16. Appendix B — Error Codes
 
 Code HTTP Description
 AUTH_REQUIRED 401 No token provided or invalid credentials

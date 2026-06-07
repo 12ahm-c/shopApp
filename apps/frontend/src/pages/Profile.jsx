@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../stores/authStore';
 import { authApi } from '../api/auth';
-import { User, Shield, Phone, KeyRound, Save, Loader2 } from 'lucide-react';
+import { User, Shield, Phone, KeyRound, Save, Loader2, LogOut } from 'lucide-react';
 import { formatPhoneNumber } from '../lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { t } = useTranslation();
-  const { user, login, token } = useAuthStore();
+  const { user, login, token, logout } = useAuthStore();
+  const navigate = useNavigate();
   
   const [name, setName] = useState(user?.name || '');
   const [password, setPassword] = useState('');
@@ -59,6 +61,19 @@ export default function Profile() {
             <div className="flex items-center justify-center gap-2 mt-2 text-sm text-slate-500">
               <Shield className="w-4 h-4" />
               <span className="uppercase font-medium">{user?.role}</span>
+            </div>
+            <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => {
+                  logout();
+                  navigate('/login');
+                }}
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/20 dark:hover:bg-red-900/40 dark:text-red-400 rounded-xl shadow-sm font-medium transition-all"
+              >
+                <LogOut className="w-5 h-5" />
+                {t('logout')}
+              </button>
             </div>
           </div>
         </div>

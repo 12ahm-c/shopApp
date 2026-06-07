@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supplierApi } from '../../api/supplier';
-import { Plus, Search, Loader2, X, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Plus, Search, Loader2, X, ArrowUpRight, ArrowDownRight, Edit, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPhoneNumber } from '../../lib/utils';
 
@@ -8,9 +8,10 @@ export default function Suppliers() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isManageDebtOpen, setIsManageDebtOpen] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [supplierToEdit, setSupplierToEdit] = useState(null);
 
   useEffect(() => {
     let isActive = true;
@@ -35,10 +36,27 @@ export default function Suppliers() {
     );
   }, [suppliers, searchTerm]);
 
-  const handleCreate = async (data) => {
-    const res = await supplierApi.createSupplier(data);
-    setSuppliers((prev) => [...prev, res.data]);
-    setIsAddOpen(false);
+  const handleSaveSupplier = async (data) => {
+    if (supplierToEdit) {
+      const res = await supplierApi.updateSupplier(supplierToEdit._id, data);
+      setSuppliers((prev) => prev.map(s => s._id === supplierToEdit._id ? { ...s, ...res.data } : s));
+    } else {
+      const res = await supplierApi.createSupplier(data);
+      setSuppliers((prev) => [...prev, res.data]);
+    }
+    setIsSupplierModalOpen(false);
+    setSupplierToEdit(null);
+  };
+
+  const handleDeleteSupplier = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?')) {
+      try {
+        await supplierApi.deleteSupplier(id);
+        setSuppliers(prev => prev.filter(s => s._id !== id));
+      } catch (err) {
+        alert(err?.response?.data?.error?.message || 'Erreur lors de la suppression du fournisseur');
+      }
+    }
   };
 
   const handleUpdateDebt = async (id, data) => {
@@ -61,7 +79,10 @@ export default function Suppliers() {
           <p className="text-slate-500 text-sm mt-1">Gérez vos fournisseurs et vos dettes envers eux.</p>
         </div>
         <button
-          onClick={() => setIsAddOpen(true)}
+          onClick={() => {
+            setSupplierToEdit(null);
+            setIsSupplierModalOpen(true);
+          }}
           className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm transition-all"
         >
           <Plus className="w-4 h-4" />
@@ -127,6 +148,23 @@ export default function Suppliers() {
                         >
                           Dette
                         </button>
+                        <button
+                          onClick={() => {
+                            setSupplierToEdit(supplier);
+                            setIsSupplierModalOpen(true);
+                          }}
+                          className="p-1.5 text-slate-400 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 rounded-md transition-colors"
+                          title="Modifier"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSupplier(supplier._id)}
+                          className="p-1.5 text-slate-400 hover:text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 rounded-md transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                         <Link
                           to={`/admin/suppliers/${supplier._id}`}
                           className="px-3 py-1 flex items-center justify-center bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-md transition-colors"
@@ -143,8 +181,15 @@ export default function Suppliers() {
         </div>
       </div>
 
-      {isAddOpen && (
-        <AddSupplierModal onClose={() => setIsAddOpen(false)} onSubmit={handleCreate} />
+      {isSupplierModalOpen && (
+        <SupplierModal 
+          supplier={supplierToEdit}
+          onClose={() => {
+            setIsSupplierModalOpen(false);
+            setSupplierToEdit(null);
+          }} 
+          onSubmit={handleSaveSupplier} 
+        />
       )}
 
       {isManageDebtOpen && selectedSupplier && (
@@ -158,8 +203,13 @@ export default function Suppliers() {
   );
 }
 
-function AddSupplierModal({ onClose, onSubmit }) {
-  const [formData, setFormData] = useState({ name: '', phone: '', address: '', initialDebt: '' });
+function SupplierModal({ supplier, onClose, onSubmit }) {
+  const [formData, setFormData] = useState({ 
+    name: supplier?.name || '', 
+    phone: supplier?.phone || '', 
+    address: supplier?.address || '', 
+    initialDebt: supplier?.totalDebt || '' 
+  });
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -176,7 +226,9 @@ function AddSupplierModal({ onClose, onSubmit }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Nouveau fournisseur</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+            {supplier ? 'Modifier le fournisseur' : 'Nouveau fournisseur'}
+          </h2>
           <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -192,14 +244,17 @@ function AddSupplierModal({ onClose, onSubmit }) {
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Adresse</span>
             <input type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none" />
           </label>
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Dette initiale (MRU)</span>
-            <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none" />
-          </label>
+          {!supplier && (
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Dette initiale (MRU)</span>
+              <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none" />
+            </label>
+          )}
           <div className="flex justify-end gap-3 mt-6">
             <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg dark:text-slate-300 dark:hover:bg-slate-800">Annuler</button>
             <button type="submit" disabled={submitting} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex gap-2 items-center disabled:opacity-70">
-              {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Créer
+              {submitting && <Loader2 className="w-4 h-4 animate-spin" />} 
+              {supplier ? 'Mettre à jour' : 'Créer'}
             </button>
           </div>
         </form>

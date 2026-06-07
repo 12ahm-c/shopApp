@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { productApi } from '../../api/product';
 import useAuthStore from '../../stores/authStore';
 import useProductStore from '../../stores/productStore';
-import { Search, Plus, Filter, AlertTriangle, Loader2, Package, Eye } from 'lucide-react';
+import { Search, Plus, Filter, AlertTriangle, Loader2, Package, Eye, Edit, Trash2 } from 'lucide-react';
 
 export default function ProductsList() {
   const role = useAuthStore(state => state.role);
@@ -41,6 +41,17 @@ export default function ProductsList() {
     }, 300);
     return () => clearTimeout(delayDebounceFn);
   }, [loadProducts]);
+
+  const handleDeleteProduct = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+      try {
+        await productApi.deleteProduct(id);
+        setProducts(prev => prev.filter(p => p._id !== id));
+      } catch (err) {
+        alert(err?.response?.data?.error?.message || 'Erreur lors de la suppression du produit');
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -163,13 +174,33 @@ export default function ProductsList() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <Link 
-                          to={`/products/${product._id}`}
-                          className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-colors"
-                          title="View Details"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Link>
+                        <div className="flex justify-center gap-2">
+                          <Link 
+                            to={`/products/${product._id}`}
+                            className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-colors"
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                          {role === 'admin' && (
+                            <>
+                              <Link 
+                                to={`/products/${product._id}/edit`}
+                                className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 dark:hover:text-emerald-400 transition-colors"
+                                title="Edit"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Link>
+                              <button 
+                                onClick={() => handleDeleteProduct(product._id)}
+                                className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 dark:hover:text-red-400 transition-colors"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );

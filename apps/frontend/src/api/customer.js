@@ -18,6 +18,7 @@ const realCustomerApi = {
   getCustomerById: (id) => apiClient(`/customers/${id}`),
   createCustomer: (data) => apiClient('/customers', { method: 'POST', body: JSON.stringify(data) }),
   updateDebt: (id, data) => apiClient(`/customers/${id}/debt`, { method: 'PUT', body: JSON.stringify(data) }),
+  updateCustomer: (id, data) => apiClient(`/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteCustomer: (id) => apiClient(`/customers/${id}`, { method: 'DELETE' })
 };
 

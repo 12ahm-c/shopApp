@@ -13,6 +13,7 @@ import {
 import { Link } from 'react-router-dom';
 import { dashboardApi } from '../api/dashboard';
 import useAuthStore from '../stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 const currencyFormatter = new Intl.NumberFormat('fr-FR');
 
@@ -27,9 +28,9 @@ const formatDateTime = (isoDate) => {
 };
 
 const paymentLabels = {
-  cash: 'Especes',
-  card: 'Carte',
-  bankily: 'Bankily'
+  cash: 'payment_cash',
+  card: 'payment_card',
+  bankily: 'payment_bankily'
 };
 
 function StatCard({ icon: Icon, label, value, tone = 'blue' }) {
@@ -57,8 +58,9 @@ function StatCard({ icon: Icon, label, value, tone = 'blue' }) {
 }
 
 function RecentSalesTable({ sales }) {
+  const { t } = useTranslation();
   if (!sales.length) {
-    return <div className="p-8 text-center text-sm text-slate-500">Aucune vente recente.</div>;
+    return <div className="p-8 text-center text-sm text-slate-500">{t('dashboard_no_sales')}</div>;
   }
 
   return (
@@ -66,10 +68,10 @@ function RecentSalesTable({ sales }) {
       <table className="w-full text-left text-sm">
         <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
           <tr>
-            <th className="px-4 py-3 font-medium">Facture</th>
-            <th className="px-4 py-3 font-medium">Client</th>
-            <th className="px-4 py-3 font-medium">Paiement</th>
-            <th className="px-4 py-3 text-right font-medium">Total</th>
+            <th className="px-4 py-3 font-medium">{t('dashboard_table_invoice')}</th>
+            <th className="px-4 py-3 font-medium">{t('dashboard_table_customer')}</th>
+            <th className="px-4 py-3 font-medium">{t('dashboard_table_payment')}</th>
+            <th className="px-4 py-3 text-right font-medium">{t('dashboard_table_total')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -82,7 +84,7 @@ function RecentSalesTable({ sales }) {
                 <div className="text-xs text-slate-500">{formatDateTime(sale.createdAt)}</div>
               </td>
               <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{sale.customerName}</td>
-              <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{paymentLabels[sale.paymentMethod] || sale.paymentMethod}</td>
+              <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{paymentLabels[sale.paymentMethod] ? t(paymentLabels[sale.paymentMethod]) : sale.paymentMethod}</td>
               <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-white">{formatMoney(sale.totalAmount)}</td>
             </tr>
           ))}
@@ -93,8 +95,9 @@ function RecentSalesTable({ sales }) {
 }
 
 function LowStockList({ products }) {
+  const { t } = useTranslation();
   if (!products.length) {
-    return <div className="p-6 text-sm text-slate-500">Aucune alerte stock.</div>;
+    return <div className="p-6 text-sm text-slate-500">{t('dashboard_no_stock_alerts')}</div>;
   }
 
   return (
@@ -110,7 +113,7 @@ function LowStockList({ products }) {
             <p className="text-xs text-slate-500">Seuil: {product.alertThreshold}</p>
           </div>
           <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
-            {product.quantity} restants
+            {product.quantity} {t('dashboard_remaining')}
           </span>
         </Link>
       ))}
@@ -119,8 +122,9 @@ function LowStockList({ products }) {
 }
 
 function ActivityList({ activity }) {
+  const { t } = useTranslation();
   if (!activity.length) {
-    return <div className="p-6 text-sm text-slate-500">Aucune activite recente.</div>;
+    return <div className="p-6 text-sm text-slate-500">{t('dashboard_no_activity')}</div>;
   }
 
   return (
@@ -140,6 +144,7 @@ function ActivityList({ activity }) {
 
 export default function Dashboard() {
   const { role, user } = useAuthStore();
+  const { t } = useTranslation();
   const [dashboardState, setDashboardState] = useState({
     status: 'loading',
     data: null,
@@ -189,10 +194,10 @@ export default function Dashboard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Tableau de bord
+            {t('dashboard')}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            {isAdmin ? 'Vue globale du magasin.' : `Resume de vos operations, ${user?.name ?? 'utilisateur'}.`}
+            {isAdmin ? t('dashboard_store_overview') : `${t('dashboard_user_summary')} ${user?.name ?? 'utilisateur'}.`}
           </p>
         </div>
         <Link
@@ -200,7 +205,7 @@ export default function Dashboard() {
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
         >
           <ShoppingBag className="h-4 w-4" />
-          Ouvrir le POS
+          {t('dashboard_open_pos')}
         </Link>
       </div>
 
@@ -219,40 +224,40 @@ export default function Dashboard() {
       {dashboardState.status === 'success' && stats && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard icon={CreditCard} label="Ventes du jour" value={formatMoney(stats.todaySales)} tone="emerald" />
-            <StatCard icon={ReceiptText} label="Factures du jour" value={stats.todayOrders} tone="blue" />
-            <StatCard icon={Package} label={isAdmin ? 'Produits en stock' : 'Ventes du mois'} value={isAdmin ? stats.totalProducts : formatMoney(stats.monthlySales)} tone="slate" />
+            <StatCard icon={CreditCard} label={t('dashboard_today_sales')} value={formatMoney(stats.todaySales)} tone="emerald" />
+            <StatCard icon={ReceiptText} label={t('dashboard_today_invoices')} value={stats.todayOrders} tone="blue" />
+            <StatCard icon={Package} label={isAdmin ? t('dashboard_stock') : t('dashboard_monthly_sales')} value={isAdmin ? stats.totalProducts : formatMoney(stats.monthlySales)} tone="slate" />
             {isAdmin ? (
-              <StatCard icon={AlertTriangle} label="Stock faible" value={stats.lowStockCount} tone="amber" />
+              <StatCard icon={AlertTriangle} label={t('dashboard_low_stock')} value={stats.lowStockCount} tone="amber" />
             ) : (
-              <StatCard icon={Bell} label="Notifications non lues" value={dashboardState.data.unreadNotifications} tone="amber" />
+              <StatCard icon={Bell} label={t('dashboard_unread_notifications')} value={dashboardState.data.unreadNotifications} tone="amber" />
             )}
           </div>
 
           {isAdmin && (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <StatCard icon={CreditCard} label="Ventes du mois" value={formatMoney(stats.monthlySales)} tone="emerald" />
-              <StatCard icon={Users} label="Clients" value={stats.totalCustomers} tone="blue" />
-              <StatCard icon={Activity} label="Dettes clients" value={formatMoney(stats.outstandingDebt)} tone="rose" />
+              <StatCard icon={CreditCard} label={t('dashboard_monthly_sales')} value={formatMoney(stats.monthlySales)} tone="emerald" />
+              <StatCard icon={Users} label={t('customers')} value={stats.totalCustomers} tone="blue" />
+              <StatCard icon={Activity} label={t('dashboard_customer_debts')} value={formatMoney(stats.outstandingDebt)} tone="rose" />
             </div>
           )}
 
           <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
             <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                <h2 className="font-semibold text-slate-900 dark:text-white">Dernieres ventes</h2>
+                <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard_recent_sales')}</h2>
                 <Link className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400" to="/invoices">
-                  Voir tout
+                  {t('dashboard_view_all')}
                 </Link>
               </div>
               <RecentSalesTable sales={recentSales} />
             </section>
 
             <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <h2 className="font-semibold text-slate-900 dark:text-white">Montants recents</h2>
+              <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard_recent_amounts')}</h2>
               <div className="mt-4 space-y-3">
                 {recentSales.length === 0 ? (
-                  <p className="text-sm text-slate-500">Aucune donnee a afficher.</p>
+                  <p className="text-sm text-slate-500">{t('dashboard_no_data')}</p>
                 ) : (
                   recentSales.slice(0, 6).map((sale) => (
                     <div key={sale._id} className="space-y-1">
@@ -277,14 +282,14 @@ export default function Dashboard() {
             <div className="grid gap-6 xl:grid-cols-2">
               <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
                 <div className="border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                  <h2 className="font-semibold text-slate-900 dark:text-white">Alertes stock faible</h2>
+                  <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard_low_stock_alerts')}</h2>
                 </div>
                 <LowStockList products={dashboardState.data.lowStockProducts ?? []} />
               </section>
 
               <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
                 <div className="border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                  <h2 className="font-semibold text-slate-900 dark:text-white">Activite recente</h2>
+                  <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard_recent_activity')}</h2>
                 </div>
                 <ActivityList activity={dashboardState.data.recentActivity ?? []} />
               </section>

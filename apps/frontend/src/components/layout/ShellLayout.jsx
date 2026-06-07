@@ -1,27 +1,39 @@
+import { useState } from 'react';
 import { Link, Navigate, NavLink, Outlet } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import useLanguageStore from '../../stores/languageStore';
+import useSettingsStore from '../../stores/settingsStore';
 import {
   Activity,
   Bell,
   LayoutDashboard,
-  LogOut,
   User,
   Globe,
   Menu,
+  Moon,
+  Sun,
   Store,
   Package,
   ReceiptText,
   ShoppingCart,
   Users,
-  Truck
+  Truck,
+  X,
+  Wallet
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function ShellLayout() {
-  const { user, role, logout } = useAuthStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, role } = useAuthStore();
   const { language, setLanguage } = useLanguageStore();
+  const { settings, updateSettings } = useSettingsStore();
   const { t } = useTranslation();
+
+  const toggleTheme = () => {
+    const currentTheme = settings?.theme || 'light';
+    updateSettings({ theme: currentTheme === 'light' ? 'dark' : 'light' });
+  };
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -37,12 +49,13 @@ export default function ShellLayout() {
     }`;
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       {/* Top Navbar */}
-      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-6 shadow-sm sticky top-0 z-50">
+      <header className="h-16 border-b border-slate-200 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-between px-6 shadow-sm sticky top-0 z-50 print:hidden">
         <div className="flex items-center gap-4">
           <button
             type="button"
+            onClick={() => setIsMobileMenuOpen(true)}
             className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors md:hidden"
             aria-label="Ouvrir le menu"
           >
@@ -53,7 +66,7 @@ export default function ShellLayout() {
               S
             </div>
             <span className="font-bold text-lg hidden sm:block tracking-tight text-slate-900 dark:text-white">
-              {t('store_name')}
+              {settings?.storeName || t('store_name')}
             </span>
           </div>
         </div>
@@ -77,6 +90,15 @@ export default function ShellLayout() {
             <span className="uppercase">{language}</span>
           </button>
 
+          <button 
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
+            title={settings?.theme === 'dark' ? t('settings_theme_light') : t('settings_theme_dark')}
+          >
+            {settings?.theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+
           <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
           <div className="flex items-center gap-3">
@@ -84,23 +106,31 @@ export default function ShellLayout() {
               <span className="text-sm font-semibold text-slate-900 dark:text-white">{user.name}</span>
               <span className="text-xs text-slate-500 uppercase tracking-wider">{role}</span>
             </div>
-            <button 
-              type="button"
-              onClick={logout}
-              className="p-2 rounded-full hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors"
-              title={t('logout')}
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
           </div>
         </div>
       </header>
 
       {/* Main Layout */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+        
         {/* Sidebar */}
-        <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hidden md:flex flex-col py-6">
-          <nav className="flex-1 px-4 space-y-1">
+        <aside className={`w-64 border-e border-slate-200 dark:border-slate-800/60 bg-white dark:bg-slate-900 flex flex-col py-6 absolute md:static inset-y-0 start-0 z-50 transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'} md:translate-x-0 md:rtl:translate-x-0 print:hidden`}>
+          <div className="flex items-center justify-between px-4 pb-4 md:hidden">
+            <span className="font-bold text-lg text-slate-900 dark:text-white">{settings?.storeName || t('store_name')}</span>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
+              <X className="w-5 h-5 text-slate-500" />
+            </button>
+          </div>
+          <nav className="flex-1 px-4 space-y-1 overflow-y-auto" onClick={(e) => {
+            if (e.target.closest('a')) setIsMobileMenuOpen(false);
+          }}>
             <NavLink to={role === 'admin' ? '/admin' : '/employee'} className={navLinkClassName}>
               <LayoutDashboard className="w-5 h-5" />
               {t('dashboard')}
@@ -116,7 +146,7 @@ export default function ShellLayout() {
             {role === 'admin' && (
               <>
                 <div className="pt-3 pb-1 px-3">
-                  <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Gestion</span>
+                  <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t('management')}</span>
                 </div>
                 <NavLink to="/admin/customers" className={navLinkClassName}>
                   <Users className="w-5 h-5" />
@@ -125,6 +155,10 @@ export default function ShellLayout() {
                 <NavLink to="/admin/suppliers" className={navLinkClassName}>
                   <Truck className="w-5 h-5" />
                   {t('suppliers')}
+                </NavLink>
+                <NavLink to="/admin/expenses" className={navLinkClassName}>
+                  <Wallet className="w-5 h-5" />
+                  Dépenses
                 </NavLink>
                 <NavLink to="/employees" className={navLinkClassName}>
                   <User className="w-5 h-5" />
@@ -137,15 +171,15 @@ export default function ShellLayout() {
               </>
             )}
             <div className="pt-3 pb-1 px-3">
-              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Compte</span>
+              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t('account')}</span>
             </div>
             <NavLink to="/invoices" className={navLinkClassName}>
               <ReceiptText className="w-5 h-5" />
-              Factures
+              {t('invoices')}
             </NavLink>
             <NavLink to="/notifications" className={navLinkClassName}>
               <Bell className="w-5 h-5" />
-              Notifications
+              {t('notifications')}
             </NavLink>
             <NavLink to="/profile" className={navLinkClassName}>
               <User className="w-5 h-5" />
@@ -153,13 +187,13 @@ export default function ShellLayout() {
             </NavLink>
             <NavLink to="/activity-logs" className={navLinkClassName}>
               <Activity className="w-5 h-5" />
-              Journal
+              {t('activity_log')}
             </NavLink>
           </nav>
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-6 print:p-0 print:overflow-visible">
           <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Outlet />
           </div>

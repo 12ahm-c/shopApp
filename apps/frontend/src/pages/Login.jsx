@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../stores/authStore';
+import useSettingsStore from '../stores/settingsStore';
 import { authApi } from '../api/auth';
 import { Loader2 } from 'lucide-react';
 
@@ -9,6 +10,7 @@ export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuthStore();
+  const { settings } = useSettingsStore();
   
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -99,7 +101,7 @@ export default function Login() {
           
           <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
             <p className="text-xs text-slate-400">
-              {t('store_name')} &copy; 2025
+              {settings?.storeName || t('store_name')} &copy; 2025
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { customerApi } from '../../api/customer';
-import { Plus, Search, Loader2, X, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Plus, Search, Loader2, X, ArrowUpRight, ArrowDownRight, Edit, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPhoneNumber } from '../../lib/utils';
 
@@ -10,9 +10,10 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [isManageDebtOpen, setIsManageDebtOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [customerToEdit, setCustomerToEdit] = useState(null);
 
   useEffect(() => {
     let isActive = true;
@@ -36,10 +37,27 @@ export default function Customers() {
     );
   }, [customers, searchTerm]);
 
-  const handleCreateCustomer = async (data) => {
-    const res = await customerApi.createCustomer(data);
-    setCustomers((prev) => [...prev, res.data]);
-    setIsAddCustomerOpen(false);
+  const handleSaveCustomer = async (data) => {
+    if (customerToEdit) {
+      const res = await customerApi.updateCustomer(customerToEdit._id, data);
+      setCustomers((prev) => prev.map(c => c._id === customerToEdit._id ? { ...c, ...res.data } : c));
+    } else {
+      const res = await customerApi.createCustomer(data);
+      setCustomers((prev) => [...prev, res.data]);
+    }
+    setIsCustomerModalOpen(false);
+    setCustomerToEdit(null);
+  };
+
+  const handleDeleteCustomer = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) {
+      try {
+        await customerApi.deleteCustomer(id);
+        setCustomers(prev => prev.filter(c => c._id !== id));
+      } catch (err) {
+        alert(err?.response?.data?.error?.message || 'Erreur lors de la suppression du client');
+      }
+    }
   };
 
   const handleUpdateDebt = async (id, data) => {
@@ -68,7 +86,10 @@ export default function Customers() {
         </div>
         <button
           type="button"
-          onClick={() => setIsAddCustomerOpen(true)}
+          onClick={() => {
+            setCustomerToEdit(null);
+            setIsCustomerModalOpen(true);
+          }}
           className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm transition-all shadow-blue-500/20"
         >
           <Plus className="w-4 h-4" />
@@ -133,6 +154,23 @@ export default function Customers() {
                         >
                           Dette
                         </button>
+                        <button
+                          onClick={() => {
+                            setCustomerToEdit(customer);
+                            setIsCustomerModalOpen(true);
+                          }}
+                          className="p-1.5 text-slate-400 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 rounded-md transition-colors"
+                          title="Modifier"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCustomer(customer._id)}
+                          className="p-1.5 text-slate-400 hover:text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 rounded-md transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                         <Link
                           to={`/admin/customers/${customer._id}`}
                           className="px-3 py-1 flex items-center justify-center bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-md transition-colors"
@@ -149,10 +187,14 @@ export default function Customers() {
         </div>
       </div>
 
-      {isAddCustomerOpen && (
-        <AddCustomerModal
-          onClose={() => setIsAddCustomerOpen(false)}
-          onSubmit={handleCreateCustomer}
+      {isCustomerModalOpen && (
+        <CustomerModal
+          customer={customerToEdit}
+          onClose={() => {
+            setIsCustomerModalOpen(false);
+            setCustomerToEdit(null);
+          }}
+          onSubmit={handleSaveCustomer}
         />
       )}
 
@@ -170,8 +212,12 @@ export default function Customers() {
   );
 }
 
-function AddCustomerModal({ onClose, onSubmit }) {
-  const [formData, setFormData] = useState({ name: '', phone: '', initialDebt: '' });
+function CustomerModal({ customer, onClose, onSubmit }) {
+  const [formData, setFormData] = useState({ 
+    name: customer?.name || '', 
+    phone: customer?.phone || '', 
+    initialDebt: customer?.totalDebt || '' 
+  });
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -188,7 +234,9 @@ function AddCustomerModal({ onClose, onSubmit }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Nouveau client</h2>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+          {customer ? 'Modifier le client' : 'Nouveau client'}
+        </h3>
           <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -200,14 +248,37 @@ function AddCustomerModal({ onClose, onSubmit }) {
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Téléphone (optionnel)</span>
             <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none" />
           </label>
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Dette initiale (MRU)</span>
-            <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none" />
-          </label>
+                   {!customer && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Dette initiale (MRU)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.initialDebt}
+                  onChange={(e) => setFormData({ ...formData, initialDebt: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-slate-900 dark:text-white"
+                  placeholder="0"
+                />
+              </div>
+            )}
           <div className="flex justify-end gap-3 mt-6">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg dark:text-slate-300 dark:hover:bg-slate-800">Annuler</button>
-            <button type="submit" disabled={submitting} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex gap-2 items-center disabled:opacity-70">
-              {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Créer
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={submitting}
+              className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+              {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+              {customer ? 'Mettre à jour' : 'Créer'}
             </button>
           </div>
         </form>

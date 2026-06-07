@@ -111,6 +111,17 @@ export const mockCustomerApi = {
     return { success: true, data: newCustomer, error: null, meta: null };
   },
 
+  updateCustomer: async (id, data) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    const customer = mockCustomers.find(c => c._id === id);
+    if (!customer) {
+      return mockError('NOT_FOUND', 'Customer not found');
+    }
+    if (data.name !== undefined) customer.name = data.name;
+    if (data.phone !== undefined) customer.phone = data.phone;
+    return { success: true, data: customer, error: null, meta: null };
+  },
+
   updateDebt: async (id, payload) => {
     await new Promise(resolve => setTimeout(resolve, 300));
     const customer = mockCustomers.find(c => c._id === id);

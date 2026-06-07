@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bell, CheckCheck, Filter, Loader2, SearchX } from 'lucide-react';
 import { notificationApi } from '../api/notification';
+import { useTranslation } from 'react-i18next';
+import { useSocket } from '../hooks/useSocket';
 
-const notificationTypes = [
-  { value: '', label: 'Tous les types' },
-  { value: 'low_stock', label: 'Stock faible' },
-  { value: 'daily_summary', label: 'Resume quotidien' },
-  { value: 'debt_updated', label: 'Dette client' },
-  { value: 'invoice_deleted', label: 'Facture annulee' }
-];
 
-const typeLabels = Object.fromEntries(notificationTypes.map((type) => [type.value, type.label]));
 
 const formatDateTime = (isoDate) => {
   if (!isoDate) return '-';
@@ -21,6 +15,20 @@ const formatDateTime = (isoDate) => {
 };
 
 export default function Notifications() {
+  const { t } = useTranslation();
+  
+  const notificationTypes = useMemo(() => [
+    { value: '', label: t('notification.types.all') },
+    { value: 'low_stock', label: t('notification.types.low_stock') },
+    { value: 'daily_summary', label: t('notification.types.daily_summary') },
+    { value: 'debt_updated', label: t('notification.types.debt_updated') },
+    { value: 'invoice_deleted', label: t('notification.types.invoice_deleted') }
+  ], [t]);
+
+  const typeLabels = useMemo(() => 
+    Object.fromEntries(notificationTypes.map((type) => [type.value, type.label])),
+  [notificationTypes]);
+
   const [filters, setFilters] = useState({
     unreadOnly: false,
     type: ''
@@ -48,7 +56,7 @@ export default function Notifications() {
     try {
       const response = await notificationApi.getNotifications(requestParams);
       if (!response.success) {
-        throw new Error(response.error?.message || 'Impossible de charger les notifications.');
+        throw new Error(response.error?.message || t('notification.error_load'));
       }
       setNotificationsState({
         status: 'success',
@@ -60,11 +68,11 @@ export default function Notifications() {
       setNotificationsState({
         status: 'error',
         data: [],
-        error: error.message || 'Impossible de charger les notifications.',
+        error: error.message || t('notification.error_load'),
         meta: null
       });
     }
-  }, [requestParams]);
+  }, [requestParams, t]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -72,6 +80,37 @@ export default function Notifications() {
     }, 0);
     return () => window.clearTimeout(timeoutId);
   }, [loadNotifications]);
+
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewNotification = (notification) => {
+      setNotificationsState((prev) => {
+        if (prev.status !== 'success') return prev;
+        
+        if (filters.type && notification.type !== filters.type) return prev;
+
+        const newTotal = (prev.meta?.total || 0) + 1;
+        const newUnreadCount = (prev.meta?.unreadCount || 0) + 1;
+
+        return {
+          ...prev,
+          data: [notification, ...prev.data].slice(0, prev.meta?.limit || 20),
+          meta: { ...prev.meta, total: newTotal, unreadCount: newUnreadCount }
+        };
+      });
+    };
+
+    socket.on('notification:new', handleNewNotification);
+    socket.on('stock:alert', handleNewNotification);
+
+    return () => {
+      socket.off('notification:new', handleNewNotification);
+      socket.off('stock:alert', handleNewNotification);
+    };
+  }, [socket, filters]);
 
   const handleMarkRead = async (id) => {
     setActionState({ status: 'loading', id });
@@ -105,10 +144,10 @@ export default function Notifications() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             <Bell className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            Notifications
+            {t('notification.title')}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Centre in-app conforme au contrat de notifications.
+            {t('notification.description')}
           </p>
         </div>
         <button
@@ -118,7 +157,7 @@ export default function Notifications() {
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
         >
           {actionState.id === 'all' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCheck className="h-4 w-4" />}
-          Tout marquer lu
+          {t('notification.mark_all_read')}
         </button>
       </div>
 
@@ -126,16 +165,16 @@ export default function Notifications() {
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
             <Filter className="h-4 w-4" />
-            Filtres
+            {t('notification.filters')}
           </div>
           <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
-            {notificationsState.meta?.unreadCount ?? 0} non lues
+            {notificationsState.meta?.unreadCount ?? 0} {t('notification.unread')}
           </span>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Type</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('notification.type')}</span>
             <select
               value={filters.type}
               onChange={(event) => setFilters((current) => ({ ...current, type: event.target.value }))}
@@ -156,7 +195,7 @@ export default function Notifications() {
               onChange={(event) => setFilters((current) => ({ ...current, unreadOnly: event.target.checked }))}
               className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
             />
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Afficher seulement les non lues</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('notification.show_unread_only')}</span>
           </label>
         </div>
 
@@ -167,7 +206,7 @@ export default function Notifications() {
             className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             <SearchX className="h-4 w-4" />
-            Reinitialiser
+            {t('notification.reset')}
           </button>
         </div>
       </section>
@@ -184,7 +223,7 @@ export default function Notifications() {
         )}
 
         {notificationsState.status === 'success' && notificationsState.data.length === 0 && (
-          <div className="p-8 text-center text-sm text-slate-500">Aucune notification trouvee.</div>
+          <div className="p-8 text-center text-sm text-slate-500">{t('notification.empty')}</div>
         )}
 
         {notificationsState.status === 'success' && notificationsState.data.length > 0 && (
@@ -211,7 +250,7 @@ export default function Notifications() {
                     className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     {actionState.id === notification._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCheck className="h-4 w-4" />}
-                    Marquer lu
+                    {t('notification.mark_read')}
                   </button>
                 )}
               </article>
