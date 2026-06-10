@@ -14,6 +14,7 @@ const getRequiredEnv = (name: string): string => {
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: Number(process.env.PORT ?? 3001),
+  clientName: process.env.CLIENT_NAME ?? "default",
   mongodbUri: () => getRequiredEnv("MONGODB_URI"),
   jwtSecret: () => getRequiredEnv("JWT_SECRET"),
   jwtRefreshSecret: () => getRequiredEnv("JWT_REFRESH_SECRET")

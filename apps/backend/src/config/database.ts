@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { env } from "./env";
 
 const ATLAS_PROTOCOL = "mongodb+srv:";
-const REQUIRED_DATABASE = "shopAPP";
 
 export const validateAtlasUri = (mongodbUri: string): void => {
   let parsed: URL;
@@ -16,15 +15,10 @@ export const validateAtlasUri = (mongodbUri: string): void => {
   if (parsed.protocol !== ATLAS_PROTOCOL) {
     throw new Error("MONGODB_URI must use MongoDB Atlas (mongodb+srv) only");
   }
-
-  const databaseName = parsed.pathname.replace(/^\//, "");
-  if (databaseName !== REQUIRED_DATABASE) {
-    throw new Error(`MONGODB_URI must target the ${REQUIRED_DATABASE} Atlas database`);
-  }
 };
 
 export const connectDatabase = async (): Promise<void> => {
   const mongodbUri = env.mongodbUri();
   validateAtlasUri(mongodbUri);
-  await mongoose.connect(mongodbUri, { dbName: REQUIRED_DATABASE });
+  await mongoose.connect(mongodbUri);
 };
