@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import mongoose, { Types } from "mongoose";
 import { User } from "../user/user.model";
 import { AppError } from "../../utils/AppError";
 import {
@@ -50,6 +51,14 @@ export const authService = {
     }
 
     log("info", "Login succeeded", { userId: user._id.toString(), role: user.role });
+    await mongoose.connection.collection("activity_logs").insertOne({
+      userId: user._id,
+      userName: user.name,
+      action: "login",
+      details: "Connexion",
+      amount: null,
+      timestamp: new Date()
+    });
     return issueTokenPair(user);
   },
 
@@ -85,6 +94,15 @@ export const authService = {
       { $set: { "refreshTokens.$[token].revokedAt": new Date() } },
       { arrayFilters: [{ "token.revokedAt": { $exists: false } }] }
     );
+    const user = await User.findById(userId).lean();
+    await mongoose.connection.collection("activity_logs").insertOne({
+      userId: new Types.ObjectId(userId),
+      userName: user?.name ?? "Unknown",
+      action: "logout",
+      details: "Déconnexion",
+      amount: null,
+      timestamp: new Date()
+    });
     log("info", "Logout succeeded", { userId });
   },
 

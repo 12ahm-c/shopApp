@@ -10,7 +10,7 @@ export const createSaleSchema = z.object({
   items: z.array(createSaleItemSchema).min(1, "At least one item is required"),
   customerId: z.string().regex(/^[a-f0-9]{24}$/, "Invalid customerId").optional(),
   customerName: z.string().trim().min(1).max(100).optional(),
-  paymentMethod: z.enum(["cash", "card", "bankily"])
+  paymentMethod: z.enum(["cash", "card", "bankily", "alsadd", "bimbank", "masrafi"])
 });
 
 export const saleListQuerySchema = z.object({

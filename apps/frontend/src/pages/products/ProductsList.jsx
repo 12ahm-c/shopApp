@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { productApi } from '../../api/product';
 import useAuthStore from '../../stores/authStore';
@@ -35,7 +35,14 @@ export default function ProductsList() {
     }
   }, [searchQuery, selectedCategory, lowStockOnly]);
 
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      loadProducts();
+      return;
+    }
     const delayDebounceFn = setTimeout(() => {
       loadProducts();
     }, 300);
@@ -66,8 +73,8 @@ export default function ProductsList() {
 
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
         {/* Filters Bar */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50 dark:bg-slate-950/50">
-          <div className="relative flex-1 min-w-[200px] max-w-md">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-slate-50/50 dark:bg-slate-950/50">
+          <div className="relative flex-1 min-w-0 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
@@ -78,7 +85,7 @@ export default function ProductsList() {
             />
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <select
@@ -93,7 +100,7 @@ export default function ProductsList() {
               </select>
             </div>
             
-            <label className="flex items-center gap-2 cursor-pointer select-none">
+            <label className="flex items-center gap-2 cursor-pointer select-none shrink-0">
               <div className="relative inline-flex items-center">
                 <input 
                   type="checkbox" 
@@ -103,7 +110,7 @@ export default function ProductsList() {
                 />
                 <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-amber-500"></div>
               </div>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5 whitespace-nowrap">
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
                 Low Stock
               </span>
@@ -116,23 +123,23 @@ export default function ProductsList() {
           <table className="w-full text-sm text-left">
             <thead className="bg-white dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-medium border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="px-6 py-4">Product Name</th>
-                <th className="px-6 py-4">Category</th>
-                <th className="px-6 py-4 text-right">Price (MRU)</th>
-                <th className="px-6 py-4 text-right">Stock</th>
-                <th className="px-6 py-4 text-center">Actions</th>
+                <th className="px-3 sm:px-6 py-4">Product Name</th>
+                <th className="px-3 sm:px-6 py-4 hidden sm:table-cell">Category</th>
+                <th className="px-3 sm:px-6 py-4 text-right">Price (MRU)</th>
+                <th className="px-3 sm:px-6 py-4 text-right">Stock</th>
+                <th className="px-3 sm:px-6 py-4 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center">
+                  <td colSpan="5" className="px-3 sm:px-6 py-12 text-center">
                     <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
                   </td>
                 </tr>
               ) : products.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan="5" className="px-3 sm:px-6 py-12 text-center text-slate-500">
                     No products found matching your filters.
                   </td>
                 </tr>
@@ -141,19 +148,19 @@ export default function ProductsList() {
                   const isLowStock = product.quantity <= product.alertThreshold;
                   return (
                     <tr key={product._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors group">
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                      <td className="px-3 sm:px-6 py-4 min-w-[120px]">
+                        <div className="font-medium text-slate-900 dark:text-white flex items-center gap-2 text-sm">
                           {product.name}
-                          {isLowStock && <AlertTriangle className="w-4 h-4 text-amber-500" title="Low stock" />}
+                          {isLowStock && <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500" title="Low stock" />}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+                      <td className="px-3 sm:px-6 py-4 text-slate-600 dark:text-slate-400 hidden sm:table-cell">
                         {product.category}
                       </td>
-                      <td className="px-6 py-4 text-right font-medium text-slate-900 dark:text-white">
+                      <td className="px-3 sm:px-6 py-4 text-right font-medium text-slate-900 dark:text-white whitespace-nowrap">
                         {product.price.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                           isLowStock 
                             ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800/50' 
@@ -162,7 +169,7 @@ export default function ProductsList() {
                           {product.quantity}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-3 sm:px-6 py-4 text-center">
                         <Link 
                           to={`/products/${product._id}`}
                           className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-colors"

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { productApi } from '../../api/product';
 import { customerApi } from '../../api/customer';
 import { saleApi } from '../../api/sale';
@@ -7,28 +8,33 @@ import useCartStore from '../../stores/cartStore';
 import { formatPhoneNumber } from '../../lib/utils';
 import { 
   Search, Plus, Minus, Trash2, ShoppingCart, CreditCard, Banknote, 
-  Smartphone, User, CheckCircle2, Loader2, RefreshCcw, Package, ReceiptText
+  Smartphone, Wallet, User, CheckCircle2, Loader2, RefreshCcw, Package, ReceiptText
 } from 'lucide-react';
-
-const currencyFormatter = new Intl.NumberFormat('fr-FR');
-
-const formatMoney = (amount) => `${currencyFormatter.format(Number(amount || 0))} MRU`;
-
-const formatDateTime = (isoDate) => {
-  if (!isoDate) return '-';
-  return new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  }).format(new Date(isoDate));
-};
+import { formatMoney } from '../../lib/format';
+import Receipt from '../../components/Receipt';
 
 const paymentLabels = {
-  cash: 'Cash',
-  card: 'Carte',
-  bankily: 'Bankily'
+  cash: 'payment.cash',
+  card: 'payment.card',
+  bankily: 'payment.bankily',
+  alsadd: 'payment.alsadd',
+  bimbank: 'payment.bimbank',
+  masrafi: 'payment.masrafi'
 };
 
+const paymentIcons = {
+  cash: Banknote,
+  card: CreditCard,
+  bankily: Smartphone,
+  alsadd: Wallet,
+  bimbank: Smartphone,
+  masrafi: Wallet
+};
+
+const PAYMENT_METHODS = ['cash', 'card', 'bankily', 'alsadd', 'bimbank', 'masrafi'];
+
 export default function POS() {
+  const { t } = useTranslation();
   
   // Products Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +48,7 @@ export default function POS() {
 
   // Cart Store
   const { 
-    cartItems, addItem, removeItem, deleteItem, 
+    cartItems, addItem, removeItem, deleteItem, setUnitPrice,
     selectedCustomer, setCustomer, paymentMethod, setPaymentMethod, 
     clearCart, getTotalAmount 
   } = useCartStore();
@@ -53,9 +59,12 @@ export default function POS() {
   const [checkoutError, setCheckoutError] = useState(null);
   const [receiptData, setReceiptData] = useState(null);
 
+  const productsLoaded = useRef(false);
+
   // Fetch Products on search change
   useEffect(() => {
     const fetchProducts = async () => {
+      if (!productsLoaded.current) productsLoaded.current = true;
       setLoadingProducts(true);
       try {
         const res = await productApi.getProducts({ search: searchQuery, limit: 10 });
@@ -67,6 +76,10 @@ export default function POS() {
       }
     };
     
+    if (!productsLoaded.current) {
+      fetchProducts();
+      return;
+    }
     const timeout = setTimeout(fetchProducts, 300);
     return () => clearTimeout(timeout);
   }, [searchQuery]);
@@ -105,7 +118,7 @@ export default function POS() {
           unitPrice: i.unitPrice
         })),
         customerId: selectedCustomer?._id,
-        customerName: selectedCustomer?.name || "Walk-in",
+        customerName: selectedCustomer?.name || t('pos.walkIn'),
         paymentMethod
       };
 
@@ -114,7 +127,7 @@ export default function POS() {
       setCheckoutSuccess(true);
       clearCart();
     } catch (err) {
-      setCheckoutError(err?.response?.data?.error?.message || 'Checkout failed');
+      setCheckoutError(err?.response?.data?.error?.message || t('pos.checkoutFailed'));
     } finally {
       setIsCheckingOut(false);
     }
@@ -135,92 +148,31 @@ export default function POS() {
               <CheckCircle2 className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Vente terminee</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('pos.saleComplete')}</h2>
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                Facture #{receiptData.invoiceNumber} generee depuis le POS.
+                {t('pos.invoiceGenerated', { number: receiptData.invoiceNumber })}
               </p>
             </div>
           </div>
         </div>
 
-        <article className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <header className="border-b border-slate-200 p-5 dark:border-slate-800">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
-                  <ReceiptText className="h-4 w-4" />
-                  Facture POS
-                </div>
-                <h3 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-                  #{receiptData.invoiceNumber}
-                </h3>
-                <p className="mt-1 text-sm text-slate-500">{formatDateTime(receiptData.createdAt)}</p>
-              </div>
+        <Receipt data={receiptData} />
 
-              <div className="grid gap-2 text-sm sm:text-right">
-                <div>
-                  <span className="block text-slate-500">Client</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">{receiptData.customerName}</span>
-                </div>
-                <div>
-                  <span className="block text-slate-500">Paiement</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">
-                    {paymentLabels[receiptData.paymentMethod] || receiptData.paymentMethod}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </header>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
-                <tr>
-                  <th className="px-5 py-3 font-medium">Produit</th>
-                  <th className="px-5 py-3 text-right font-medium">Qté</th>
-                  <th className="px-5 py-3 text-right font-medium">Prix payé</th>
-                  <th className="px-5 py-3 text-right font-medium">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {receiptData.items.map((item) => (
-                  <tr key={`${item.productId}-${item.name}`}>
-                    <td className="px-5 py-4 font-medium text-slate-900 dark:text-white">{item.name}</td>
-                    <td className="px-5 py-4 text-right text-slate-700 dark:text-slate-300">{item.quantity}</td>
-                    <td className="px-5 py-4 text-right text-slate-700 dark:text-slate-300">{formatMoney(item.unitPrice)}</td>
-                    <td className="px-5 py-4 text-right font-semibold text-slate-900 dark:text-white">{formatMoney(item.total)}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot className="bg-slate-50 dark:bg-slate-950/50">
-                <tr>
-                  <td className="px-5 py-4 text-right font-semibold text-slate-900 dark:text-white" colSpan="3">
-                    Total general
-                  </td>
-                  <td className="px-5 py-4 text-right text-lg font-bold text-slate-900 dark:text-white">
-                    {formatMoney(receiptData.totalAmount)}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </article>
-
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3">
           <button
             type="button"
             onClick={handleNewSale}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
             <RefreshCcw className="h-5 w-5" />
-            Nouvelle vente
+            {t('pos.newSale')}
           </button>
           <Link
             to={`/invoices/${receiptData._id}`}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <ReceiptText className="h-5 w-5" />
-            Voir le detail
+            {t('pos.viewDetail')}
           </Link>
         </div>
       </div>
@@ -228,7 +180,7 @@ export default function POS() {
   }
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col lg:flex-row gap-6">
+    <div className="min-h-[calc(100dvh-4rem)] lg:min-h-[calc(100vh-8rem)] flex flex-col lg:flex-row gap-6">
       
       {/* Left side: Products catalog */}
       <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
@@ -237,7 +189,7 @@ export default function POS() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input 
               type="text" 
-              placeholder="Search products by name or barcode..." 
+              placeholder={t('pos.searchProducts')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow"
@@ -253,10 +205,10 @@ export default function POS() {
           ) : products.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-slate-500">
               <Package className="w-12 h-12 mb-2 opacity-50" />
-              <p>No products found</p>
+              <p>{t('pos.noProducts')}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
               {products.map(product => {
                 const inCart = cartItems.find(i => i.productId === product._id);
                 const isOutOfStock = product.quantity < 1;
@@ -267,7 +219,7 @@ export default function POS() {
                     key={product._id}
                     onClick={() => canAdd && addItem(product)}
                     disabled={!canAdd}
-                    className={`text-left p-4 rounded-xl border transition-all flex flex-col justify-between h-32 ${
+                    className={`text-left p-3 sm:p-4 rounded-xl border transition-all flex flex-col justify-between min-h-[120px] sm:h-32 ${
                       canAdd 
                         ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:shadow-md cursor-pointer group' 
                         : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 opacity-60 cursor-not-allowed'
@@ -324,7 +276,7 @@ export default function POS() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search or add customer..."
+                placeholder={t('pos.searchCustomer')}
                 value={customerSearch}
                 onChange={(e) => {
                   setCustomerSearch(e.target.value);
@@ -375,7 +327,16 @@ export default function POS() {
                   </button>
                 </div>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">{item.unitPrice} MRU</span>
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min="0"
+                      value={item.unitPrice}
+                      onChange={(e) => setUnitPrice(item.productId, Math.max(0, parseInt(e.target.value) || 0))}
+                      className="w-16 sm:w-20 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-transparent border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 sm:px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    />
+                    <span className="text-xs text-slate-400">MRU</span>
+                  </div>
                   <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-0.5">
                     <button 
                       onClick={() => removeItem(item.productId)}
@@ -407,46 +368,30 @@ export default function POS() {
           )}
 
           <div className="flex justify-between items-center mb-4">
-            <span className="text-slate-500 font-medium">Total</span>
+            <span className="text-slate-500 font-medium">{t('table.total')}</span>
             <span className="text-2xl font-bold text-slate-900 dark:text-white">
-              {getTotalAmount().toLocaleString()} <span className="text-base text-slate-500 font-medium">MRU</span>
+              {formatMoney(getTotalAmount())}
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <button
-              onClick={() => setPaymentMethod('cash')}
-              className={`py-2 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
-                paymentMethod === 'cash' 
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
-              }`}
-            >
-              <Banknote className="w-5 h-5" />
-              <span className="text-xs font-medium">Cash</span>
-            </button>
-            <button
-              onClick={() => setPaymentMethod('card')}
-              className={`py-2 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
-                paymentMethod === 'card' 
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
-              }`}
-            >
-              <CreditCard className="w-5 h-5" />
-              <span className="text-xs font-medium">Card</span>
-            </button>
-            <button
-              onClick={() => setPaymentMethod('bankily')}
-              className={`py-2 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
-                paymentMethod === 'bankily' 
-                  ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
-              }`}
-            >
-              <Smartphone className="w-5 h-5" />
-              <span className="text-xs font-medium">Bankily</span>
-            </button>
+          <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-3 gap-1.5 sm:gap-2 mb-4">
+            {PAYMENT_METHODS.map((method) => {
+              const Icon = paymentIcons[method];
+              return (
+                <button
+                  key={method}
+                  onClick={() => setPaymentMethod(method)}
+                  className={`py-2 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
+                    paymentMethod === method 
+                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="text-xs font-medium">{t(paymentLabels[method])}</span>
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -457,11 +402,11 @@ export default function POS() {
             {isCheckingOut ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Processing...
+                {t('pos.processing')}...
               </>
             ) : (
               <>
-                Checkout {cartItems.length > 0 && `(${cartItems.length})`}
+                {t('pos.checkout')} {cartItems.length > 0 && `(${cartItems.length})`}
               </>
             )}
           </button>

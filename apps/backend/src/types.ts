@@ -42,7 +42,7 @@ export interface UserDocument {
   validatePassword(password: string): Promise<boolean>;
 }
 
-export type PaymentMethod = "cash" | "card" | "bankily";
+export type PaymentMethod = "cash" | "card" | "bankily" | "alsadd" | "bimbank" | "masrafi";
 
 export interface SaleItem {
   productId: string;

@@ -6,6 +6,7 @@ import { serializeCustomer } from "../../utils/serializer";
 import { User } from "../user/user.model";
 import { notificationService } from "../notification/notification.service";
 import type { CreateCustomerInput, CustomerListQuery, DebtInput } from "./customer.validation";
+import type { AuthUser } from "../../types";
 
 const ensureObjectId = (id: string): void => {
   if (!Types.ObjectId.isValid(id)) throw new AppError(404, "NOT_FOUND", "Customer does not exist");
@@ -88,7 +89,7 @@ export const customerService = {
     };
   },
 
-  async updateDebt(id: string, input: DebtInput) {
+  async updateDebt(id: string, input: DebtInput, user: AuthUser) {
     ensureObjectId(id);
     const customer = await Customer.findById(id);
     if (!customer) throw new AppError(404, "NOT_FOUND", "Customer does not exist");
@@ -114,10 +115,21 @@ export const customerService = {
     customer.transactions.push(transaction);
     await customer.save();
 
+    const notifiedIds = new Set<string>();
     const admins = await User.find({ role: "admin" }).lean();
     for (const admin of admins) {
+      notifiedIds.add(admin._id.toString());
       await notificationService.createNotification(
         admin._id.toString(),
+        "debt_updated",
+        `Dette mise à jour : ${customer.name}`,
+        `${customer.name} - ${input.type === "increase" ? "Augmentation" : "Diminution"} de ${input.amount} MRU. Nouvelle dette: ${newTotalDebt} MRU.`,
+        { customerId: customer._id.toString(), amount: input.amount, type: input.type, newTotalDebt }
+      );
+    }
+    if (!notifiedIds.has(user.userId)) {
+      await notificationService.createNotification(
+        user.userId,
         "debt_updated",
         `Dette mise à jour : ${customer.name}`,
         `${customer.name} - ${input.type === "increase" ? "Augmentation" : "Diminution"} de ${input.amount} MRU. Nouvelle dette: ${newTotalDebt} MRU.`,

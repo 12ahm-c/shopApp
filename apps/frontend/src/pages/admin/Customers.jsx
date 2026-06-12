@@ -94,48 +94,48 @@ export default function Customers() {
           <table className="w-full text-sm text-left">
             <thead className="bg-slate-50 dark:bg-slate-950/50 text-slate-500 dark:text-slate-400 font-medium">
               <tr>
-                <th className="px-6 py-4 font-medium">Nom</th>
-                <th className="px-6 py-4 font-medium">Téléphone</th>
-                <th className="px-6 py-4 font-medium text-right">Dette totale (MRU)</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                <th className="px-3 sm:px-6 py-4 font-medium">Nom</th>
+                <th className="px-3 sm:px-6 py-4 font-medium hidden sm:table-cell">Téléphone</th>
+                <th className="px-3 sm:px-6 py-4 font-medium text-right">Dette totale (MRU)</th>
+                <th className="px-3 sm:px-6 py-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-12 text-center">
+                  <td colSpan="4" className="px-3 sm:px-6 py-12 text-center">
                     <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
                   </td>
                 </tr>
               ) : filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan="4" className="px-3 sm:px-6 py-12 text-center text-slate-500">
                     Aucun client trouvé.
                   </td>
                 </tr>
               ) : (
                 filteredCustomers.map(customer => (
                   <tr key={customer._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-medium text-slate-900 dark:text-white">{customer.name}</div>
+                    <td className="px-3 sm:px-6 py-4 min-w-[120px]">
+                      <div className="font-medium text-slate-900 dark:text-white text-sm">{customer.name}</div>
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{formatPhoneNumber(customer.phone) || '-'}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 sm:px-6 py-4 text-slate-600 dark:text-slate-300 hidden sm:table-cell">{formatPhoneNumber(customer.phone) || '-'}</td>
+                    <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap">
                       <span className={`font-medium ${customer.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'}`}>
                         {customer.totalDebt.toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap">
+                      <div className="flex justify-end gap-1 sm:gap-2">
                         <button
                           onClick={() => openDebtModal(customer)}
-                          className="px-3 py-1 text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors"
+                          className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors"
                         >
                           Dette
                         </button>
                         <Link
                           to={`/admin/customers/${customer._id}`}
-                          className="px-3 py-1 flex items-center justify-center bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-md transition-colors"
+                          className="px-2 sm:px-3 py-1 flex items-center justify-center text-xs sm:text-sm bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-md transition-colors"
                         >
                           Détails
                         </Link>

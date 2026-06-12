@@ -355,7 +355,7 @@ Index : name (texte), category
     }
   ],
   "totalAmount": "number",
-  "paymentMethod": "cash | card | bankily",
+  "paymentMethod": "cash | card | bankily | alsadd | bimbank | masrafi",
   "createdAt": "Date"
 }
 ```

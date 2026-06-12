@@ -1,26 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bell, CheckCheck, Filter, Loader2, SearchX } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { notificationApi } from '../api/notification';
-
-const notificationTypes = [
-  { value: '', label: 'Tous les types' },
-  { value: 'low_stock', label: 'Stock faible' },
-  { value: 'daily_summary', label: 'Resume quotidien' },
-  { value: 'debt_updated', label: 'Dette client' },
-  { value: 'invoice_deleted', label: 'Facture annulee' }
-];
-
-const typeLabels = Object.fromEntries(notificationTypes.map((type) => [type.value, type.label]));
-
-const formatDateTime = (isoDate) => {
-  if (!isoDate) return '-';
-  return new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  }).format(new Date(isoDate));
-};
+import { formatDateTime } from '../lib/format';
 
 export default function Notifications() {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({
     unreadOnly: false,
     type: ''
@@ -36,6 +21,19 @@ export default function Notifications() {
     id: null
   });
 
+  const notificationTypes = useMemo(() => [
+    { value: '', label: t('notification.allTypes') },
+    { value: 'low_stock', label: t('notification.lowStock') },
+    { value: 'daily_summary', label: t('notification.dailySummary') },
+    { value: 'debt_updated', label: t('notification.debtUpdated') },
+    { value: 'invoice_deleted', label: t('notification.invoiceDeleted') }
+  ], [t]);
+
+  const typeLabels = useMemo(() =>
+    Object.fromEntries(notificationTypes.map((type) => [type.value, type.label])),
+    [notificationTypes]
+  );
+
   const requestParams = useMemo(() => ({
     page: 1,
     limit: 20,
@@ -48,7 +46,7 @@ export default function Notifications() {
     try {
       const response = await notificationApi.getNotifications(requestParams);
       if (!response.success) {
-        throw new Error(response.error?.message || 'Impossible de charger les notifications.');
+        throw new Error(response.error?.message || t('notification.loadError'));
       }
       setNotificationsState({
         status: 'success',
@@ -60,11 +58,11 @@ export default function Notifications() {
       setNotificationsState({
         status: 'error',
         data: [],
-        error: error.message || 'Impossible de charger les notifications.',
+        error: error.message || t('notification.loadError'),
         meta: null
       });
     }
-  }, [requestParams]);
+  }, [requestParams, t]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -77,22 +75,40 @@ export default function Notifications() {
     setActionState({ status: 'loading', id });
     try {
       await notificationApi.markAsRead(id);
+      setNotificationsState((current) => ({
+        ...current,
+        data: current.data.filter((n) => n._id !== id),
+        meta: current.meta ? { ...current.meta, unreadCount: Math.max(0, current.meta.unreadCount - 1) } : current.meta
+      }));
     } catch {
-      // Silently fail — user can retry
+      // silently fail
+    } finally {
+      setActionState({ status: 'idle', id: null });
     }
-    setActionState({ status: 'idle', id: null });
-    loadNotifications();
   };
 
   const handleMarkAllRead = async () => {
     setActionState({ status: 'loading', id: 'all' });
     try {
       await notificationApi.markAllAsRead();
+      setNotificationsState((current) => ({
+        ...current,
+        data: [],
+        meta: current.meta ? { ...current.meta, unreadCount: 0 } : current.meta
+      }));
     } catch {
-      // Silently fail — user can retry
+      // silently fail
+    } finally {
+      setActionState({ status: 'idle', id: null });
     }
-    setActionState({ status: 'idle', id: null });
-    loadNotifications();
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, type, value, checked } = event.target;
+    setFilters((current) => ({
+      ...current,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const resetFilters = () => {
@@ -105,119 +121,125 @@ export default function Notifications() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             <Bell className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            Notifications
+            {t('notification.title')}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Centre in-app conforme au contrat de notifications.
+            {notificationsState.meta?.unreadCount != null
+              ? `${notificationsState.meta.unreadCount} ${t('notification.unreadOnly').toLowerCase()}`
+              : ''}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={handleMarkAllRead}
-          disabled={actionState.status === 'loading' || !notificationsState.meta?.unreadCount}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-        >
-          {actionState.id === 'all' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCheck className="h-4 w-4" />}
-          Tout marquer lu
-        </button>
+        {notificationsState.data.length > 0 && (
+          <button
+            type="button"
+            onClick={handleMarkAllRead}
+            disabled={actionState.status === 'loading'}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            {actionState.status === 'loading' && actionState.id === 'all' ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCheck className="h-4 w-4" />
+            )}
+            {t('notification.markAllRead')}
+          </button>
+        )}
       </div>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
-            <Filter className="h-4 w-4" />
-            Filtres
-          </div>
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
-            {notificationsState.meta?.unreadCount ?? 0} non lues
-          </span>
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
+          <Filter className="h-4 w-4" />
+          {t('notification.filters')}
         </div>
-
-        <div className="grid gap-3 md:grid-cols-2">
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Type</span>
-            <select
-              value={filters.type}
-              onChange={(event) => setFilters((current) => ({ ...current, type: event.target.value }))}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
-            >
-              {notificationTypes.map((type) => (
-                <option key={type.value || 'all'} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="flex items-end gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+        <div className="flex flex-wrap items-end gap-4">
+          <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
             <input
               type="checkbox"
+              name="unreadOnly"
               checked={filters.unreadOnly}
-              onChange={(event) => setFilters((current) => ({ ...current, unreadOnly: event.target.checked }))}
-              className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              onChange={handleFilterChange}
+              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-700"
             />
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Afficher seulement les non lues</span>
+            {t('notification.unreadOnly')}
           </label>
-        </div>
-
-        <div className="mt-4 flex justify-end">
+          <select
+            name="type"
+            value={filters.type}
+            onChange={handleFilterChange}
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+          >
+            {notificationTypes.map((type) => (
+              <option key={type.value || 'all'} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
           <button
             type="button"
             onClick={resetFilters}
             className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             <SearchX className="h-4 w-4" />
-            Reinitialiser
+            {t('activityLog.reset')}
           </button>
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <section className="space-y-3">
         {notificationsState.status === 'loading' && (
-          <div className="flex items-center justify-center p-10" aria-live="polite" aria-busy="true">
+          <div className="flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-12 dark:border-slate-800 dark:bg-slate-900">
             <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
           </div>
         )}
 
         {notificationsState.status === 'error' && (
-          <div className="p-6 text-sm text-rose-600 dark:text-rose-400">{notificationsState.error}</div>
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+            {notificationsState.error}
+          </div>
         )}
 
         {notificationsState.status === 'success' && notificationsState.data.length === 0 && (
-          <div className="p-8 text-center text-sm text-slate-500">Aucune notification trouvee.</div>
-        )}
-
-        {notificationsState.status === 'success' && notificationsState.data.length > 0 && (
-          <div className="divide-y divide-slate-200 dark:divide-slate-800">
-            {notificationsState.data.map((notification) => (
-              <article key={notification._id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className={`h-2.5 w-2.5 rounded-full ${notification.isRead ? 'bg-slate-300 dark:bg-slate-700' : 'bg-blue-500'}`} aria-hidden="true" />
-                    <h2 className="font-semibold text-slate-900 dark:text-white">{notification.title}</h2>
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                      {typeLabels[notification.type] || notification.type}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{notification.body}</p>
-                  <p className="mt-2 text-xs text-slate-500">{formatDateTime(notification.createdAt)}</p>
-                </div>
-
-                {!notification.isRead && (
-                  <button
-                    type="button"
-                    onClick={() => handleMarkRead(notification._id)}
-                    disabled={actionState.status === 'loading'}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800"
-                  >
-                    {actionState.id === notification._id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCheck className="h-4 w-4" />}
-                    Marquer lu
-                  </button>
-                )}
-              </article>
-            ))}
+          <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900">
+            {t('notification.noNotifications')}
           </div>
         )}
+
+        {notificationsState.status === 'success' &&
+          notificationsState.data.map((notification) => (
+            <div
+              key={notification._id}
+              className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400">
+                <Bell className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">{notification.title}</p>
+                    <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-400">{notification.body}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                    {typeLabels[notification.type] || notification.type}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs text-slate-400">{formatDateTime(notification.createdAt)}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleMarkRead(notification._id)}
+                disabled={actionState.status === 'loading'}
+                className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-blue-600 disabled:opacity-50 dark:hover:bg-slate-800 dark:hover:text-blue-400"
+                aria-label="Marquer comme lu"
+              >
+                {actionState.status === 'loading' && actionState.id === notification._id ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCheck className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          ))}
       </section>
     </div>
   );

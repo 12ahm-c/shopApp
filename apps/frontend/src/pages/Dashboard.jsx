@@ -11,25 +11,18 @@ import {
   Users
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { dashboardApi } from '../api/dashboard';
 import useAuthStore from '../stores/authStore';
-
-const currencyFormatter = new Intl.NumberFormat('fr-FR');
-
-const formatMoney = (amount) => `${currencyFormatter.format(Number(amount || 0))} MRU`;
-
-const formatDateTime = (isoDate) => {
-  if (!isoDate) return '-';
-  return new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  }).format(new Date(isoDate));
-};
+import { formatMoney, formatDateTime } from '../lib/format';
 
 const paymentLabels = {
-  cash: 'Especes',
-  card: 'Carte',
-  bankily: 'Bankily'
+  cash: 'payment.cash',
+  card: 'payment.card',
+  bankily: 'payment.bankily',
+  alsadd: 'payment.alsadd',
+  bimbank: 'payment.bimbank',
+  masrafi: 'payment.masrafi'
 };
 
 function StatCard({ icon: Icon, label, value, tone = 'blue' }) {
@@ -57,8 +50,10 @@ function StatCard({ icon: Icon, label, value, tone = 'blue' }) {
 }
 
 function RecentSalesTable({ sales }) {
+  const { t } = useTranslation();
+
   if (!sales.length) {
-    return <div className="p-8 text-center text-sm text-slate-500">Aucune vente recente.</div>;
+    return <div className="p-8 text-center text-sm text-slate-500">{t('dashboard.noSales')}</div>;
   }
 
   return (
@@ -66,24 +61,24 @@ function RecentSalesTable({ sales }) {
       <table className="w-full text-left text-sm">
         <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
           <tr>
-            <th className="px-4 py-3 font-medium">Facture</th>
-            <th className="px-4 py-3 font-medium">Client</th>
-            <th className="px-4 py-3 font-medium">Paiement</th>
-            <th className="px-4 py-3 text-right font-medium">Total</th>
+            <th className="px-3 sm:px-4 py-3 font-medium">{t('table.invoice')}</th>
+            <th className="px-3 sm:px-4 py-3 font-medium hidden sm:table-cell">{t('table.client')}</th>
+            <th className="px-3 sm:px-4 py-3 font-medium hidden xs:table-cell sm:table-cell">{t('table.payment')}</th>
+            <th className="px-3 sm:px-4 py-3 text-right font-medium">{t('table.total')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
           {sales.map((sale) => (
             <tr key={sale._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50">
-              <td className="px-4 py-3">
-                <Link className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400" to={`/invoices/${sale._id}`}>
+              <td className="px-3 sm:px-4 py-3">
+                <Link className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 text-sm" to={`/invoices/${sale._id}`}>
                   #{sale.invoiceNumber}
                 </Link>
                 <div className="text-xs text-slate-500">{formatDateTime(sale.createdAt)}</div>
               </td>
-              <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{sale.customerName}</td>
-              <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{paymentLabels[sale.paymentMethod] || sale.paymentMethod}</td>
-              <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-white">{formatMoney(sale.totalAmount)}</td>
+              <td className="px-3 sm:px-4 py-3 text-slate-700 dark:text-slate-300 hidden sm:table-cell">{sale.customerName}</td>
+              <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 hidden xs:table-cell sm:table-cell text-sm">{t(paymentLabels[sale.paymentMethod] || sale.paymentMethod)}</td>
+              <td className="px-3 sm:px-4 py-3 text-right font-semibold text-slate-900 dark:text-white whitespace-nowrap">{formatMoney(sale.totalAmount)}</td>
             </tr>
           ))}
         </tbody>
@@ -93,8 +88,10 @@ function RecentSalesTable({ sales }) {
 }
 
 function LowStockList({ products }) {
+  const { t } = useTranslation();
+
   if (!products.length) {
-    return <div className="p-6 text-sm text-slate-500">Aucune alerte stock.</div>;
+    return <div className="p-6 text-sm text-slate-500">{t('dashboard.noStockAlerts')}</div>;
   }
 
   return (
@@ -107,10 +104,10 @@ function LowStockList({ products }) {
         >
           <div>
             <p className="font-medium text-slate-900 dark:text-white">{product.name}</p>
-            <p className="text-xs text-slate-500">Seuil: {product.alertThreshold}</p>
+            <p className="text-xs text-slate-500">{t('dashboard.threshold')}: {product.alertThreshold}</p>
           </div>
           <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
-            {product.quantity} restants
+            {product.quantity} {t('dashboard.remaining')}
           </span>
         </Link>
       ))}
@@ -119,8 +116,10 @@ function LowStockList({ products }) {
 }
 
 function ActivityList({ activity }) {
+  const { t } = useTranslation();
+
   if (!activity.length) {
-    return <div className="p-6 text-sm text-slate-500">Aucune activite recente.</div>;
+    return <div className="p-6 text-sm text-slate-500">{t('dashboard.noActivity')}</div>;
   }
 
   return (
@@ -139,6 +138,7 @@ function ActivityList({ activity }) {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const { role, user } = useAuthStore();
   const [dashboardState, setDashboardState] = useState({
     status: 'loading',
@@ -155,17 +155,17 @@ export default function Dashboard() {
         ? await dashboardApi.getAdminDashboard()
         : await dashboardApi.getEmployeeDashboard();
       if (!response.success) {
-        throw new Error(response.error?.message || 'Impossible de charger le tableau de bord.');
+        throw new Error(response.error?.message || t('dashboard.loadError'));
       }
       setDashboardState({ status: 'success', data: response.data, error: null });
     } catch (error) {
       setDashboardState({
         status: 'error',
         data: null,
-        error: error.message || 'Impossible de charger le tableau de bord.'
+        error: error.message || t('dashboard.loadError')
       });
     }
-  }, [isAdmin]);
+    }, [isAdmin, t]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -189,10 +189,10 @@ export default function Dashboard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Tableau de bord
+            {t('dashboard.title')}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            {isAdmin ? 'Vue globale du magasin.' : `Resume de vos operations, ${user?.name ?? 'utilisateur'}.`}
+            {isAdmin ? t('dashboard.subtitle.admin') : t('dashboard.subtitle.employee', { name: user?.name ?? t('employees') })}
           </p>
         </div>
         <Link
@@ -200,7 +200,7 @@ export default function Dashboard() {
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
         >
           <ShoppingBag className="h-4 w-4" />
-          Ouvrir le POS
+          {t('dashboard.openPOS')}
         </Link>
       </div>
 
@@ -219,40 +219,40 @@ export default function Dashboard() {
       {dashboardState.status === 'success' && stats && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard icon={CreditCard} label="Ventes du jour" value={formatMoney(stats.todaySales)} tone="emerald" />
-            <StatCard icon={ReceiptText} label="Factures du jour" value={stats.todayOrders} tone="blue" />
-            <StatCard icon={Package} label={isAdmin ? 'Produits en stock' : 'Ventes du mois'} value={isAdmin ? stats.totalProducts : formatMoney(stats.monthlySales)} tone="slate" />
+            <StatCard icon={CreditCard} label={t('dashboard.todaySales')} value={formatMoney(stats.todaySales)} tone="emerald" />
+            <StatCard icon={ReceiptText} label={t('dashboard.todayInvoices')} value={stats.todayOrders} tone="blue" />
+            <StatCard icon={Package} label={isAdmin ? t('dashboard.stockProducts') : t('dashboard.monthlySales')} value={isAdmin ? stats.totalProducts : formatMoney(stats.monthlySales)} tone="slate" />
             {isAdmin ? (
-              <StatCard icon={AlertTriangle} label="Stock faible" value={stats.lowStockCount} tone="amber" />
+              <StatCard icon={AlertTriangle} label={t('dashboard.lowStock')} value={stats.lowStockCount} tone="amber" />
             ) : (
-              <StatCard icon={Bell} label="Notifications non lues" value={dashboardState.data.unreadNotifications} tone="amber" />
+              <StatCard icon={Bell} label={t('dashboard.unreadNotifications')} value={dashboardState.data.unreadNotifications} tone="amber" />
             )}
           </div>
 
           {isAdmin && (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <StatCard icon={CreditCard} label="Ventes du mois" value={formatMoney(stats.monthlySales)} tone="emerald" />
-              <StatCard icon={Users} label="Clients" value={stats.totalCustomers} tone="blue" />
-              <StatCard icon={Activity} label="Dettes clients" value={formatMoney(stats.outstandingDebt)} tone="rose" />
+              <StatCard icon={CreditCard} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" />
+              <StatCard icon={Users} label={t('dashboard.customers')} value={stats.totalCustomers} tone="blue" />
+              <StatCard icon={Activity} label={t('dashboard.clientDebts')} value={formatMoney(stats.outstandingDebt)} tone="rose" />
             </div>
           )}
 
           <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
             <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                <h2 className="font-semibold text-slate-900 dark:text-white">Dernieres ventes</h2>
+                <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.recentSales')}</h2>
                 <Link className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400" to="/invoices">
-                  Voir tout
+                  {t('dashboard.viewAll')}
                 </Link>
               </div>
               <RecentSalesTable sales={recentSales} />
             </section>
 
             <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <h2 className="font-semibold text-slate-900 dark:text-white">Montants recents</h2>
+              <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.recentAmounts')}</h2>
               <div className="mt-4 space-y-3">
                 {recentSales.length === 0 ? (
-                  <p className="text-sm text-slate-500">Aucune donnee a afficher.</p>
+                  <p className="text-sm text-slate-500">{t('dashboard.noData')}</p>
                 ) : (
                   recentSales.slice(0, 6).map((sale) => (
                     <div key={sale._id} className="space-y-1">
@@ -264,7 +264,7 @@ export default function Dashboard() {
                         className="h-2 w-full overflow-hidden rounded-full"
                         max={recentMax}
                         value={sale.totalAmount}
-                        aria-label={`Montant facture ${sale.invoiceNumber}`}
+                        aria-label={t('invoice.invoiceNumber', { number: sale.invoiceNumber })}
                       />
                     </div>
                   ))
@@ -277,14 +277,14 @@ export default function Dashboard() {
             <div className="grid gap-6 xl:grid-cols-2">
               <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
                 <div className="border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                  <h2 className="font-semibold text-slate-900 dark:text-white">Alertes stock faible</h2>
+                  <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.lowStockAlerts')}</h2>
                 </div>
                 <LowStockList products={dashboardState.data.lowStockProducts ?? []} />
               </section>
 
               <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
                 <div className="border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                  <h2 className="font-semibold text-slate-900 dark:text-white">Activite recente</h2>
+                  <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.recentActivity')}</h2>
                 </div>
                 <ActivityList activity={dashboardState.data.recentActivity ?? []} />
               </section>

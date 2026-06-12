@@ -6,6 +6,7 @@ import type { SaleDocument } from "../modules/sale/sale.model";
 import type { StoreSettingsDocument } from "../modules/storeSettings/settings.model";
 import type { ActivityLogDocument } from "../modules/activityLog/activityLog.model";
 import type { NotificationDocument } from "../modules/notification/notification.model";
+import type { ExpenseDocument } from "../modules/expense/expense.model";
 
 export const serializeUser = (
   user: UserDocument,
@@ -112,6 +113,19 @@ export const serializeActivityLog = (log: ActivityLogDocument) => ({
   details: log.details,
   amount: log.amount,
   timestamp: log.timestamp.toISOString()
+});
+
+export const serializeExpense = (expense: ExpenseDocument) => ({
+  _id: expense._id.toString(),
+  description: expense.description,
+  category: expense.category,
+  amount: expense.amount,
+  paidBy: expense.paidBy.toString(),
+  paidByName: expense.paidByName,
+  note: expense.note ?? null,
+  date: expense.date.toISOString(),
+  createdAt: expense.createdAt.toISOString(),
+  updatedAt: expense.updatedAt.toISOString()
 });
 
 export const serializeNotification = (notif: NotificationDocument) => ({

@@ -21,7 +21,7 @@ export const customerController = {
   }),
 
   updateDebt: asyncHandler(async (req: Request, res: Response) => {
-    const data = await customerService.updateDebt(String(req.params.id), req.body as DebtInput);
+    const data = await customerService.updateDebt(String(req.params.id), req.body as DebtInput, req.user!);
     successResponse(res, data);
   }),
 

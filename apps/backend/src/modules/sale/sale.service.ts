@@ -125,11 +125,25 @@ export const saleService = {
       }).lean();
 
       if (lowStockProducts.length > 0) {
+        const notifiedIds = new Set<string>();
         const admins = await User.find({ role: "admin" }).lean();
         for (const admin of admins) {
+          notifiedIds.add(admin._id.toString());
           for (const prod of lowStockProducts) {
             const notif = await notificationService.createNotification(
               admin._id.toString(),
+              "low_stock",
+              `Stock faible : ${prod.name}`,
+              `Il reste ${prod.quantity} unités de ${prod.name}. Seuil: ${prod.alertThreshold}.`,
+              { productId: prod._id.toString() }
+            );
+            emitStockAlert(notif);
+          }
+        }
+        if (!notifiedIds.has(user.userId)) {
+          for (const prod of lowStockProducts) {
+            const notif = await notificationService.createNotification(
+              user.userId,
               "low_stock",
               `Stock faible : ${prod.name}`,
               `Il reste ${prod.quantity} unités de ${prod.name}. Seuil: ${prod.alertThreshold}.`,
@@ -236,12 +250,23 @@ export const saleService = {
       await session.commitTransaction();
 
       const admins = await User.find({ role: "admin" }).lean();
+      const notifiedIds = new Set<string>();
       for (const admin of admins) {
+        notifiedIds.add(admin._id.toString());
         await notificationService.createNotification(
           admin._id.toString(),
           "invoice_deleted",
           "Facture annulée",
           `Facture #${sale.invoiceNumber} de ${sale.totalAmount} MRU a été annulée par ${userName}.`,
+          { saleId: sale._id.toString(), invoiceNumber: sale.invoiceNumber }
+        );
+      }
+      if (!notifiedIds.has(user.userId)) {
+        await notificationService.createNotification(
+          user.userId,
+          "invoice_deleted",
+          "Facture annulée",
+          `Facture #${sale.invoiceNumber} de ${sale.totalAmount} MRU a été annulée.`,
           { saleId: sale._id.toString(), invoiceNumber: sale.invoiceNumber }
         );
       }

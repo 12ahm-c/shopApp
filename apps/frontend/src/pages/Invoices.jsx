@@ -1,32 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDays, Eye, Filter, Loader2, ReceiptText, SearchX } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { employeeApi } from '../api/employee';
 import { invoiceApi } from '../api/invoice';
 import useAuthStore from '../stores/authStore';
-
-const currencyFormatter = new Intl.NumberFormat('fr-FR');
-
-const formatMoney = (amount) => `${currencyFormatter.format(Number(amount || 0))} MRU`;
-
-const formatDateTime = (isoDate) => {
-  if (!isoDate) return '-';
-  return new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  }).format(new Date(isoDate));
-};
+import { formatMoney, formatDateTime } from '../lib/format';
 
 const paymentLabels = {
-  cash: 'Especes',
-  card: 'Carte',
-  bankily: 'Bankily'
+  cash: 'payment.cash',
+  card: 'payment.card',
+  bankily: 'payment.bankily',
+  alsadd: 'payment.alsadd',
+  bimbank: 'payment.bimbank',
+  masrafi: 'payment.masrafi'
 };
 
 const toStartOfDay = (date) => date ? `${date}T00:00:00.000Z` : '';
 const toEndOfDay = (date) => date ? `${date}T23:59:59.999Z` : '';
 
 export default function Invoices() {
+  const { t } = useTranslation();
   const role = useAuthStore((state) => state.role);
   const isAdmin = role === 'admin';
   const [filters, setFilters] = useState({
@@ -37,8 +31,7 @@ export default function Invoices() {
   const [invoicesState, setInvoicesState] = useState({
     status: 'loading',
     data: [],
-    error: null,
-    meta: null
+    error: null
   });
   const [employeesState, setEmployeesState] = useState({
     status: 'idle',
@@ -55,26 +48,22 @@ export default function Invoices() {
 
   const loadInvoices = useCallback(async () => {
     setInvoicesState((current) => ({ ...current, status: 'loading', error: null }));
+
     try {
       const response = await invoiceApi.getInvoices(requestParams);
-      if (!response.success) {
-        throw new Error(response.error?.message || 'Impossible de charger les factures.');
-      }
       setInvoicesState({
         status: 'success',
         data: response.data,
-        error: null,
-        meta: response.meta
+        error: null
       });
     } catch (error) {
       setInvoicesState({
         status: 'error',
         data: [],
-        error: error.message || 'Impossible de charger les factures.',
-        meta: null
+        error: error.message || t('invoice.notFound')
       });
     }
-  }, [requestParams]);
+    }, [requestParams, t]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -91,10 +80,14 @@ export default function Invoices() {
       setEmployeesState({ status: 'loading', data: [] });
       employeeApi.getEmployees({ page: 1, limit: 100 })
         .then((response) => {
-          if (isActive) setEmployeesState({ status: 'success', data: response.data });
+          if (isActive) {
+            setEmployeesState({ status: 'success', data: response.data });
+          }
         })
         .catch(() => {
-          if (isActive) setEmployeesState({ status: 'error', data: [] });
+          if (isActive) {
+            setEmployeesState({ status: 'error', data: [] });
+          }
         });
     }, 0);
 
@@ -121,10 +114,10 @@ export default function Invoices() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             <ReceiptText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            Factures
+            {t('invoice.title')}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            {isAdmin ? 'Toutes les ventes du magasin.' : 'Vos factures personnelles.'}
+            {isAdmin ? t('invoice.subtitle.admin') : t('invoice.subtitle.employee')}
           </p>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
@@ -135,11 +128,11 @@ export default function Invoices() {
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
           <Filter className="h-4 w-4" />
-          Filtres
+          {t('invoice.filters')}
         </div>
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Depuis</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('invoice.from')}</span>
             <input
               type="date"
               name="from"
@@ -150,7 +143,7 @@ export default function Invoices() {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Jusqu'au</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('invoice.to')}</span>
             <input
               type="date"
               name="to"
@@ -162,14 +155,14 @@ export default function Invoices() {
 
           {isAdmin && (
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Employe</span>
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('invoice.employee')}</span>
               <select
                 name="employeeId"
                 value={filters.employeeId}
                 onChange={handleFilterChange}
                 className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
               >
-                <option value="">Tous les employes</option>
+                <option value="">{t('invoice.allEmployees')}</option>
                 {employeesState.data.map((employee) => (
                   <option key={employee._id} value={employee._id}>
                     {employee.name}
@@ -186,7 +179,7 @@ export default function Invoices() {
             className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             <SearchX className="h-4 w-4" />
-            Reinitialiser
+            {t('invoice.reset')}
           </button>
         </div>
       </section>
@@ -203,7 +196,7 @@ export default function Invoices() {
         )}
 
         {invoicesState.status === 'success' && invoicesState.data.length === 0 && (
-          <div className="p-8 text-center text-sm text-slate-500">Aucune facture trouvee.</div>
+          <div className="p-8 text-center text-sm text-slate-500">{t('invoice.noInvoices')}</div>
         )}
 
         {invoicesState.status === 'success' && invoicesState.data.length > 0 && (
@@ -211,33 +204,33 @@ export default function Invoices() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Facture</th>
-                  <th className="px-6 py-4 font-medium">Client</th>
-                  <th className="px-6 py-4 font-medium">Employe</th>
-                  <th className="px-6 py-4 font-medium">Paiement</th>
-                  <th className="px-6 py-4 text-right font-medium">Total</th>
-                  <th className="px-6 py-4 text-right font-medium">Actions</th>
+                  <th className="px-3 sm:px-6 py-4 font-medium">{t('table.invoice')}</th>
+                  <th className="px-3 sm:px-6 py-4 font-medium hidden sm:table-cell">{t('table.client')}</th>
+                  <th className="px-3 sm:px-6 py-4 font-medium hidden md:table-cell">{t('table.employee')}</th>
+                  <th className="px-3 sm:px-6 py-4 font-medium hidden sm:table-cell">{t('table.payment')}</th>
+                  <th className="px-3 sm:px-6 py-4 text-right font-medium">{t('table.total')}</th>
+                  <th className="px-3 sm:px-6 py-4 text-right font-medium">{t('table.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                 {invoicesState.data.map((invoice) => (
                   <tr key={invoice._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50">
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-slate-900 dark:text-white">#{invoice.invoiceNumber}</div>
+                    <td className="px-3 sm:px-6 py-4 min-w-[130px]">
+                      <div className="font-semibold text-slate-900 dark:text-white text-sm sm:text-base">#{invoice.invoiceNumber}</div>
                       <div className="mt-1 flex items-center gap-1 text-xs text-slate-500">
-                        <CalendarDays className="h-3.5 w-3.5" />
-                        {formatDateTime(invoice.createdAt)}
+                        <CalendarDays className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{formatDateTime(invoice.createdAt)}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-700 dark:text-slate-300">{invoice.customerName}</td>
-                    <td className="px-6 py-4 text-slate-700 dark:text-slate-300">{invoice.employeeName}</td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{paymentLabels[invoice.paymentMethod] || invoice.paymentMethod}</td>
-                    <td className="px-6 py-4 text-right font-semibold text-slate-900 dark:text-white">{formatMoney(invoice.totalAmount)}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 sm:px-6 py-4 text-slate-700 dark:text-slate-300 hidden sm:table-cell">{invoice.customerName}</td>
+                    <td className="px-3 sm:px-6 py-4 text-slate-700 dark:text-slate-300 hidden md:table-cell">{invoice.employeeName}</td>
+                    <td className="px-3 sm:px-6 py-4 text-slate-600 dark:text-slate-400 hidden sm:table-cell">{t(paymentLabels[invoice.paymentMethod] || invoice.paymentMethod)}</td>
+                    <td className="px-3 sm:px-6 py-4 text-right font-semibold text-slate-900 dark:text-white text-sm sm:text-base whitespace-nowrap">{formatMoney(invoice.totalAmount)}</td>
+                    <td className="px-3 sm:px-6 py-4 text-right">
                       <Link
                         to={`/invoices/${invoice._id}`}
                         className="inline-flex items-center justify-center rounded-lg p-2 text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
-                        aria-label={`Voir facture ${invoice.invoiceNumber}`}
+                        aria-label={t('invoice.view', { number: invoice.invoiceNumber })}
                       >
                         <Eye className="h-4 w-4" />
                       </Link>

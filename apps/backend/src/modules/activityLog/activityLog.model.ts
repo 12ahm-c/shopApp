@@ -11,14 +11,17 @@ export interface ActivityLogDocument extends Document {
   timestamp: Date;
 }
 
-const activityLogSchema = new Schema<ActivityLogDocument>({
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  userName: { type: String, required: true },
-  action: { type: String, enum: ["sale", "delete_invoice", "login", "logout"], required: true },
-  details: { type: String, required: true },
-  amount: { type: Number, default: null },
-  timestamp: { type: Date, default: Date.now }
-});
+const activityLogSchema = new Schema<ActivityLogDocument>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userName: { type: String, required: true },
+    action: { type: String, enum: ["sale", "delete_invoice", "login", "logout"], required: true },
+    details: { type: String, required: true },
+    amount: { type: Number, default: null },
+    timestamp: { type: Date, default: Date.now }
+  },
+  { collection: "activity_logs" }
+);
 
 activityLogSchema.index({ userId: 1, timestamp: -1 });
 activityLogSchema.index({ timestamp: -1 });

@@ -384,7 +384,7 @@ Request body
   ],
   "customerId": "65f... (optional, if known customer)",
   "customerName": "string (required if no customerId, max 100)",
-  "paymentMethod": "cash | card | bankily"
+  "paymentMethod": "cash | card | bankily | alsadd | bimbank | masrafi"
 }
 ```
 

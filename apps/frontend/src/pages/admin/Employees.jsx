@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { employeeApi } from '../../api/employee';
 import { formatPhoneNumber } from '../../lib/utils';
+import { formatNumber, getLocale } from '../../lib/format';
 
 const initialEmployeesState = {
   status: 'idle',
@@ -31,11 +32,11 @@ const attendanceInitialState = {
   status: 'present'
 };
 
-const formatAmount = (amount) => `${Number(amount || 0).toLocaleString()} MRU`;
+const formatAmount = (amount) => `${formatNumber(amount)} MRU`;
 
 const formatDate = (isoDate) => {
   if (!isoDate) return '-';
-  return new Intl.DateTimeFormat('fr-FR', {
+  return new Intl.DateTimeFormat(getLocale(), {
     year: 'numeric',
     month: 'short',
     day: '2-digit'
@@ -211,7 +212,7 @@ export default function Employees() {
             {t('employees')}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Liste, profil, salaire et presence des employes, visibles par Admin uniquement.
+            {t('employeesPage.description')}
           </p>
         </div>
         <button
@@ -220,14 +221,14 @@ export default function Employees() {
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-blue-500/20 transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
         >
           <Plus className="h-4 w-4" />
-          Ajouter un employe
+          {t('employeesPage.addButton')}
         </button>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="flex flex-col gap-3 border-b border-slate-200 p-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
           <label className="relative block w-full max-w-md">
-            <span className="sr-only">Rechercher un employe</span>
+            <span className="sr-only">{t('employeesPage.searchPlaceholder')}</span>
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
@@ -261,51 +262,51 @@ export default function Employees() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 font-medium text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
                 <tr>
-                  <th className="px-6 py-4 font-medium">{t('employeesPage.headers.name')}</th>
-                  <th className="px-6 py-4 font-medium">{t('employeesPage.headers.phone')}</th>
-                  <th className="px-6 py-4 font-medium">{t('employeesPage.headers.role')}</th>
-                  <th className="px-6 py-4 text-right font-medium">{t('employeesPage.headers.salary')}</th>
-                  <th className="px-6 py-4 text-right font-medium">Actions</th>
+                  <th className="px-3 sm:px-6 py-4 font-medium">{t('employeesPage.headers.name')}</th>
+                  <th className="px-3 sm:px-6 py-4 font-medium hidden sm:table-cell">{t('employeesPage.headers.phone')}</th>
+                  <th className="px-3 sm:px-6 py-4 font-medium hidden xs:table-cell sm:table-cell">{t('employeesPage.headers.role')}</th>
+                  <th className="px-3 sm:px-6 py-4 text-right font-medium hidden xs:table-cell sm:table-cell">{t('employeesPage.headers.salary')}</th>
+                  <th className="px-3 sm:px-6 py-4 text-right font-medium">{t('table.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                 {filteredEmployees.map((employee) => (
                   <tr key={employee._id} className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-950/50">
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-4 min-w-[100px]">
                       <button
                         type="button"
                         onClick={() => setSelectedEmployeeId(employee._id)}
-                        className="font-medium text-slate-900 underline-offset-4 hover:underline dark:text-white"
+                        className="font-medium text-slate-900 underline-offset-4 hover:underline dark:text-white text-sm"
                       >
                         {employee.name}
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{formatPhoneNumber(employee.phone)}</td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium uppercase tracking-wide text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                    <td className="px-3 sm:px-6 py-4 text-slate-600 dark:text-slate-300 hidden sm:table-cell">{formatPhoneNumber(employee.phone)}</td>
+                    <td className="px-3 sm:px-6 py-4 hidden xs:table-cell sm:table-cell">
+                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] sm:text-xs font-medium uppercase tracking-wide text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
                         {employee.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-medium text-slate-900 dark:text-white">
+                    <td className="px-3 sm:px-6 py-4 text-right font-medium text-slate-900 dark:text-white hidden xs:table-cell sm:table-cell whitespace-nowrap">
                       {formatAmount(employee.salary)}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                      <div className="flex justify-end gap-1 sm:gap-2">
                         <button
                           type="button"
                           onClick={() => openEditModal(employee)}
-                          className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-3 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                          className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                         >
-                          <Edit className="h-4 w-4" />
-                          Editer
+                          <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <span className="hidden xs:inline">{t('employeesPage.edit')}</span>
                         </button>
                         <button
                           type="button"
                           onClick={() => openAttendanceModal(employee)}
-                          className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-3 py-1.5 text-sm text-blue-700 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+                          className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-blue-700 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
                         >
-                          <CalendarCheck className="h-4 w-4" />
-                          Presence
+                          <CalendarCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <span className="hidden xs:inline">{t('employeesPage.attendance')}</span>
                         </button>
                       </div>
                     </td>
@@ -357,6 +358,7 @@ function EmployeesLoading() {
 }
 
 function EmployeeDetail({ employee, onClose }) {
+  const { t } = useTranslation();
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-start justify-between gap-4">
@@ -372,7 +374,7 @@ function EmployeeDetail({ employee, onClose }) {
         <button
           type="button"
           onClick={onClose}
-          aria-label="Fermer le detail employe"
+          aria-label={t('employeesPage.close')}
           className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
         >
           <X className="h-5 w-5" />
@@ -380,16 +382,16 @@ function EmployeeDetail({ employee, onClose }) {
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <DetailStat label="Role" value={employee.role} />
-        <DetailStat label="Salaire" value={formatAmount(employee.salary)} />
-        <DetailStat label="Derniere activite" value={formatDate(employee.lastActiveAt)} />
+        <DetailStat label={t('employeesPage.headers.role')} value={employee.role} />
+        <DetailStat label={t('employeesPage.headers.salary')} value={formatAmount(employee.salary)} />
+        <DetailStat label={t('employeesPage.lastActivity')} value={formatDate(employee.lastActiveAt)} />
       </div>
 
       <div className="mt-5">
-        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Presence recente</h3>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{t('employeesPage.recentAttendance')}</h3>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {(employee.attendance ?? []).length === 0 ? (
-            <p className="text-sm text-slate-500">Aucune presence enregistree.</p>
+            <p className="text-sm text-slate-500">{t('employeesPage.noAttendance')}</p>
           ) : (
             employee.attendance.map((item) => (
               <div
@@ -417,8 +419,9 @@ function DetailStat({ label, value }) {
 }
 
 function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, onSubmit }) {
+  const { t } = useTranslation();
   const isSubmitting = mutationState.status === 'loading';
-  const title = mode === 'create' ? 'Ajouter un employe' : 'Modifier employe';
+  const title = mode === 'create' ? t('employeesPage.addTitle') : t('employeesPage.editTitle');
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -429,7 +432,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
     <ModalFrame title={title} onClose={onClose}>
       <form onSubmit={onSubmit} className="space-y-4">
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Nom complet</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('employeesPage.fields.name')}</span>
           <input
             type="text"
             name="name"
@@ -441,7 +444,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Telephone</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('employeesPage.fields.phone')}</span>
           <input
             type="tel"
             name="phone"
@@ -453,7 +456,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Salaire</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('employeesPage.fields.salary')}</span>
           <input
             type="number"
             name="salary"
@@ -466,7 +469,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
 
         <label className="block space-y-2">
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {mode === 'create' ? 'Mot de passe' : 'Nouveau mot de passe'}
+            {mode === 'create' ? t('employeesPage.password') : t('employeesPage.newPassword')}
           </span>
           <input
             type="password"
@@ -486,7 +489,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
         <ModalActions
           onClose={onClose}
           isSubmitting={isSubmitting}
-          submitLabel={mode === 'create' ? 'Creer' : 'Enregistrer'}
+          submitLabel={mode === 'create' ? t('employeesPage.create') : t('employeesPage.save')}
         />
       </form>
     </ModalFrame>
@@ -494,6 +497,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
 }
 
 function AttendanceModal({ employee, attendanceData, mutationState, onChange, onClose, onSubmit }) {
+  const { t } = useTranslation();
   const isSubmitting = mutationState.status === 'loading';
 
   const handleChange = (event) => {
@@ -502,10 +506,10 @@ function AttendanceModal({ employee, attendanceData, mutationState, onChange, on
   };
 
   return (
-    <ModalFrame title={`Presence - ${employee.name}`} onClose={onClose}>
+    <ModalFrame title={`${t('employeesPage.attendance')} - ${employee.name}`} onClose={onClose}>
       <form onSubmit={onSubmit} className="space-y-4">
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Date</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('table.date')}</span>
           <input
             type="date"
             name="date"
@@ -517,7 +521,7 @@ function AttendanceModal({ employee, attendanceData, mutationState, onChange, on
         </label>
 
         <fieldset className="space-y-2">
-          <legend className="text-sm font-medium text-slate-700 dark:text-slate-300">Statut</legend>
+          <legend className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('employeesPage.status')}</legend>
           <div className="grid grid-cols-2 gap-3">
             {['present', 'absent'].map((status) => (
               <label
@@ -546,13 +550,14 @@ function AttendanceModal({ employee, attendanceData, mutationState, onChange, on
           <p className="text-sm text-rose-600 dark:text-rose-400">{mutationState.error}</p>
         )}
 
-        <ModalActions onClose={onClose} isSubmitting={isSubmitting} submitLabel="Marquer" />
+        <ModalActions onClose={onClose} isSubmitting={isSubmitting} submitLabel={t('employeesPage.mark')} />
       </form>
     </ModalFrame>
   );
 }
 
 function ModalFrame({ title, onClose, children }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
@@ -561,7 +566,7 @@ function ModalFrame({ title, onClose, children }) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label={t('employeesPage.close')}
             className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
           >
             <X className="h-5 w-5" />
@@ -574,6 +579,7 @@ function ModalFrame({ title, onClose, children }) {
 }
 
 function ModalActions({ onClose, isSubmitting, submitLabel }) {
+  const { t } = useTranslation();
   return (
     <div className="flex justify-end gap-3 pt-2">
       <button
@@ -581,7 +587,7 @@ function ModalActions({ onClose, isSubmitting, submitLabel }) {
         onClick={onClose}
         className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
       >
-        Annuler
+        {t('employeesPage.cancel')}
       </button>
       <button
         type="submit"

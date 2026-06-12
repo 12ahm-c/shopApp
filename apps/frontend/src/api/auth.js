@@ -25,7 +25,9 @@ const mockedAuthApi = {
       success: true,
       data: {
         ...currentUser,
-        ...(data.name ? { name: data.name } : {})
+        ...(data.name ? { name: data.name } : {}),
+        ...(data.phone ? { phone: data.phone } : {}),
+        ...(data.password ? { password: '***' } : {})
       },
       error: null,
       meta: null
