@@ -35,14 +35,14 @@ function StatCard({ icon: Icon, label, value, tone = 'blue' }) {
   };
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-3">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${tones[tone]}`}>
-          <Icon className="h-5 w-5" />
+    <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg ${tones[tone]}`}>
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
-        <div>
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
-          <p className="mt-1 text-xl font-bold text-slate-900 dark:text-white">{value}</p>
+        <div className="min-w-0">
+          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 truncate">{label}</p>
+          <p className="mt-0.5 text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate">{value}</p>
         </div>
       </div>
     </div>
@@ -58,27 +58,27 @@ function RecentSalesTable({ sales }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm">
+      <table className="w-full text-left text-xs sm:text-sm">
         <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
           <tr>
-            <th className="px-3 sm:px-4 py-3 font-medium">{t('table.invoice')}</th>
-            <th className="px-3 sm:px-4 py-3 font-medium hidden sm:table-cell">{t('table.client')}</th>
-            <th className="px-3 sm:px-4 py-3 font-medium hidden xs:table-cell sm:table-cell">{t('table.payment')}</th>
-            <th className="px-3 sm:px-4 py-3 text-right font-medium">{t('table.total')}</th>
+            <th className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium">{t('table.invoice')}</th>
+            <th className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium hidden sm:table-cell">{t('table.client')}</th>
+            <th className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium hidden md:table-cell">{t('table.payment')}</th>
+            <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-right font-medium">{t('table.total')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
           {sales.map((sale) => (
             <tr key={sale._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50">
-              <td className="px-3 sm:px-4 py-3">
-                <Link className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 text-sm" to={`/invoices/${sale._id}`}>
+              <td className="px-3 sm:px-4 py-2.5 sm:py-3">
+                <Link className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 text-xs sm:text-sm" to={`/invoices/${sale._id}`}>
                   #{sale.invoiceNumber}
                 </Link>
-                <div className="text-xs text-slate-500">{formatDateTime(sale.createdAt)}</div>
+                <div className="text-[10px] sm:text-xs text-slate-500">{formatDateTime(sale.createdAt)}</div>
               </td>
-              <td className="px-3 sm:px-4 py-3 text-slate-700 dark:text-slate-300 hidden sm:table-cell">{sale.customerName}</td>
-              <td className="px-3 sm:px-4 py-3 text-slate-600 dark:text-slate-400 hidden xs:table-cell sm:table-cell text-sm">{t(paymentLabels[sale.paymentMethod] || sale.paymentMethod)}</td>
-              <td className="px-3 sm:px-4 py-3 text-right font-semibold text-slate-900 dark:text-white whitespace-nowrap">{formatMoney(sale.totalAmount)}</td>
+              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-300 hidden sm:table-cell">{sale.customerName}</td>
+              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell text-xs sm:text-sm">{t(paymentLabels[sale.paymentMethod] || sale.paymentMethod)}</td>
+              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-right font-semibold text-slate-900 dark:text-white whitespace-nowrap text-xs sm:text-sm">{formatMoney(sale.totalAmount)}</td>
             </tr>
           ))}
         </tbody>

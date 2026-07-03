@@ -120,7 +120,52 @@ export default function ProductsList() {
 
         {/* Products Grid/Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          {/* Mobile Card View */}
+          <div className="sm:hidden divide-y divide-slate-200 dark:divide-slate-800">
+            {loading ? (
+              <div className="p-8 text-center">
+                <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
+              </div>
+            ) : products.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 text-sm">
+                No products found.
+              </div>
+            ) : (
+              products.map(product => {
+                const isLowStock = product.quantity <= product.alertThreshold;
+                return (
+                  <Link
+                    key={product._id}
+                    to={`/products/${product._id}`}
+                    className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-slate-900 dark:text-white truncate">{product.name}</span>
+                        {isLowStock && <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-500" />}
+                      </div>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-xs text-slate-500">{product.category}</span>
+                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
+                          isLowStock 
+                            ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400' 
+                            : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400'
+                        }`}>
+                          {product.quantity} in stock
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white shrink-0">
+                      {product.price.toLocaleString()} MRU
+                    </span>
+                  </Link>
+                );
+              })
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <table className="w-full text-sm text-left hidden sm:table">
             <thead className="bg-white dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-medium border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-3 sm:px-6 py-4">Product Name</th>

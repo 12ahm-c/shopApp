@@ -45,7 +45,7 @@ export default function ShellLayout() {
   };
 
   const navLinkClassName = ({ isActive }) =>
-    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-all font-medium ${
+    `flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-all font-medium ${
       isActive ? 'text-blue-600 bg-blue-50 dark:bg-slate-800 dark:text-white' : ''
     }`;
 
@@ -124,13 +124,12 @@ export default function ShellLayout() {
         className={`fixed top-0 bottom-0 z-50 w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
           isRtl ? 'right-0 border-l' : 'left-0'
         } ${sidebarOpen ? 'translate-x-0' : isRtl ? 'translate-x-full' : '-translate-x-full'}`}
-        aria-label={t('activityLog.title')}
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-center justify-between px-4 h-20 pt-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex items-center justify-between px-4 h-16 pt-2 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
+            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
               S
             </div>
             <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
@@ -140,24 +139,24 @@ export default function ShellLayout() {
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
-            className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Fermer le menu"
           >
             <X className="w-5 h-5 text-slate-700 dark:text-slate-300" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto py-6">
+        <div className="flex-1 overflow-y-auto py-4">
           {sidebarContent}
         </div>
       </aside>
 
       {/* Top Navbar */}
-      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-5 z-30 mx-3 mt-5 rounded-b-xl">
-        <div className="flex items-center gap-3">
+      <header className="h-14 sm:h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-3 sm:px-6 shadow-sm sticky top-4 z-30 mx-2 sm:mx-3 mt-4 sm:mt-5 rounded-b-xl">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors md:hidden"
+            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors md:hidden"
             aria-label="Ouvrir le menu"
           >
             <Menu className="w-5 h-5 text-slate-700 dark:text-slate-300" />
@@ -166,53 +165,52 @@ export default function ShellLayout() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
               S
             </div>
-            <span className="font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white">
+            <span className="font-bold text-sm sm:text-lg tracking-tight text-slate-900 dark:text-white hidden sm:block">
               {storeName}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Link
             to="/notifications"
             className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title={t('notifications')}
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500" aria-hidden="true"></span>
+            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-blue-500" aria-hidden="true"></span>
           </Link>
 
           <button
             type="button"
             onClick={toggleLanguage}
-            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium transition-all"
+            className="flex items-center gap-1 px-2 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium transition-all"
           >
             <Globe className="w-4 h-4 shrink-0" />
-            <span className="uppercase text-xs sm:text-sm">{language}</span>
+            <span className="uppercase">{language}</span>
           </button>
 
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2.5 rounded-full bg-white text-slate-700 shadow-md hover:shadow-lg transition-all duration-200 border border-slate-200"
+            className="p-2 rounded-full bg-white text-slate-700 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-200"
             title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
-          <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+          <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-sm font-semibold text-slate-900 dark:text-white">{user.name}</span>
-            <button
-              type="button"
-              onClick={logout}
-              className="p-2 rounded-full hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors"
-              title={t('logout')}
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
+          <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hidden sm:block">{user.name}</span>
+
+          <button
+            type="button"
+            onClick={logout}
+            className="p-2 rounded-full hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors"
+            title={t('logout')}
+          >
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
         </div>
       </header>
 
@@ -224,7 +222,7 @@ export default function ShellLayout() {
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-auto p-4 sm:p-6">
+        <main className="flex-1 overflow-auto p-3 sm:p-6">
           <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Outlet />
           </div>
