@@ -127,7 +127,7 @@ export default function ShellLayout() {
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-center justify-between px-4 h-16 pt-2 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex items-center justify-between px-4 h-20 pt-6 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
               S
@@ -193,7 +193,7 @@ export default function ShellLayout() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-white text-slate-700 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-200"
+            className="p-2 rounded-full bg-white text-blue-600 shadow-md border border-slate-200 hover:shadow-lg transition-all duration-200"
             title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
