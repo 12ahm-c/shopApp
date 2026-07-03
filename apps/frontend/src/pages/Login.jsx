@@ -53,9 +53,9 @@ export default function Login() {
   return (
     <div dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#0a0e1a]">
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-blue-600/8 blur-[120px]" />
-        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] rounded-full bg-indigo-600/6 blur-[100px]" />
-        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] rounded-full bg-purple-600/5 blur-[80px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-blue-600/8 blur-[40px]" />
+        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] rounded-full bg-indigo-600/6 blur-[30px]" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] rounded-full bg-purple-600/5 blur-[25px]" />
       </div>
 
       <button
@@ -80,7 +80,7 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="bg-white/[0.03] backdrop-blur-2xl rounded-3xl border border-white/[0.06] p-8 shadow-2xl shadow-black/20">
+        <div className="bg-slate-900/80 rounded-3xl border border-white/[0.06] p-8 shadow-2xl shadow-black/20" style={{ WebkitBackdropFilter: 'none', backdropFilter: 'none' }}>
           {error && (
             <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
               {error}

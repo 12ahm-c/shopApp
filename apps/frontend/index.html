@@ -114,8 +114,8 @@
 
     <!-- Hide splash screen when React loads -->
     <script>
-      window.addEventListener('load', function() {
-        setTimeout(function() {
+      (function() {
+        function hideSplash() {
           var splash = document.getElementById('splash-screen');
           if (splash) {
             splash.classList.add('fade-out');
@@ -123,8 +123,17 @@
               splash.remove();
             }, 500);
           }
-        }, 1500);
-      });
+        }
+        // Use DOMContentLoaded for faster splash removal on Safari
+        // Fall back to load event if DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(hideSplash, 800);
+          });
+        } else {
+          setTimeout(hideSplash, 800);
+        }
+      })();
     </script>
   </body>
 </html>

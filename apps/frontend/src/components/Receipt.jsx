@@ -225,7 +225,7 @@ export default function Receipt({ data, showActions = true, storeOverrides = {} 
       >
         {/* Brand Header */}
         <div className="bg-gradient-to-br from-slate-800 via-slate-800 to-blue-900 px-6 pt-6 pb-5 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-sm mb-3">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/10 mb-3">
             <Store className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-extrabold tracking-wider text-white uppercase">
