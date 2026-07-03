@@ -128,7 +128,7 @@ export default function ShellLayout() {
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-center justify-between px-4 h-16 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex items-center justify-between px-4 h-20 pt-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
               S
@@ -152,7 +152,7 @@ export default function ShellLayout() {
       </aside>
 
       {/* Top Navbar */}
-      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-3 z-30 mx-3 mt-3 rounded-b-xl">
+      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-5 z-30 mx-3 mt-5 rounded-b-xl">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -203,10 +203,7 @@ export default function ShellLayout() {
           <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="flex flex-col items-end">
-              <span className="text-sm font-semibold text-slate-900 dark:text-white">{user.name}</span>
-              <span className="text-xs text-slate-500 uppercase tracking-wider">{role}</span>
-            </div>
+            <span className="text-sm font-semibold text-slate-900 dark:text-white">{user.name}</span>
             <button
               type="button"
               onClick={logout}
