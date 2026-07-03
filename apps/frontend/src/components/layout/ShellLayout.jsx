@@ -152,7 +152,7 @@ export default function ShellLayout() {
       </aside>
 
       {/* Top Navbar */}
-      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-2 z-30 mx-2 mt-2 rounded-b-xl">
+      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-3 z-30 mx-3 mt-3 rounded-b-xl">
         <div className="flex items-center gap-3">
           <button
             type="button"
