@@ -1,5 +1,5 @@
-const CACHE_NAME = 'shopmanager-v1';
-const PRECACHE_URLS = ['/', '/index.html'];
+const CACHE_NAME = 'shopmanager-v2';
+const PRECACHE_URLS = ['/', '/index.html', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

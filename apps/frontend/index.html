@@ -7,12 +7,124 @@
     <meta name="theme-color" content="#2563eb" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ShopManager" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="manifest" href="/manifest.json" />
     <title>ShopManager</title>
+    <style>
+      /* Splash Screen Styles */
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #1d4ed8 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+      }
+
+      #splash-screen.fade-out {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .splash-logo {
+        width: 120px;
+        height: 120px;
+        background: white;
+        border-radius: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .splash-logo-text {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 72px;
+        font-weight: 900;
+        color: #2563eb;
+        line-height: 1;
+      }
+
+      .splash-app-name {
+        margin-top: 24px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -0.5px;
+      }
+
+      .splash-tagline {
+        margin-top: 8px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .splash-loader {
+        margin-top: 40px;
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Hide splash when app loads */
+      .app-loaded #splash-screen {
+        opacity: 0;
+        visibility: hidden;
+      }
+    </style>
   </head>
   <body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+      <div class="splash-logo">
+        <span class="splash-logo-text">S</span>
+      </div>
+      <div class="splash-app-name">ShopManager</div>
+      <div class="splash-tagline">Gestion de Magasin</div>
+      <div class="splash-loader"></div>
+    </div>
+
+    <!-- React App Root -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Hide splash screen when React loads -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var splash = document.getElementById('splash-screen');
+          if (splash) {
+            splash.classList.add('fade-out');
+            setTimeout(function() {
+              splash.remove();
+            }, 500);
+          }
+        }, 1500);
+      });
+    </script>
   </body>
 </html>

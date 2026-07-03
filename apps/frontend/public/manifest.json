@@ -7,7 +7,16 @@
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "orientation": "any",
+  "scope": "/",
+  "lang": "fr",
+  "categories": ["business", "finance"],
   "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
