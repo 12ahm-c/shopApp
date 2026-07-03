@@ -152,7 +152,7 @@ export default function ShellLayout() {
       </aside>
 
       {/* Top Navbar */}
-      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-0 z-30">
+      <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-4 sm:px-6 shadow-sm sticky top-2 z-30 mx-2 mt-2 rounded-b-xl">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -166,7 +166,7 @@ export default function ShellLayout() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
               S
             </div>
-            <span className="font-bold text-base sm:text-lg tracking-tight hidden xs:block sm:block text-slate-900 dark:text-white">
+            <span className="font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-white">
               {storeName}
             </span>
           </div>
@@ -194,16 +194,16 @@ export default function ShellLayout() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-2.5 rounded-full bg-white text-slate-700 shadow-md hover:shadow-lg transition-all duration-200 border border-slate-200"
             title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
           >
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
 
-          <div className="hidden sm:block h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+          <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex flex-col items-end">
+            <div className="flex flex-col items-end">
               <span className="text-sm font-semibold text-slate-900 dark:text-white">{user.name}</span>
               <span className="text-xs text-slate-500 uppercase tracking-wider">{role}</span>
             </div>
