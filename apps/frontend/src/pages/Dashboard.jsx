@@ -20,54 +20,55 @@ import { dashboardApi } from '../api/dashboard';
 import useAuthStore from '../stores/authStore';
 import { formatMoney, formatDateTime } from '../lib/format';
 
-function StatCard({ icon: Icon, label, value, tone = 'green', trend, trendValue }) {
+function StatCard({ icon: Icon, label, value, tone = 'blue', trend, trendValue }) {
   const tones = {
-    green: 'bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400',
-    blue: 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400',
-    amber: 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400',
-    rose: 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400',
-    slate: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
-    emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400'
+    blue: 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20',
+    emerald: 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20',
+    amber: 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20',
+    rose: 'bg-rose-500/10 text-rose-400 ring-1 ring-rose-500/20',
+    slate: 'bg-white/5 text-slate-400 ring-1 ring-white/10',
+    cyan: 'bg-cyan-500/10 text-cyan-400 ring-1 ring-cyan-500/20'
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-800">
+    <div className="bg-white/[0.03] backdrop-blur-sm rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-colors">
       <div className="flex items-center justify-between">
-        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${tones[tone]}`}>
-          <Icon className="w-6 h-6" />
+        <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${tones[tone]}`}>
+          <Icon className="w-5 h-5" />
         </div>
         {trend && (
-          <div className={`flex items-center gap-0.5 text-xs font-semibold ${trend === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+          <div className={`flex items-center gap-0.5 text-xs font-semibold ${trend === 'up' ? 'text-emerald-400' : 'text-rose-400'}`}>
             {trend === 'up' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
             {trendValue}
           </div>
         )}
       </div>
       <div className="mt-3">
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
-        <p className="mt-0.5 text-xl font-bold text-slate-900 dark:text-white">{value}</p>
+        <p className="text-[13px] text-slate-500">{label}</p>
+        <p className="mt-0.5 text-xl font-bold text-white tabular-nums">{value}</p>
       </div>
     </div>
   );
 }
 
-function QuickActionCard({ icon: Icon, label, to, tone = 'green' }) {
+function QuickActionCard({ icon: Icon, label, to, tone = 'blue' }) {
   const tones = {
-    green: 'bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400',
-    blue: 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400',
-    amber: 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400',
-    rose: 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400'
+    blue: 'bg-blue-500/10 text-blue-400',
+    emerald: 'bg-emerald-500/10 text-emerald-400',
+    amber: 'bg-amber-500/10 text-amber-400',
+    rose: 'bg-rose-500/10 text-rose-400',
+    cyan: 'bg-cyan-500/10 text-cyan-400'
   };
 
   return (
     <Link
       to={to}
-      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-md transition-all active:scale-[0.97]`}
+      className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-200 active:scale-[0.97]"
     >
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${tones[tone]}`}>
-        <Icon className="w-6 h-6" />
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${tones[tone]}`}>
+        <Icon className="w-5 h-5" />
       </div>
-      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">{label}</span>
+      <span className="text-[11px] font-medium text-slate-400 text-center">{label}</span>
     </Link>
   );
 }
@@ -78,32 +79,32 @@ function RecentSalesList({ sales }) {
   if (!sales.length) {
     return (
       <div className="p-8 text-center">
-        <ShoppingBag className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <ShoppingBag className="w-10 h-10 mx-auto text-slate-700 mb-3" />
         <p className="text-sm text-slate-500">{t('dashboard.noSales')}</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-slate-100 dark:divide-slate-800">
+    <div className="divide-y divide-white/5">
       {sales.map((sale) => (
         <Link
           key={sale._id}
           to={`/invoices/${sale._id}`}
-          className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors"
+          className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center shrink-0">
-              <ReceiptText className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+              <ReceiptText className="w-5 h-5 text-blue-400" />
             </div>
             <div className="min-w-0">
-              <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">#{sale.invoiceNumber}</p>
+              <p className="font-semibold text-sm text-white truncate">#{sale.invoiceNumber}</p>
               <p className="text-xs text-slate-500 truncate">{sale.customerName}</p>
             </div>
           </div>
           <div className="text-right shrink-0">
-            <p className="font-bold text-sm text-slate-900 dark:text-white">{formatMoney(sale.totalAmount)}</p>
-            <p className="text-[10px] text-slate-500">{formatDateTime(sale.createdAt)}</p>
+            <p className="font-bold text-sm text-white tabular-nums">{formatMoney(sale.totalAmount)}</p>
+            <p className="text-[10px] text-slate-600">{formatDateTime(sale.createdAt)}</p>
           </div>
         </Link>
       ))}
@@ -117,25 +118,25 @@ function LowStockList({ products }) {
   if (!products.length) {
     return (
       <div className="p-8 text-center">
-        <Package className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <Package className="w-10 h-10 mx-auto text-slate-700 mb-3" />
         <p className="text-sm text-slate-500">{t('dashboard.noStockAlerts')}</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-slate-100 dark:divide-slate-800">
+    <div className="divide-y divide-white/5">
       {products.map((product) => (
         <Link
           key={product._id}
           to={`/products/${product._id}`}
-          className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors"
+          className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors"
         >
           <div className="min-w-0">
-            <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{product.name}</p>
+            <p className="font-medium text-sm text-white truncate">{product.name}</p>
             <p className="text-xs text-slate-500">{t('dashboard.threshold')}: {product.alertThreshold}</p>
           </div>
-          <span className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+          <span className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-lg bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20">
             {product.quantity} {t('dashboard.remaining')}
           </span>
         </Link>
@@ -150,19 +151,19 @@ function ActivityList({ activity }) {
   if (!activity.length) {
     return (
       <div className="p-8 text-center">
-        <Activity className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <Activity className="w-10 h-10 mx-auto text-slate-700 mb-3" />
         <p className="text-sm text-slate-500">{t('dashboard.noActivity')}</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-slate-100 dark:divide-slate-800">
+    <div className="divide-y divide-white/5">
       {activity.map((item) => (
-        <div key={item._id} className="px-4 py-3">
+        <div key={item._id} className="px-4 py-3.5">
           <div className="flex items-center justify-between gap-3">
-            <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{item.details}</p>
-            <span className="text-xs text-slate-500 shrink-0">{formatDateTime(item.timestamp)}</span>
+            <p className="font-medium text-sm text-white truncate">{item.details}</p>
+            <span className="text-xs text-slate-600 shrink-0">{formatDateTime(item.timestamp)}</span>
           </div>
           <p className="mt-1 text-xs text-slate-500">{item.userName} - {item.action}</p>
         </div>
@@ -222,17 +223,18 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg shadow-green-500/20">
-        <div className="flex items-center justify-between">
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-400 rounded-2xl p-5 text-white shadow-xl shadow-blue-500/20">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMGg0MHY0MEgwem0zMCAyNWE5IDkgMCAxIDAtMTggMCA5IDkgMCAwIDAgMTggMHoiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IGZpbGw9InVybCgjZykiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiLz48L3N2Zz4=')] opacity-50" />
+        <div className="relative flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold">{getGreeting()}</h1>
-            <p className="mt-1 text-green-100 text-sm">{t('dashboard.welcomeBack')}</p>
+            <h1 className="text-xl font-bold tracking-tight">{getGreeting()}</h1>
+            <p className="mt-1 text-blue-100 text-sm">{t('dashboard.welcomeBack')}</p>
           </div>
           <Link
             to="/pos"
-            className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors active:scale-[0.95]"
+            className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/30 transition-colors active:scale-[0.95]"
           >
             <ShoppingCart className="w-6 h-6" />
           </Link>
@@ -240,13 +242,13 @@ export default function Dashboard() {
       </div>
 
       {dashboardState.status === 'loading' && (
-        <div className="flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-12 dark:border-slate-800 dark:bg-slate-900">
-          <Loader2 className="h-7 w-7 animate-spin text-green-500" />
+        <div className="flex items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-12">
+          <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
         </div>
       )}
 
       {dashboardState.status === 'error' && (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-400">
           {dashboardState.error}
         </div>
       )}
@@ -255,8 +257,8 @@ export default function Dashboard() {
         <>
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-3">
-            <StatCard icon={CreditCard} label={t('dashboard.todaySales')} value={formatMoney(stats.todaySales)} tone="green" trend="up" trendValue="+12%" />
-            <StatCard icon={ReceiptText} label={t('dashboard.todayInvoices')} value={stats.todayOrders} tone="blue" />
+            <StatCard icon={CreditCard} label={t('dashboard.todaySales')} value={formatMoney(stats.todaySales)} tone="blue" trend="up" trendValue="+12%" />
+            <StatCard icon={ReceiptText} label={t('dashboard.todayInvoices')} value={stats.todayOrders} tone="cyan" />
             {isAdmin ? (
               <>
                 <StatCard icon={Package} label={t('dashboard.stockProducts')} value={stats.totalProducts} tone="slate" />
@@ -276,16 +278,16 @@ export default function Dashboard() {
               <StatCard icon={CreditCard} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" trend="up" trendValue="+8%" />
               <StatCard icon={Users} label={t('dashboard.customers')} value={stats.totalCustomers} tone="blue" />
               <StatCard icon={Activity} label={t('dashboard.clientDebts')} value={formatMoney(stats.outstandingDebt)} tone="rose" />
-              <StatCard icon={TrendingUp} label={t('dashboard.profits')} value={formatMoney(stats.monthlySales - (stats.totalExpenses || 0))} tone="green" />
+              <StatCard icon={TrendingUp} label={t('dashboard.profits')} value={formatMoney(stats.monthlySales - (stats.totalExpenses || 0))} tone="emerald" />
             </div>
           )}
 
           {/* Quick Actions */}
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">{t('dashboard.quickActions')}</h2>
+            <h2 className="text-[15px] font-semibold text-white mb-3">{t('dashboard.quickActions')}</h2>
             <div className="grid grid-cols-4 gap-3">
-              <QuickActionCard icon={ShoppingCart} label={t('pos.title')} to="/pos" tone="green" />
-              <QuickActionCard icon={Package} label={t('products')} to="/products" tone="blue" />
+              <QuickActionCard icon={ShoppingCart} label={t('pos.title')} to="/pos" tone="blue" />
+              <QuickActionCard icon={Package} label={t('products')} to="/products" tone="cyan" />
               <QuickActionCard icon={ReceiptText} label={t('invoices')} to="/invoices" tone="amber" />
               {isAdmin && (
                 <QuickActionCard icon={Users} label={t('customers')} to="/admin/customers" tone="rose" />
@@ -294,10 +296,10 @@ export default function Dashboard() {
           </div>
 
           {/* Recent Sales */}
-          <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-              <h2 className="font-bold text-slate-900 dark:text-white">{t('dashboard.recentSales')}</h2>
-              <Link className="text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700" to="/invoices">
+          <section className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+              <h2 className="font-semibold text-white">{t('dashboard.recentSales')}</h2>
+              <Link className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors" to="/invoices">
                 {t('dashboard.viewAll')}
               </Link>
             </div>
@@ -307,16 +309,16 @@ export default function Dashboard() {
           {/* Admin Sections */}
           {isAdmin && (
             <div className="grid gap-4 md:grid-cols-2">
-              <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
-                <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                  <h2 className="font-bold text-slate-900 dark:text-white">{t('dashboard.lowStockAlerts')}</h2>
+              <section className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
+                <div className="px-4 py-3 border-b border-white/5">
+                  <h2 className="font-semibold text-white">{t('dashboard.lowStockAlerts')}</h2>
                 </div>
                 <LowStockList products={dashboardState.data.lowStockProducts ?? []} />
               </section>
 
-              <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
-                <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                  <h2 className="font-bold text-slate-900 dark:text-white">{t('dashboard.recentActivity')}</h2>
+              <section className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
+                <div className="px-4 py-3 border-b border-white/5">
+                  <h2 className="font-semibold text-white">{t('dashboard.recentActivity')}</h2>
                 </div>
                 <ActivityList activity={dashboardState.data.recentActivity ?? []} />
               </section>

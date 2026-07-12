@@ -77,7 +77,7 @@ export default function ProductForm() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-green-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
       </div>
     );
   }
@@ -87,25 +87,25 @@ export default function ProductForm() {
       <div className="flex items-center gap-4">
         <button 
           onClick={() => navigate('/products')}
-          className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-500"
+          className="p-2 rounded-xl hover:bg-white/5 transition-colors text-slate-400"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
             {isEdit ? 'Edit Product' : 'Add New Product'}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-slate-500">
             {isEdit ? 'Update the product details below.' : 'Fill out the details to create a new product.'}
           </p>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+      <div className="bg-white/[0.03] rounded-2xl border border-white/5 p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <label className="block space-y-2 md:col-span-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Product Name *</span>
+              <span className="text-sm font-medium text-slate-300">Product Name *</span>
               <input 
                 type="text" 
                 name="name" 
@@ -114,12 +114,12 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={100}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Category *</span>
+              <span className="text-sm font-medium text-slate-300">Category *</span>
               <input 
                 type="text" 
                 name="category" 
@@ -129,7 +129,7 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={50}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none"
               />
               <datalist id="categories">
                 <option value="Épicerie" />
@@ -140,7 +140,7 @@ export default function ProductForm() {
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Price (MRU) *</span>
+              <span className="text-sm font-medium text-slate-300">Price (MRU) *</span>
               <input 
                 type="number" 
                 name="price" 
@@ -148,12 +148,12 @@ export default function ProductForm() {
                 value={formData.price} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none tabular-nums"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Initial Quantity *</span>
+              <span className="text-sm font-medium text-slate-300">Initial Quantity *</span>
               <input 
                 type="number" 
                 name="quantity" 
@@ -161,34 +161,34 @@ export default function ProductForm() {
                 value={formData.quantity} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none tabular-nums"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Low Stock Alert Threshold</span>
+              <span className="text-sm font-medium text-slate-300">Low Stock Alert Threshold</span>
               <input 
                 type="number" 
                 name="alertThreshold" 
                 min="0"
                 value={formData.alertThreshold} 
                 onChange={handleChange} 
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none tabular-nums"
               />
             </label>
           </div>
 
           {error && (
-            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-900/50 dark:text-red-400">
+            <div className="p-3 text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl">
               {error}
             </div>
           )}
 
-          <div className="flex items-center justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-end pt-4 border-t border-white/5">
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-sm shadow-green-500/20 font-medium transition-all disabled:opacity-70"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl shadow-lg shadow-blue-500/25 font-semibold transition-all disabled:opacity-70 active:scale-[0.98]"
             >
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {isEdit ? 'Update Product' : 'Create Product'}

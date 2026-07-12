@@ -62,7 +62,7 @@ export default function Customers() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
             {t('customers')}
           </h1>
           <p className="text-slate-500 text-sm mt-1">Gérez vos clients et leurs dettes.</p>
@@ -70,33 +70,33 @@ export default function Customers() {
         <button
           type="button"
           onClick={() => setIsAddCustomerOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl shadow-sm transition-all shadow-green-500/20 active:scale-[0.97]"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all active:scale-[0.97]"
         >
           <Plus className="w-4 h-4" />
           Nouveau client
         </button>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-4">
+      <div className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
+        <div className="p-4 border-b border-white/5 flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Rechercher par nom ou téléphone..."
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              className="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/5 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           {/* Mobile Card View */}
-          <div className="sm:hidden divide-y divide-slate-200 dark:divide-slate-800">
+          <div className="sm:hidden divide-y divide-white/5">
             {loading ? (
               <div className="p-8 text-center">
-                <Loader2 className="w-6 h-6 animate-spin mx-auto text-green-500" />
+                <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
               </div>
             ) : filteredCustomers.length === 0 ? (
               <div className="p-8 text-center text-slate-500 text-sm">
@@ -104,10 +104,10 @@ export default function Customers() {
               </div>
             ) : (
               filteredCustomers.map(customer => (
-                <div key={customer._id} className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50">
+                <div key={customer._id} className="px-4 py-3 hover:bg-white/[0.03]">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-900 dark:text-white text-sm">{customer.name}</div>
-                    <span className={`font-medium text-sm ${customer.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'}`}>
+                    <div className="font-medium text-white text-sm">{customer.name}</div>
+                    <span className={`font-medium text-sm tabular-nums ${customer.totalDebt > 0 ? 'text-rose-400' : 'text-white'}`}>
                       {customer.totalDebt.toLocaleString()} MRU
                     </span>
                   </div>
@@ -116,13 +116,13 @@ export default function Customers() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => openDebtModal(customer)}
-                        className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors active:scale-[0.97]"
+                        className="px-3 py-1.5 text-xs bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg transition-colors active:scale-[0.97]"
                       >
                         Dette
                       </button>
                       <Link
                         to={`/admin/customers/${customer._id}`}
-                        className="px-3 py-1.5 flex items-center justify-center text-xs bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-600 dark:text-green-400 rounded-lg transition-colors active:scale-[0.97]"
+                        className="px-3 py-1.5 flex items-center justify-center text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors active:scale-[0.97]"
                       >
                         Détails
                       </Link>
@@ -135,7 +135,7 @@ export default function Customers() {
 
           {/* Desktop Table View */}
           <table className="w-full text-sm text-left hidden sm:table">
-            <thead className="bg-slate-50 dark:bg-slate-950/50 text-slate-500 dark:text-slate-400 font-medium">
+            <thead className="text-slate-400 font-medium">
               <tr>
                 <th className="px-6 py-4 font-medium">Nom</th>
                 <th className="px-6 py-4 font-medium">Téléphone</th>
@@ -143,11 +143,11 @@ export default function Customers() {
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+            <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-12 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-green-500" />
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
                   </td>
                 </tr>
               ) : filteredCustomers.length === 0 ? (
@@ -158,13 +158,13 @@ export default function Customers() {
                 </tr>
               ) : (
                 filteredCustomers.map(customer => (
-                  <tr key={customer._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                  <tr key={customer._id} className="hover:bg-white/[0.03] transition-colors">
                     <td className="px-6 py-4 min-w-[120px]">
-                      <div className="font-medium text-slate-900 dark:text-white text-sm">{customer.name}</div>
+                      <div className="font-medium text-white text-sm">{customer.name}</div>
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{formatPhoneNumber(customer.phone) || '-'}</td>
+                    <td className="px-6 py-4 text-slate-300">{formatPhoneNumber(customer.phone) || '-'}</td>
                     <td className="px-6 py-4 text-right whitespace-nowrap">
-                      <span className={`font-medium ${customer.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'}`}>
+                      <span className={`font-medium tabular-nums ${customer.totalDebt > 0 ? 'text-rose-400' : 'text-white'}`}>
                         {customer.totalDebt.toLocaleString()}
                       </span>
                     </td>
@@ -172,13 +172,13 @@ export default function Customers() {
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => openDebtModal(customer)}
-                          className="px-3 py-1 text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors"
+                          className="px-3 py-1 text-sm bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg transition-colors"
                         >
                           Dette
                         </button>
                         <Link
                           to={`/admin/customers/${customer._id}`}
-                          className="px-3 py-1 flex items-center justify-center text-sm bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-600 dark:text-green-400 rounded-md transition-colors"
+                          className="px-3 py-1 flex items-center justify-center text-sm bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors"
                         >
                           Détails
                         </Link>
@@ -230,20 +230,20 @@ function AddCustomerModal({ onClose, onSubmit }) {
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Nom complet</span>
-        <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+        <span className="text-sm font-medium text-slate-300">Nom complet</span>
+        <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Téléphone (optionnel)</span>
-        <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+        <span className="text-sm font-medium text-slate-300">Téléphone (optionnel)</span>
+        <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Dette initiale (MRU)</span>
-        <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+        <span className="text-sm font-medium text-slate-300">Dette initiale (MRU)</span>
+        <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none tabular-nums" />
       </label>
       <div className="flex justify-end gap-3 mt-6 pb-4">
-        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-600 hover:bg-slate-100 rounded-lg dark:text-slate-300 dark:hover:bg-slate-800">Annuler</button>
-        <button type="submit" disabled={submitting} className="px-4 py-3 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 flex gap-2 items-center disabled:opacity-70">
+        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-400 hover:bg-white/5 rounded-lg">Annuler</button>
+        <button type="submit" disabled={submitting} className="px-4 py-3 text-sm bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:from-blue-500 hover:to-cyan-400 flex gap-2 items-center disabled:opacity-70 shadow-lg shadow-blue-500/25">
           {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Créer
         </button>
       </div>
@@ -258,11 +258,11 @@ function AddCustomerModal({ onClose, onSubmit }) {
       </BottomSheet>
 
       {/* Desktop Modal */}
-      <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-slate-950/50 p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-md rounded-2xl bg-[#0d1424] p-6 shadow-xl border border-white/5">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Nouveau client</h2>
-            <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X className="w-5 h-5" /></button>
+            <h2 className="text-lg font-semibold text-white">Nouveau client</h2>
+            <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-white/5"><X className="w-5 h-5" /></button>
           </div>
           {formContent}
         </div>
@@ -297,18 +297,18 @@ function ManageDebtModal({ customer, onClose, onSubmit }) {
 
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 mb-4">
-        <span className="text-sm text-slate-500 block mb-1">Dette actuelle</span>
-        <span className="text-xl font-bold text-slate-900 dark:text-white">{customer.totalDebt.toLocaleString()} MRU</span>
+      <div className="p-3 bg-white/[0.03] rounded-xl border border-white/5 mb-4">
+        <span className="text-sm text-slate-400 block mb-1">Dette actuelle</span>
+        <span className="text-xl font-bold text-white tabular-nums">{customer.totalDebt.toLocaleString()} MRU</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'increase' ? 'border-rose-500 bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'increase' ? 'border-rose-500/30 bg-rose-500/10 text-rose-400' : 'border-white/5 text-slate-400 hover:bg-white/[0.03]'}`}>
           <input type="radio" name="type" value="increase" checked={formData.type === 'increase'} onChange={() => setFormData({...formData, type: 'increase'})} className="sr-only" />
           <ArrowUpRight className="w-5 h-5" />
           <span className="text-sm font-medium">Augmenter</span>
         </label>
-        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'decrease' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
+        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'decrease' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-white/5 text-slate-400 hover:bg-white/[0.03]'}`}>
           <input type="radio" name="type" value="decrease" checked={formData.type === 'decrease'} onChange={() => setFormData({...formData, type: 'decrease'})} className="sr-only" />
           <ArrowDownRight className="w-5 h-5" />
           <span className="text-sm font-medium">Rembourser</span>
@@ -316,20 +316,20 @@ function ManageDebtModal({ customer, onClose, onSubmit }) {
       </div>
 
       <label className="block space-y-2 mt-4">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Montant (MRU)</span>
-        <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+        <span className="text-sm font-medium text-slate-300">Montant (MRU)</span>
+        <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none tabular-nums" />
       </label>
 
-      {error && <p className="text-sm text-rose-600 dark:text-rose-400 mt-2">{error}</p>}
+      {error && <p className="text-sm text-rose-400 mt-2">{error}</p>}
 
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Note (optionnel)</span>
-        <input type="text" value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} placeholder="Ex: Paiement en espèces" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+        <span className="text-sm font-medium text-slate-300">Note (optionnel)</span>
+        <input type="text" value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} placeholder="Ex: Paiement en espèces" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
       </label>
 
       <div className="flex justify-end gap-3 mt-6 pb-4">
-        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-600 hover:bg-slate-100 rounded-lg dark:text-slate-300 dark:hover:bg-slate-800">Annuler</button>
-        <button type="submit" disabled={submitting} className={`px-4 py-3 text-sm text-white rounded-lg flex gap-2 items-center disabled:opacity-70 ${formData.type === 'increase' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700'}`}>
+        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-400 hover:bg-white/5 rounded-lg">Annuler</button>
+        <button type="submit" disabled={submitting} className={`px-4 py-3 text-sm text-white rounded-lg flex gap-2 items-center disabled:opacity-70 shadow-lg ${formData.type === 'increase' ? 'bg-rose-600 hover:bg-rose-500 shadow-rose-500/25' : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/25'}`}>
           {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Valider
         </button>
       </div>
@@ -344,11 +344,11 @@ function ManageDebtModal({ customer, onClose, onSubmit }) {
       </BottomSheet>
 
       {/* Desktop Modal */}
-      <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-slate-950/50 p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-md rounded-2xl bg-[#0d1424] p-6 shadow-xl border border-white/5">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Gérer la dette - {customer.name}</h2>
-            <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X className="w-5 h-5" /></button>
+            <h2 className="text-lg font-semibold text-white">Gérer la dette - {customer.name}</h2>
+            <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-white/5"><X className="w-5 h-5" /></button>
           </div>
           {formContent}
         </div>

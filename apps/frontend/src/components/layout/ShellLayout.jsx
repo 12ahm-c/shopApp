@@ -88,67 +88,65 @@ export default function ShellLayout() {
   const isMoreActive = moreNavItems.some(item => location.pathname === item.to);
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col bg-slate-50 dark:bg-slate-900 h-dvh">
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col bg-[#0a0f1a] min-h-dvh">
       {/* ========== MOBILE HEADER ========== */}
-      <header className="md:hidden flex items-center justify-between px-4 h-12 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0 z-10 safe-area-top">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center text-white">
-            <Store className="w-4 h-4" />
+      <header className="md:hidden flex items-center justify-between px-5 h-14 bg-[#0a0f1a]/80 backdrop-blur-xl border-b border-white/5 shrink-0 z-10 safe-area-top">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+            <Store className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-sm text-slate-900 dark:text-white">{storeName}</span>
+          <span className="font-semibold text-[15px] text-white">{storeName}</span>
         </div>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setShowNotifications(true)}
-            className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
           >
-            <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500"></span>
+            <Bell className="w-5 h-5 text-slate-400" />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
           </button>
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-600 dark:text-slate-400" /> : <Moon className="w-5 h-5 text-slate-600 dark:text-slate-400" />}
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-400" /> : <Moon className="w-5 h-5 text-slate-400" />}
           </button>
         </div>
       </header>
 
       {/* ========== MOBILE MAIN ========== */}
-      <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-4 pb-20 scrollbar-hide">
+      <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-5 pb-24 scrollbar-hide">
         <Outlet />
       </main>
 
       {/* ========== DESKTOP LAYOUT ========== */}
-      <header className="hidden md:flex h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 items-center justify-between px-6 shadow-sm shrink-0 z-10">
+      <header className="hidden md:flex h-16 border-b border-white/5 bg-[#0a0f1a]/80 backdrop-blur-xl items-center justify-between px-6 shrink-0 z-10">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-green-500/25">
-              <Store className="w-5 h-5" />
-            </div>
-            <span className="font-bold-lg tracking-tight text-slate-900 dark:text-white">
-              {storeName}
-            </span>
+          <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+            <Store className="w-5 h-5 text-white" />
           </div>
+          <span className="font-bold text-lg tracking-tight text-white">
+            {storeName}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setShowNotifications(true)}
-            className="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
             title={t('notifications')}
           >
-            <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500"></span>
+            <Bell className="w-5 h-5 text-slate-400" />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
           </button>
 
           <button
             type="button"
             onClick={toggleLanguage}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium transition-all text-slate-600 dark:text-slate-400"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-sm font-medium transition-colors text-slate-400"
           >
             <Globe className="w-4 h-4 shrink-0" />
             <span className="uppercase">{language}</span>
@@ -157,25 +155,25 @@ export default function ShellLayout() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
             title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-600 dark:text-slate-400" /> : <Moon className="w-5 h-5 text-slate-600 dark:text-slate-400" />}
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-400" /> : <Moon className="w-5 h-5 text-slate-400" />}
           </button>
 
-          <div className="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+          <div className="h-6 w-px bg-white/10 mx-1"></div>
 
-          <div className="flex items-center gap-2 pl-2">
-            <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center">
+          <div className="flex items-center gap-2.5 pl-1">
+            <div className="w-8 h-8 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center ring-1 ring-blue-500/20">
               <User className="w-4 h-4" />
             </div>
-            <span className="text-sm font-semibold text-slate-900 dark:text-white">{user.name}</span>
+            <span className="text-sm font-medium text-slate-200">{user.name}</span>
           </div>
 
           <button
             type="button"
             onClick={logout}
-            className="p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors text-slate-600 dark:text-slate-400"
+            className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/10 hover:text-red-400 transition-colors text-slate-400"
             title={t('logout')}
           >
             <LogOut className="w-5 h-5" />
@@ -189,90 +187,96 @@ export default function ShellLayout() {
         </div>
       </main>
 
-      {/* ========== BOTTOM TAB BAR (fixed) ========== */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 z-40 safe-area-bottom">
-        <div className="flex items-center h-14 px-1">
-          {mainNavItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.to ||
-              (item.to === (role === 'admin' ? '/admin' : '/employee') && location.pathname === '/admin');
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-14 transition-all active:scale-[0.92] ${
-                  isActive
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-slate-400 dark:text-slate-500'
-                }`}
-              >
-                <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-green-50 dark:bg-green-900/20' : ''}`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-medium leading-tight">{item.label}</span>
-              </Link>
-            );
-          })}
+      {/* ========== BOTTOM TAB BAR ========== */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 safe-area-bottom">
+        <div className="bg-[#0a0f1a]/90 backdrop-blur-xl border-t border-white/5">
+          <div className="flex items-center h-16 px-2">
+            {mainNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.to ||
+                (item.to === (role === 'admin' ? '/admin' : '/employee') && location.pathname === '/admin');
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
+                    isActive
+                      ? 'text-blue-400'
+                      : 'text-slate-500 active:text-slate-300'
+                  }`}
+                >
+                  <div className={`p-2 rounded-xl transition-all duration-200 ${
+                    isActive ? 'bg-blue-500/10 shadow-lg shadow-blue-500/10' : ''
+                  }`}>
+                    <Icon className="w-5 h-5" strokeWidth={isActive ? 2.2 : 1.8} />
+                  </div>
+                  <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+                </Link>
+              );
+            })}
 
-          <button
-            type="button"
-            onClick={() => setShowMoreMenu(true)}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-14 transition-all active:scale-[0.92] ${
-              isMoreActive
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-slate-400 dark:text-slate-500'
-            }`}
-          >
-            <div className={`p-1.5 rounded-xl transition-all ${isMoreActive ? 'bg-green-50 dark:bg-green-900/20' : ''}`}>
-              <MoreHorizontal className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] font-medium leading-tight">{t('more')}</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setShowMoreMenu(true)}
+              className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
+                isMoreActive
+                  ? 'text-blue-400'
+                  : 'text-slate-500 active:text-slate-300'
+              }`}
+            >
+              <div className={`p-2 rounded-xl transition-all duration-200 ${
+                isMoreActive ? 'bg-blue-500/10 shadow-lg shadow-blue-500/10' : ''
+              }`}>
+                <MoreHorizontal className="w-5 h-5" strokeWidth={isMoreActive ? 2.2 : 1.8} />
+              </div>
+              <span className="text-[10px] font-medium leading-tight">{t('more')}</span>
+            </button>
+          </div>
         </div>
       </nav>
 
       {/* ========== NOTIFICATIONS PANEL ========== */}
       {showNotifications && (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-50 animate-fade-in">
           <div
-            className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowNotifications(false)}
           />
-          <div className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-slate-950 shadow-2xl flex flex-col animate-slide-left">
-            <div className="flex items-center justify-between px-5 h-14 border-b border-slate-200 dark:border-slate-800 shrink-0">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('notifications')}</h2>
+          <div className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-[#0d1424] border-l border-white/5 shadow-2xl flex flex-col animate-slide-left">
+            <div className="flex items-center justify-between px-5 h-14 border-b border-white/5 shrink-0 safe-area-top">
+              <h2 className="text-lg font-bold text-white">{t('notifications')}</h2>
               <button
                 type="button"
                 onClick={() => setShowNotifications(false)}
-                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-[0.95]"
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
               >
-                <X className="w-5 h-5 text-slate-500" />
+                <X className="w-5 h-5 text-slate-400" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto">
               {loadingNotifs ? (
                 <div className="flex items-center justify-center p-10">
-                  <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
               ) : notifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-10 text-slate-400">
-                  <Bell className="w-12 h-12 mb-3 opacity-30" />
+                <div className="flex flex-col items-center justify-center p-10 text-slate-500">
+                  <Bell className="w-12 h-12 mb-3 opacity-20" />
                   <p className="text-sm">{t('notification.noNotifications')}</p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                <div className="divide-y divide-white/5">
                   {notifications.map((notif) => (
-                    <div key={notif._id} className="px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                    <div key={notif._id} className="px-5 py-4 hover:bg-white/5 transition-colors">
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <Bell className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                          <Bell className="w-4 h-4 text-blue-400" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-slate-900 dark:text-white line-clamp-2">{notif.message}</p>
+                          <p className="text-sm font-medium text-slate-200 line-clamp-2">{notif.message}</p>
                           <p className="text-xs text-slate-500 mt-1">{formatDateTime(notif.createdAt)}</p>
                         </div>
                         {!notif.read && (
-                          <div className="w-2 h-2 rounded-full bg-green-500 shrink-0 mt-2"></div>
+                          <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2 shadow-lg shadow-blue-500/50"></div>
                         )}
                       </div>
                     </div>
@@ -286,24 +290,24 @@ export default function ShellLayout() {
 
       {/* ========== PLUS MENU ========== */}
       {showMoreMenu && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 md:hidden animate-fade-in">
           <div
-            className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowMoreMenu(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-slate-950 rounded-t-3xl max-h-[70vh] flex flex-col animate-slide-up">
+          <div className="absolute bottom-0 left-0 right-0 bg-[#0d1424] border-t border-white/5 rounded-t-3xl max-h-[70vh] flex flex-col animate-slide-up">
             <div className="flex items-center justify-center pt-3 pb-2">
-              <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
+              <div className="w-10 h-1 rounded-full bg-white/10" />
             </div>
 
-            <div className="flex items-center justify-between px-5 pb-4 border-b border-slate-200 dark:border-slate-800">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('more')}</h2>
+            <div className="flex items-center justify-between px-5 pb-4 border-b border-white/5">
+              <h2 className="text-lg font-bold text-white">{t('more')}</h2>
               <button
                 type="button"
                 onClick={() => setShowMoreMenu(false)}
-                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-[0.95]"
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
               >
-                <X className="w-5 h-5 text-slate-500" />
+                <X className="w-5 h-5 text-slate-400" />
               </button>
             </div>
 
@@ -317,10 +321,10 @@ export default function ShellLayout() {
                       key={item.to}
                       to={item.to}
                       onClick={() => setShowMoreMenu(false)}
-                      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all active:scale-[0.95] ${
+                      className={`flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl transition-all duration-200 ${
                         isActive
-                          ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                          : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20'
+                          : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200'
                       }`}
                     >
                       <Icon className="w-6 h-6" />
@@ -332,7 +336,7 @@ export default function ShellLayout() {
                 <button
                   type="button"
                   onClick={() => { toggleLanguage(); setShowMoreMenu(false); }}
-                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.95]"
+                  className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200 transition-all duration-200"
                 >
                   <Globe className="w-6 h-6" />
                   <span className="text-xs font-medium text-center leading-tight">{language === 'fr' ? 'العربية' : 'Français'}</span>
@@ -341,7 +345,7 @@ export default function ShellLayout() {
                 <button
                   type="button"
                   onClick={() => { logout(); setShowMoreMenu(false); }}
-                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all active:scale-[0.95]"
+                  className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all duration-200"
                 >
                   <LogOut className="w-6 h-6" />
                   <span className="text-xs font-medium text-center leading-tight">{t('logout')}</span>

@@ -51,25 +51,28 @@ export default function Login() {
   };
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#0a1a12]">
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#060a14]">
+      {/* Background orbs */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-green-600/8 blur-[40px]" />
-        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] rounded-full bg-emerald-600/6 blur-[30px]" />
-        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] rounded-full bg-teal-600/5 blur-[25px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-blue-600/8 blur-[120px]" />
+        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] rounded-full bg-cyan-600/6 blur-[100px]" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] rounded-full bg-indigo-600/5 blur-[80px]" />
       </div>
 
+      {/* Language toggle */}
       <button
         type="button"
         onClick={toggleLanguage}
-        className={`absolute top-5 ${isRtl ? 'left-5' : 'right-5'} z-20 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all text-sm`}
+        className={`absolute top-5 ${isRtl ? 'left-5' : 'right-5'} z-20 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all text-sm backdrop-blur-sm`}
       >
         <Globe className="w-4 h-4" />
         {isRtl ? 'FR' : 'ع'}
       </button>
 
       <div className="relative z-10 w-full max-w-[420px] mx-4">
+        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 mb-5 shadow-lg shadow-green-500/25">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 mb-5 shadow-xl shadow-blue-500/25">
             <Store className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">
@@ -80,9 +83,10 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="bg-slate-900/80 rounded-3xl border border-white/[0.06] p-8 shadow-2xl shadow-black/20" style={{ WebkitBackdropFilter: 'none', backdropFilter: 'none' }}>
+        {/* Login card */}
+        <div className="bg-white/[0.03] backdrop-blur-2xl rounded-3xl border border-white/[0.06] p-8 shadow-2xl shadow-black/40">
           {error && (
-            <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <div className="mb-6 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
               {error}
             </div>
           )}
@@ -102,7 +106,7 @@ export default function Login() {
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder={isRtl ? '33 44 55 66' : '33 44 55 66'}
                   required
-                  className={`w-full py-3.5 ${isRtl ? 'pr-20 pl-4' : 'pl-20 pr-4'} rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/40 transition-all text-sm`}
+                  className={`w-full py-3.5 ${isRtl ? 'pr-20 pl-4' : 'pl-20 pr-4'} rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all text-sm`}
                 />
               </div>
             </div>
@@ -117,7 +121,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full py-3.5 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/40 transition-all text-sm"
+                  className="w-full py-3.5 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all text-sm"
                 />
                 <button
                   type="button"
@@ -133,7 +137,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 mt-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-medium rounded-xl shadow-lg shadow-green-600/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 text-sm"
+              className="w-full py-3.5 mt-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/25 transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 text-sm"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

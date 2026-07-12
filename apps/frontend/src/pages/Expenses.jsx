@@ -74,48 +74,48 @@ export default function Expenses() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-white">
             {t('expenses.title')}
           </h1>
           <p className="text-slate-500 text-sm mt-1">{t('expenses.description')}</p>
         </div>
         <button
           onClick={() => setIsAddOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl shadow-sm transition-all shadow-green-500/20 active:scale-[0.97]"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all active:scale-[0.97]"
         >
           <Plus className="w-4 h-4" />
           {t('expenses.addButton')}
         </button>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800">
+      <div className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
+        <div className="p-4 border-b border-white/5">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t('expenses.searchPlaceholder')}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              className="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/5 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
         </div>
 
         {filteredExpenses.length > 0 && (
-          <div className="px-4 py-3 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800">
-            <span className="text-sm text-slate-500">
-              {t('expenses.totalExpenses')}: <strong className="text-slate-900 dark:text-white">{totalAmount.toLocaleString()} MRU</strong>
+          <div className="px-4 py-3 border-b border-white/5">
+            <span className="text-sm text-slate-400">
+              {t('expenses.totalExpenses')}: <strong className="text-white tabular-nums">{totalAmount.toLocaleString()} MRU</strong>
             </span>
           </div>
         )}
 
         <div className="overflow-x-auto">
           {/* Mobile Card View */}
-          <div className="sm:hidden divide-y divide-slate-200 dark:divide-slate-800">
+          <div className="sm:hidden divide-y divide-white/5">
             {loading ? (
               <div className="p-8 text-center">
-                <Loader2 className="w-6 h-6 animate-spin mx-auto text-green-500" />
+                <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
               </div>
             ) : filteredExpenses.length === 0 ? (
               <div className="p-8 text-center text-slate-500 text-sm">
@@ -123,15 +123,15 @@ export default function Expenses() {
               </div>
             ) : (
               filteredExpenses.map(expense => (
-                <div key={expense._id} className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50">
+                <div key={expense._id} className="px-4 py-3 hover:bg-white/[0.03]">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-slate-900 dark:text-white text-sm">{expense.description}</div>
-                    <span className="font-medium text-rose-600 dark:text-rose-400 text-sm">
+                    <div className="font-medium text-white text-sm">{expense.description}</div>
+                    <span className="font-medium text-rose-400 text-sm tabular-nums">
                       -{expense.amount.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-medium bg-blue-500/10 text-blue-400">
                       {t(CATEGORY_LABELS[expense.category] || expense.category)}
                     </span>
                     <span className="text-xs text-slate-500">{formatDate(expense.date)}</span>
@@ -141,14 +141,14 @@ export default function Expenses() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => { setSelectedExpense(expense); setIsEditOpen(true); }}
-                        className="p-2 text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-slate-800 rounded-lg transition-colors active:scale-[0.97]"
+                        className="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors active:scale-[0.97]"
                         title={t('expenses.edit')}
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(expense._id)}
-                        className="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg transition-colors active:scale-[0.97]"
+                        className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors active:scale-[0.97]"
                         title={t('expenses.delete')}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -162,7 +162,7 @@ export default function Expenses() {
 
           {/* Desktop Table View */}
           <table className="w-full text-sm text-left hidden sm:table">
-            <thead className="bg-slate-50 dark:bg-slate-950/50 text-slate-500 dark:text-slate-400 font-medium">
+            <thead className="text-slate-400 font-medium">
               <tr>
                 <th className="px-6 py-4 font-medium">{t('expenses.table.date')}</th>
                 <th className="px-6 py-4 font-medium">{t('expenses.table.description')}</th>
@@ -172,11 +172,11 @@ export default function Expenses() {
                 <th className="px-6 py-4 font-medium text-right">{t('expenses.table.actions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+            <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-green-500" />
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
                   </td>
                 </tr>
               ) : filteredExpenses.length === 0 ? (
@@ -187,37 +187,37 @@ export default function Expenses() {
                 </tr>
               ) : (
                 filteredExpenses.map(expense => (
-                  <tr key={expense._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                  <tr key={expense._id} className="hover:bg-white/[0.03] transition-colors">
+                    <td className="px-6 py-4 text-slate-400 whitespace-nowrap">
                       {formatDate(expense.date)}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-slate-900 dark:text-white">{expense.description}</div>
+                      <div className="font-medium text-white">{expense.description}</div>
                       {expense.note && (
                         <div className="text-xs text-slate-500 mt-0.5">{expense.note}</div>
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-400">
                         {t(CATEGORY_LABELS[expense.category] || expense.category)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{expense.paidByName}</td>
-                    <td className="px-6 py-4 text-right font-medium text-rose-600 dark:text-rose-400">
+                    <td className="px-6 py-4 text-slate-300">{expense.paidByName}</td>
+                    <td className="px-6 py-4 text-right font-medium text-rose-400 tabular-nums">
                       -{expense.amount.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => { setSelectedExpense(expense); setIsEditOpen(true); }}
-                          className="p-1.5 text-slate-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-slate-800 rounded-md transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                           title={t('expenses.edit')}
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(expense._id)}
-                          className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-md transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
                           title={t('expenses.delete')}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -278,12 +278,12 @@ function ExpenseFormModal({ expense, onClose, onSubmit }) {
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('expenses.form.description')}</span>
-        <input type="text" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+        <span className="text-sm font-medium text-slate-300">{t('expenses.form.description')}</span>
+        <input type="text" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('expenses.form.category')}</span>
-        <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none">
+        <span className="text-sm font-medium text-slate-300">{t('expenses.form.category')}</span>
+        <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none">
           {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
             <option key={key} value={key}>{t(label)}</option>
           ))}
@@ -291,21 +291,21 @@ function ExpenseFormModal({ expense, onClose, onSubmit }) {
       </label>
       <div className="grid grid-cols-2 gap-4">
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('expenses.form.amount')}</span>
-          <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+          <span className="text-sm font-medium text-slate-300">{t('expenses.form.amount')}</span>
+          <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none tabular-nums" />
         </label>
         <label className="block space-y-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('expenses.form.date')}</span>
-          <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none" />
+          <span className="text-sm font-medium text-slate-300">{t('expenses.form.date')}</span>
+          <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
         </label>
       </div>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('expenses.form.note')}</span>
-        <textarea value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} rows="2" className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base dark:border-slate-800 dark:bg-slate-950 dark:text-white focus:ring-2 focus:ring-green-500/50 outline-none resize-none" />
+        <span className="text-sm font-medium text-slate-300">{t('expenses.form.note')}</span>
+        <textarea value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} rows="2" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none resize-none" />
       </label>
       <div className="flex justify-end gap-3 mt-6 pb-4">
-        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-600 hover:bg-slate-100 rounded-lg dark:text-slate-300 dark:hover:bg-slate-800">{t('expenses.cancel')}</button>
-        <button type="submit" disabled={submitting} className="px-4 py-3 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 flex gap-2 items-center disabled:opacity-70">
+        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-400 hover:bg-white/5 rounded-lg">{t('expenses.cancel')}</button>
+        <button type="submit" disabled={submitting} className="px-4 py-3 text-sm bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:from-blue-500 hover:to-cyan-400 flex gap-2 items-center disabled:opacity-70 shadow-lg shadow-blue-500/25">
           {submitting && <Loader2 className="w-4 h-4 animate-spin" />} {expense ? t('expenses.save') : t('expenses.create')}
         </button>
       </div>
@@ -320,13 +320,13 @@ function ExpenseFormModal({ expense, onClose, onSubmit }) {
       </BottomSheet>
 
       {/* Desktop Modal */}
-      <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-slate-950/50 p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+      <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-md rounded-2xl bg-[#0d1424] p-6 shadow-xl border border-white/5">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+            <h2 className="text-lg font-semibold text-white">
               {expense ? t('expenses.editTitle') : t('expenses.addTitle')}
             </h2>
-            <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><X className="w-5 h-5" /></button>
+            <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-white/5"><X className="w-5 h-5" /></button>
           </div>
           {formContent}
         </div>
