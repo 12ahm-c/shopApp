@@ -141,10 +141,10 @@ export default function POS() {
 
   if (checkoutSuccess && receiptData) {
     return (
-      <div className="mx-auto mt-8 max-w-3xl space-y-5">
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/50 dark:bg-emerald-950/30">
+      <div className="mx-auto max-w-3xl space-y-5">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/50 dark:bg-emerald-950/30">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
               <CheckCircle2 className="h-6 w-6" />
             </div>
             <div>
@@ -162,14 +162,14 @@ export default function POS() {
           <button
             type="button"
             onClick={handleNewSale}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-green-700 transition-all active:scale-[0.98]"
           >
             <RefreshCcw className="h-5 w-5" />
             {t('pos.newSale')}
           </button>
           <Link
             to={`/invoices/${receiptData._id}`}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <ReceiptText className="h-5 w-5" />
             {t('pos.viewDetail')}
@@ -180,7 +180,7 @@ export default function POS() {
   }
 
   return (
-    <div className="min-h-[calc(100dvh-3.5rem)] sm:min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-8rem)] flex flex-col lg:flex-row gap-4 sm:gap-6">
+    <div className="h-[calc(100dvh-8rem)] sm:h-[calc(100vh-4rem)] flex flex-col lg:flex-row gap-4 sm:gap-6">
       
       {/* Left side: Products catalog */}
       <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden min-h-0">
@@ -192,7 +192,7 @@ export default function POS() {
               placeholder={t('pos.searchProducts')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-shadow text-sm sm:text-base"
+              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-shadow text-sm sm:text-base"
             />
           </div>
         </div>
@@ -200,7 +200,7 @@ export default function POS() {
         <div className="flex-1 overflow-y-auto p-3 sm:p-4">
           {loadingProducts ? (
             <div className="flex items-center justify-center h-full">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+              <Loader2 className="w-8 h-8 animate-spin text-green-500" />
             </div>
           ) : products.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-slate-500">
@@ -219,9 +219,9 @@ export default function POS() {
                     key={product._id}
                     onClick={() => canAdd && addItem(product)}
                     disabled={!canAdd}
-                    className={`text-left p-3 rounded-xl border transition-all flex flex-col justify-between min-h-[100px] sm:min-h-[120px] ${
+                    className={`text-left p-3 rounded-2xl border transition-all flex flex-col justify-between min-h-[100px] sm:min-h-[120px] ${
                       canAdd 
-                        ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:shadow-md cursor-pointer active:scale-[0.98]' 
+                        ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-green-500 hover:shadow-md cursor-pointer active:scale-[0.98]' 
                         : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 opacity-60 cursor-not-allowed'
                     }`}
                   >
@@ -232,7 +232,7 @@ export default function POS() {
                       <p className="text-[10px] sm:text-xs text-slate-500 mt-1 line-clamp-1">{product.category}</p>
                     </div>
                     <div className="flex items-end justify-between w-full mt-2">
-                      <span className="font-bold text-blue-600 dark:text-blue-400 text-xs sm:text-sm">
+                      <span className="font-bold text-green-600 dark:text-green-400 text-xs sm:text-sm">
                         {product.price} MRU
                       </span>
                       <span className={`text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-full ${
@@ -255,19 +255,19 @@ export default function POS() {
         {/* Customer Selection */}
         <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 relative">
           {selectedCustomer ? (
-            <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-800/30">
+            <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-100 dark:border-green-800/30">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 flex items-center justify-center">
-                  <User className="w-4 h-4" />
+                <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-300 flex items-center justify-center">
+                  <User className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm text-blue-900 dark:text-blue-100">{selectedCustomer.name}</p>
-                  <p className="text-xs text-blue-600/80 dark:text-blue-300/80">{formatPhoneNumber(selectedCustomer.phone)}</p>
+                  <p className="font-medium text-sm text-green-900 dark:text-green-100">{selectedCustomer.name}</p>
+                  <p className="text-xs text-green-600/80 dark:text-green-300/80">{formatPhoneNumber(selectedCustomer.phone)}</p>
                 </div>
               </div>
               <button 
                 onClick={() => setCustomer(null)}
-                className="p-1.5 hover:bg-blue-200/50 dark:hover:bg-blue-800/50 rounded-lg text-blue-600 dark:text-blue-400 transition-colors"
+                className="p-2 hover:bg-green-200/50 dark:hover:bg-green-800/50 rounded-xl text-green-600 dark:text-green-400 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -283,7 +283,7 @@ export default function POS() {
                   setShowCustomerDropdown(true);
                 }}
                 onFocus={() => setShowCustomerDropdown(true)}
-                className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/50"
               />
               {showCustomerDropdown && customers.length > 0 && (
                 <div className="absolute z-10 w-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-xl overflow-hidden">
@@ -333,7 +333,7 @@ export default function POS() {
                       min="0"
                       value={item.unitPrice}
                       onChange={(e) => setUnitPrice(item.productId, Math.max(0, parseInt(e.target.value) || 0))}
-                      className="w-16 sm:w-20 text-sm font-semibold text-blue-600 dark:text-blue-400 bg-transparent border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-16 sm:w-20 text-sm font-semibold text-green-600 dark:text-green-400 bg-transparent border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500/50"
                     />
                     <span className="text-xs text-slate-400">MRU</span>
                   </div>
@@ -383,8 +383,8 @@ export default function POS() {
                   onClick={() => setPaymentMethod(method)}
                   className={`py-2.5 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
                     paymentMethod === method 
-                      ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-300' 
-                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300'
+                      ? 'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300' 
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-green-300'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -397,7 +397,7 @@ export default function POS() {
           <button
             onClick={handleCheckout}
             disabled={cartItems.length === 0 || isCheckingOut}
-            className="w-full py-3.5 sm:py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-sm shadow-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base active:scale-[0.98]"
+            className="w-full py-3.5 sm:py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium shadow-sm shadow-green-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base active:scale-[0.98]"
           >
             {isCheckingOut ? (
               <>

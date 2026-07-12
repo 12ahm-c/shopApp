@@ -147,7 +147,7 @@ export default function ActivityLogs() {
               name="action"
               value={filters.action}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
             >
               {logActions.map((action) => (
                 <option key={action.value || 'all'} value={action.value}>
@@ -164,7 +164,7 @@ export default function ActivityLogs() {
               name="from"
               value={filters.from}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
             />
           </label>
 
@@ -175,7 +175,7 @@ export default function ActivityLogs() {
               name="to"
               value={filters.to}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
             />
           </label>
 
@@ -186,7 +186,7 @@ export default function ActivityLogs() {
                 name="userId"
                 value={filters.userId}
                 onChange={handleFilterChange}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
               >
                 <option value="">{t('activityLog.allUsers')}</option>
                 {employeesState.data.map((employee) => (
@@ -214,7 +214,7 @@ export default function ActivityLogs() {
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         {logsState.status === 'loading' && (
           <div className="flex items-center justify-center p-10" aria-live="polite" aria-busy="true">
-            <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+            <Loader2 className="h-6 w-6 animate-spin text-green-500" />
           </div>
         )}
 

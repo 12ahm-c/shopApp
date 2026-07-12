@@ -71,7 +71,7 @@ export default function InvoiceDetail() {
   if (invoiceState.status === 'loading') {
     return (
       <div className="flex items-center justify-center rounded-lg border border-slate-200 bg-white p-12 dark:border-slate-800 dark:bg-slate-900">
-        <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+        <Loader2 className="h-7 w-7 animate-spin text-green-500" />
       </div>
     );
   }
@@ -79,7 +79,7 @@ export default function InvoiceDetail() {
   if (invoiceState.status === 'error') {
     return (
       <div className="space-y-4">
-        <Link to="/invoices" className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 dark:text-slate-300">
+        <Link to="/invoices" className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-green-600 dark:text-slate-300">
           <ArrowLeft className="h-4 w-4" />
           {t('invoice.backTo')}
         </Link>
@@ -101,7 +101,7 @@ export default function InvoiceDetail() {
           </Link>
           <div>
             <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              <ReceiptText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <ReceiptText className="h-6 w-6 text-green-600 dark:text-green-400" />
               {t('invoice.invoiceNumber', { number: invoice.invoiceNumber })}
             </h1>
             <p className="mt-1 text-sm text-slate-500">{formatDateTime(invoice.createdAt)}</p>

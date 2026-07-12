@@ -50,20 +50,22 @@ export default function ProductsList() {
   }, [loadProducts]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <Package className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="w-10 h-10 bg-green-50 dark:bg-green-950/40 rounded-xl flex items-center justify-center">
+              <Package className="w-5 h-5 text-green-600 dark:text-green-400" />
+            </div>
             Product Catalog
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Manage your store's inventory and products.</p>
+          <p className="text-slate-500 text-sm mt-1 ml-12">Manage your store's inventory and products.</p>
         </div>
         
         {role === 'admin' && (
           <Link
             to="/products/new"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl shadow-sm transition-all shadow-blue-500/20"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl shadow-sm transition-all shadow-green-500/20 active:scale-[0.97]"
           >
             <Plus className="w-4 h-4" />
             Add Product
@@ -81,7 +83,7 @@ export default function ProductsList() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full pl-9 pr-4 py-3 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-green-500/50"
             />
           </div>
           
@@ -91,7 +93,7 @@ export default function ProductsList() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="pl-9 pr-8 py-2 appearance-none bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 font-medium text-slate-700 dark:text-slate-300"
+                className="pl-9 pr-8 py-2.5 appearance-none bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 font-medium text-slate-700 dark:text-slate-300"
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (
@@ -108,7 +110,7 @@ export default function ProductsList() {
                   onChange={(e) => setLowStockOnly(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-amber-500"></div>
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-green-500"></div>
               </div>
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5 whitespace-nowrap">
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
@@ -124,7 +126,7 @@ export default function ProductsList() {
           <div className="sm:hidden divide-y divide-slate-200 dark:divide-slate-800">
             {loading ? (
               <div className="p-8 text-center">
-                <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
+                <Loader2 className="w-6 h-6 animate-spin mx-auto text-green-500" />
               </div>
             ) : products.length === 0 ? (
               <div className="p-8 text-center text-slate-500 text-sm">
@@ -179,7 +181,7 @@ export default function ProductsList() {
               {loading ? (
                 <tr>
                   <td colSpan="5" className="px-3 sm:px-6 py-12 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-green-500" />
                   </td>
                 </tr>
               ) : products.length === 0 ? (
@@ -217,7 +219,7 @@ export default function ProductsList() {
                       <td className="px-3 sm:px-6 py-4 text-center">
                         <Link 
                           to={`/products/${product._id}`}
-                          className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-colors"
+                          className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-slate-800 dark:hover:text-green-400 transition-colors"
                           title="View Details"
                         >
                           <Eye className="w-4 h-4" />

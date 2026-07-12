@@ -1,4 +1,4 @@
-import { Link, Navigate, NavLink, Outlet } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import useLanguageStore from '../../stores/languageStore';
 import useSettingsStore from '../../stores/settingsStore';
@@ -10,8 +10,6 @@ import {
   LogOut,
   User,
   Globe,
-  Menu,
-  X,
   Store,
   Package,
   ReceiptText,
@@ -20,7 +18,10 @@ import {
   Moon,
   Users,
   Truck,
-  Wallet
+  Wallet,
+  Settings,
+  MoreHorizontal,
+  X
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
@@ -32,8 +33,9 @@ export default function ShellLayout() {
   const { theme, toggleTheme } = useThemeStore();
   const { t, i18n } = useTranslation();
   const storeName = settings?.storeName || t('store_name');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isRtl = i18n.language === 'ar';
+  const location = useLocation();
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -44,147 +46,88 @@ export default function ShellLayout() {
     setLanguage(newLang);
   };
 
-  const navLinkClassName = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:text-blue-600 hover:bg-blue-50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-all font-medium ${
-      isActive ? 'text-blue-600 bg-blue-50 dark:bg-slate-800 dark:text-white' : ''
-    }`;
+  const mainNavItems = [
+    { to: role === 'admin' ? '/admin' : '/employee', icon: LayoutDashboard, label: t('dashboard.title') },
+    { to: '/products', icon: Package, label: t('products') },
+    { to: '/pos', icon: ShoppingCart, label: t('pos.title') },
+    { to: '/invoices', icon: ReceiptText, label: t('invoices') },
+  ];
 
-  const sidebarContent = (
-    <nav className="flex-1 px-4 space-y-1">
-      <NavLink to={role === 'admin' ? '/admin' : '/employee'} className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-        <LayoutDashboard className="w-5 h-5 shrink-0" />
-        {t('dashboard.title')}
-      </NavLink>
-      <NavLink to="/pos" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-        <ShoppingCart className="w-5 h-5 shrink-0" />
-        {t('pos.title')}
-      </NavLink>
-      <NavLink to="/products" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-        <Package className="w-5 h-5 shrink-0" />
-        {t('products')}
-      </NavLink>
-      {role === 'admin' && (
-        <>
-          <div className="pt-3 pb-1 px-3">
-            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t('admin.management')}</span>
-          </div>
-          <NavLink to="/admin/customers" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-            <Users className="w-5 h-5 shrink-0" />
-            {t('customers')}
-          </NavLink>
-          <NavLink to="/admin/suppliers" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-            <Truck className="w-5 h-5 shrink-0" />
-            {t('suppliers')}
-          </NavLink>
-          <NavLink to="/employees" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-            <User className="w-5 h-5 shrink-0" />
-            {t('employees')}
-          </NavLink>
-          <NavLink to="/expenses" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-            <Wallet className="w-5 h-5 shrink-0" />
-            {t('expenses.title')}
-          </NavLink>
-        </>
-      )}
-      <div className="pt-3 pb-1 px-3">
-        <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t('account')}</span>
-      </div>
-      <NavLink to="/invoices" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-        <ReceiptText className="w-5 h-5 shrink-0" />
-        {t('invoices')}
-      </NavLink>
-      <NavLink to="/notifications" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-        <Bell className="w-5 h-5 shrink-0" />
-        {t('notifications')}
-      </NavLink>
-      <NavLink to="/settings" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-        <Store className="w-5 h-5 shrink-0" />
-        {t('settings')}
-      </NavLink>
-      <NavLink to="/activity-logs" className={navLinkClassName} onClick={() => setSidebarOpen(false)}>
-        <Activity className="w-5 h-5 shrink-0" />
-        {t('activityLog.title')}
-      </NavLink>
-    </nav>
-  );
+  const moreNavItems = [
+    { to: '/settings', icon: Settings, label: t('settings') },
+    { to: '/notifications', icon: Bell, label: t('notifications') },
+    { to: '/activity-logs', icon: Activity, label: t('activityLog.title') },
+    ...(role === 'admin' ? [
+      { to: '/admin/customers', icon: Users, label: t('customers') },
+      { to: '/admin/suppliers', icon: Truck, label: t('suppliers') },
+      { to: '/employees', icon: User, label: t('employees') },
+      { to: '/expenses', icon: Wallet, label: t('expenses.title') },
+    ] : []),
+  ];
+
+  const isMoreActive = moreNavItems.some(item => location.pathname === item.to);
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      {/* Mobile backdrop */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden="true"
-        />
-      )}
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="h-[100dvh] flex flex-col bg-slate-50 dark:bg-slate-900 overflow-hidden">
+      {/* ========== MOBILE LAYOUT ========== */}
+      {/* Mobile Header - Minimal */}
+      <header className="md:hidden flex items-center justify-between px-4 h-12 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center text-white">
+            <Store className="w-4 h-4" />
+          </div>
+          <span className="font-bold text-sm text-slate-900 dark:text-white">{storeName}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Link
+            to="/notifications"
+            className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500"></span>
+          </Link>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-600 dark:text-slate-400" /> : <Moon className="w-5 h-5 text-slate-600 dark:text-slate-400" />}
+          </button>
+        </div>
+      </header>
 
-      {/* Mobile drawer */}
-      <aside
-        className={`fixed top-0 bottom-0 z-50 w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
-          isRtl ? 'right-0 border-l' : 'left-0'
-        } ${sidebarOpen ? 'translate-x-0' : isRtl ? 'translate-x-full' : '-translate-x-full'}`}
-        role="dialog"
-        aria-modal="true"
-      >
-        <div className="flex items-center justify-between px-4 h-20 pt-6 border-b border-slate-200 dark:border-slate-800 shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
-              S
+      {/* Mobile Main Content */}
+      <main className="md:hidden flex-1 overflow-y-auto p-4 pb-20 scrollbar-hide">
+        <Outlet />
+      </main>
+
+      {/* ========== DESKTOP LAYOUT ========== */}
+      <header className="hidden md:flex h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 items-center justify-between px-6 shadow-sm shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-green-500/25">
+              <Store className="w-5 h-5" />
             </div>
             <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
               {storeName}
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(false)}
-            className="p-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            aria-label="Fermer le menu"
-          >
-            <X className="w-5 h-5 text-slate-700 dark:text-slate-300" />
-          </button>
-        </div>
-        <div className="flex-1 overflow-y-auto py-4">
-          {sidebarContent}
-        </div>
-      </aside>
-
-      {/* Top Navbar */}
-      <header className="h-14 sm:h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center justify-between px-3 sm:px-6 shadow-sm sticky top-4 z-30 mx-2 sm:mx-3 mt-4 sm:mt-5 rounded-b-xl">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors md:hidden"
-            aria-label="Ouvrir le menu"
-          >
-            <Menu className="w-5 h-5 text-slate-700 dark:text-slate-300" />
-          </button>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
-              S
-            </div>
-            <span className="font-bold text-sm sm:text-lg tracking-tight text-slate-900 dark:text-white hidden sm:block">
-              {storeName}
-            </span>
-          </div>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-2">
           <Link
             to="/notifications"
-            className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title={t('notifications')}
           >
-            <Bell className="w-5 h-5" />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-blue-500" aria-hidden="true"></span>
+            <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500"></span>
           </Link>
 
           <button
             type="button"
             onClick={toggleLanguage}
-            className="flex items-center gap-1 px-2 py-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium transition-all text-slate-600 dark:text-slate-400"
           >
             <Globe className="w-4 h-4 shrink-0" />
             <span className="uppercase">{language}</span>
@@ -193,41 +136,150 @@ export default function ShellLayout() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-white text-blue-600 shadow-md border border-slate-200 hover:shadow-lg transition-all duration-200"
+            className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-600 dark:text-slate-400" /> : <Moon className="w-5 h-5 text-slate-600 dark:text-slate-400" />}
           </button>
 
-          <div className="h-5 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+          <div className="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
 
-          <span className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hidden sm:block">{user.name}</span>
+          <div className="flex items-center gap-2 pl-2">
+            <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4" />
+            </div>
+            <span className="text-sm font-semibold text-slate-900 dark:text-white">{user.name}</span>
+          </div>
 
           <button
             type="button"
             onClick={logout}
-            className="p-2 rounded-full hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors"
+            className="p-2.5 rounded-xl hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors text-slate-600 dark:text-slate-400"
             title={t('logout')}
           >
-            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+            <LogOut className="w-5 h-5" />
           </button>
         </div>
       </header>
 
-      {/* Main Layout */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Desktop Sidebar */}
-        <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hidden md:flex flex-col py-6 shrink-0">
-          {sidebarContent}
-        </aside>
+      <main className="hidden md:block flex-1 overflow-auto p-6">
+        <div className="max-w-6xl mx-auto">
+          <Outlet />
+        </div>
+      </main>
 
-        {/* Content Area */}
-        <main className="flex-1 overflow-auto p-3 sm:p-6">
-          <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Outlet />
+      {/* ========== BOTTOM TAB BAR ========== */}
+      <nav className="md:hidden shrink-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 safe-area-bottom">
+        <div className="flex items-center h-16 px-1">
+          {mainNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.to ||
+              (item.to === (role === 'admin' ? '/admin' : '/employee') && location.pathname === '/admin');
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-14 transition-all active:scale-[0.92] ${
+                  isActive
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-slate-400 dark:text-slate-500'
+                }`}
+              >
+                <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-green-50 dark:bg-green-900/20' : ''}`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+              </Link>
+            );
+          })}
+
+          {/* Plus Tab */}
+          <button
+            type="button"
+            onClick={() => setShowMoreMenu(true)}
+            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-14 transition-all active:scale-[0.92] ${
+              isMoreActive
+                ? 'text-green-600 dark:text-green-400'
+                : 'text-slate-400 dark:text-slate-500'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-all ${isMoreActive ? 'bg-green-50 dark:bg-green-900/20' : ''}`}>
+              <MoreHorizontal className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] font-medium leading-tight">{t('more')}</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* ========== PLUS MENU ========== */}
+      {showMoreMenu && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+            onClick={() => setShowMoreMenu(false)}
+          />
+          <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-slate-950 rounded-t-3xl max-h-[75vh] flex flex-col animate-slide-up">
+            <div className="flex items-center justify-center pt-3 pb-2">
+              <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
+            </div>
+
+            <div className="flex items-center justify-between px-5 pb-4 border-b border-slate-200 dark:border-slate-800">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('more')}</h2>
+              <button
+                type="button"
+                onClick={() => setShowMoreMenu(false)}
+                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-[0.95]"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5">
+              <div className="grid grid-cols-3 gap-3">
+                {moreNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.to;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setShowMoreMenu(false)}
+                      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all active:scale-[0.95] ${
+                        isActive
+                          ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                          : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <Icon className="w-6 h-6" />
+                      <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
+                    </Link>
+                  );
+                })}
+
+                {/* Language */}
+                <button
+                  type="button"
+                  onClick={() => { toggleLanguage(); setShowMoreMenu(false); }}
+                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-[0.95]"
+                >
+                  <Globe className="w-6 h-6" />
+                  <span className="text-xs font-medium text-center leading-tight">{language === 'fr' ? 'العربية' : 'Français'}</span>
+                </button>
+
+                {/* Logout */}
+                <button
+                  type="button"
+                  onClick={() => { logout(); setShowMoreMenu(false); }}
+                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all active:scale-[0.95]"
+                >
+                  <LogOut className="w-6 h-6" />
+                  <span className="text-xs font-medium text-center leading-tight">{t('logout')}</span>
+                </button>
+              </div>
+            </div>
           </div>
-        </main>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

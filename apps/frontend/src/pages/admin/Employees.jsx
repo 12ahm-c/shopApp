@@ -12,6 +12,7 @@ import {
 import { employeeApi } from '../../api/employee';
 import { formatPhoneNumber } from '../../lib/utils';
 import { formatNumber, getLocale } from '../../lib/format';
+import BottomSheet from '../../components/ui/BottomSheet';
 
 const initialEmployeesState = {
   status: 'idle',
@@ -218,7 +219,7 @@ export default function Employees() {
         <button
           type="button"
           onClick={openCreateModal}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-blue-500/20 transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-green-500/20 transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/50 active:scale-[0.97]"
         >
           <Plus className="h-4 w-4" />
           {t('employeesPage.addButton')}
@@ -235,7 +236,7 @@ export default function Employees() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder={t('employeesPage.searchPlaceholder')}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
             />
           </label>
           <span className="text-sm text-slate-500">
@@ -258,63 +259,108 @@ export default function Employees() {
         )}
 
         {employeesState.status === 'success' && filteredEmployees.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 font-medium text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
-                <tr>
-                  <th className="px-3 sm:px-6 py-4 font-medium">{t('employeesPage.headers.name')}</th>
-                  <th className="px-3 sm:px-6 py-4 font-medium hidden sm:table-cell">{t('employeesPage.headers.phone')}</th>
-                  <th className="px-3 sm:px-6 py-4 font-medium hidden xs:table-cell sm:table-cell">{t('employeesPage.headers.role')}</th>
-                  <th className="px-3 sm:px-6 py-4 text-right font-medium hidden xs:table-cell sm:table-cell">{t('employeesPage.headers.salary')}</th>
-                  <th className="px-3 sm:px-6 py-4 text-right font-medium">{t('table.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                {filteredEmployees.map((employee) => (
-                  <tr key={employee._id} className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-950/50">
-                    <td className="px-3 sm:px-6 py-4 min-w-[100px]">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedEmployeeId(employee._id)}
-                        className="font-medium text-slate-900 underline-offset-4 hover:underline dark:text-white text-sm"
-                      >
-                        {employee.name}
-                      </button>
-                    </td>
-                    <td className="px-3 sm:px-6 py-4 text-slate-600 dark:text-slate-300 hidden sm:table-cell">{formatPhoneNumber(employee.phone)}</td>
-                    <td className="px-3 sm:px-6 py-4 hidden xs:table-cell sm:table-cell">
-                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] sm:text-xs font-medium uppercase tracking-wide text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        {employee.role}
-                      </span>
-                    </td>
-                    <td className="px-3 sm:px-6 py-4 text-right font-medium text-slate-900 dark:text-white hidden xs:table-cell sm:table-cell whitespace-nowrap">
-                      {formatAmount(employee.salary)}
-                    </td>
-                    <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                      <div className="flex justify-end gap-1 sm:gap-2">
-                        <button
-                          type="button"
-                          onClick={() => openEditModal(employee)}
-                          className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                        >
-                          <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          <span className="hidden xs:inline">{t('employeesPage.edit')}</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openAttendanceModal(employee)}
-                          className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-blue-700 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-                        >
-                          <CalendarCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          <span className="hidden xs:inline">{t('employeesPage.attendance')}</span>
-                        </button>
-                      </div>
-                    </td>
+          <>
+            {/* Mobile Card View */}
+            <div className="sm:hidden divide-y divide-slate-200 dark:divide-slate-800">
+              {filteredEmployees.map((employee) => (
+                <div key={employee._id} className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedEmployeeId(employee._id)}
+                      className="font-medium text-slate-900 dark:text-white text-sm"
+                    >
+                      {employee.name}
+                    </button>
+                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      {employee.role}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-slate-500">{formatPhoneNumber(employee.phone)}</span>
+                    <span className="text-sm font-medium text-slate-900 dark:text-white">{formatAmount(employee.salary)}</span>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(employee)}
+                      className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-3 py-1.5 text-xs text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 active:scale-[0.97]"
+                    >
+                      <Edit className="h-3.5 w-3.5" />
+                      {t('employeesPage.edit')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openAttendanceModal(employee)}
+                      className="inline-flex items-center gap-1 rounded-lg bg-green-50 px-3 py-1.5 text-xs text-green-700 transition-colors hover:bg-green-100 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50 active:scale-[0.97]"
+                    >
+                      <CalendarCheck className="h-3.5 w-3.5" />
+                      {t('employeesPage.attendance')}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="overflow-x-auto hidden sm:block">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-50 font-medium text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
+                  <tr>
+                    <th className="px-6 py-4 font-medium">{t('employeesPage.headers.name')}</th>
+                    <th className="px-6 py-4 font-medium">{t('employeesPage.headers.phone')}</th>
+                    <th className="px-6 py-4 font-medium">{t('employeesPage.headers.role')}</th>
+                    <th className="px-6 py-4 text-right font-medium">{t('employeesPage.headers.salary')}</th>
+                    <th className="px-6 py-4 text-right font-medium">{t('table.actions')}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                  {filteredEmployees.map((employee) => (
+                    <tr key={employee._id} className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-950/50">
+                      <td className="px-6 py-4 min-w-[100px]">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedEmployeeId(employee._id)}
+                          className="font-medium text-slate-900 underline-offset-4 hover:underline dark:text-white text-sm"
+                        >
+                          {employee.name}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{formatPhoneNumber(employee.phone)}</td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                          {employee.role}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                        {formatAmount(employee.salary)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(employee)}
+                            className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-3 py-1.5 text-sm text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                          >
+                            <Edit className="h-4 w-4" />
+                            {t('employeesPage.edit')}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openAttendanceModal(employee)}
+                            className="inline-flex items-center gap-1 rounded-md bg-green-50 px-3 py-1.5 text-sm text-green-700 transition-colors hover:bg-green-100 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50"
+                          >
+                            <CalendarCheck className="h-4 w-4" />
+                            {t('employeesPage.attendance')}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
@@ -363,7 +409,7 @@ function EmployeeDetail({ employee, onClose }) {
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300">
             <UserRound className="h-5 w-5" />
           </div>
           <div>
@@ -439,7 +485,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
           />
         </label>
 
@@ -451,7 +497,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
             value={formData.phone}
             onChange={handleChange}
             required
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
           />
         </label>
 
@@ -463,7 +509,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
             min="0"
             value={formData.salary}
             onChange={handleChange}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
           />
         </label>
 
@@ -478,7 +524,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
             value={formData.password}
             onChange={handleChange}
             required={mode === 'create'}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
           />
         </label>
 
@@ -516,7 +562,7 @@ function AttendanceModal({ employee, attendanceData, mutationState, onChange, on
             value={attendanceData.date}
             onChange={handleChange}
             required
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-900 outline-none focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
           />
         </label>
 
@@ -528,7 +574,7 @@ function AttendanceModal({ employee, attendanceData, mutationState, onChange, on
                 key={status}
                 className={`cursor-pointer rounded-xl border p-3 text-center text-sm font-medium transition-colors ${
                   attendanceData.status === status
-                    ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                    ? 'border-green-500 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                     : 'border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800'
                 }`}
               >
@@ -559,22 +605,30 @@ function AttendanceModal({ employee, attendanceData, mutationState, onChange, on
 function ModalFrame({ title, onClose, children }) {
   const { t } = useTranslation();
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t('employeesPage.close')}
-            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <>
+      {/* Mobile Bottom Sheet */}
+      <BottomSheet isOpen={true} onClose={onClose} title={title}>
         {children}
+      </BottomSheet>
+
+      {/* Desktop Modal */}
+      <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-slate-950/50 p-4">
+        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t('employeesPage.close')}
+              className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -592,7 +646,7 @@ function ModalActions({ onClose, isSubmitting, submitLabel }) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-blue-500/20 transition-colors hover:bg-blue-700 disabled:opacity-70"
+        className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-green-500/20 transition-colors hover:bg-green-700 disabled:opacity-70"
       >
         {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
         {submitLabel}

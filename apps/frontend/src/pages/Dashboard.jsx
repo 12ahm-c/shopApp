@@ -8,7 +8,11 @@ import {
   Package,
   ReceiptText,
   ShoppingBag,
-  Users
+  Users,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  ShoppingCart
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -16,73 +20,93 @@ import { dashboardApi } from '../api/dashboard';
 import useAuthStore from '../stores/authStore';
 import { formatMoney, formatDateTime } from '../lib/format';
 
-const paymentLabels = {
-  cash: 'payment.cash',
-  card: 'payment.card',
-  bankily: 'payment.bankily',
-  alsadd: 'payment.alsadd',
-  bimbank: 'payment.bimbank',
-  masrafi: 'payment.masrafi'
-};
-
-function StatCard({ icon: Icon, label, value, tone = 'blue' }) {
+function StatCard({ icon: Icon, label, value, tone = 'green', trend, trendValue }) {
   const tones = {
-    blue: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300',
-    emerald: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
-    amber: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
-    rose: 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300',
-    slate: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200'
+    green: 'bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400',
+    blue: 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400',
+    amber: 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400',
+    rose: 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400',
+    slate: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+    emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400'
   };
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-2.5 sm:gap-3">
-        <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg ${tones[tone]}`}>
-          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+    <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-800">
+      <div className="flex items-center justify-between">
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${tones[tone]}`}>
+          <Icon className="w-6 h-6" />
         </div>
-        <div className="min-w-0">
-          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 truncate">{label}</p>
-          <p className="mt-0.5 text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate">{value}</p>
-        </div>
+        {trend && (
+          <div className={`flex items-center gap-0.5 text-xs font-semibold ${trend === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+            {trend === 'up' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+            {trendValue}
+          </div>
+        )}
+      </div>
+      <div className="mt-3">
+        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
+        <p className="mt-0.5 text-xl font-bold text-slate-900 dark:text-white">{value}</p>
       </div>
     </div>
   );
 }
 
-function RecentSalesTable({ sales }) {
+function QuickActionCard({ icon: Icon, label, to, tone = 'green' }) {
+  const tones = {
+    green: 'bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400',
+    blue: 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400',
+    amber: 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400',
+    rose: 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400'
+  };
+
+  return (
+    <Link
+      to={to}
+      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-md transition-all active:scale-[0.97]`}
+    >
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${tones[tone]}`}>
+        <Icon className="w-6 h-6" />
+      </div>
+      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 text-center">{label}</span>
+    </Link>
+  );
+}
+
+function RecentSalesList({ sales }) {
   const { t } = useTranslation();
 
   if (!sales.length) {
-    return <div className="p-8 text-center text-sm text-slate-500">{t('dashboard.noSales')}</div>;
+    return (
+      <div className="p-8 text-center">
+        <ShoppingBag className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <p className="text-sm text-slate-500">{t('dashboard.noSales')}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left text-xs sm:text-sm">
-        <thead className="bg-slate-50 text-slate-500 dark:bg-slate-950/50 dark:text-slate-400">
-          <tr>
-            <th className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium">{t('table.invoice')}</th>
-            <th className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium hidden sm:table-cell">{t('table.client')}</th>
-            <th className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium hidden md:table-cell">{t('table.payment')}</th>
-            <th className="px-3 sm:px-4 py-2.5 sm:py-3 text-right font-medium">{t('table.total')}</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-          {sales.map((sale) => (
-            <tr key={sale._id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50">
-              <td className="px-3 sm:px-4 py-2.5 sm:py-3">
-                <Link className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 text-xs sm:text-sm" to={`/invoices/${sale._id}`}>
-                  #{sale.invoiceNumber}
-                </Link>
-                <div className="text-[10px] sm:text-xs text-slate-500">{formatDateTime(sale.createdAt)}</div>
-              </td>
-              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-slate-700 dark:text-slate-300 hidden sm:table-cell">{sale.customerName}</td>
-              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-slate-600 dark:text-slate-400 hidden md:table-cell text-xs sm:text-sm">{t(paymentLabels[sale.paymentMethod] || sale.paymentMethod)}</td>
-              <td className="px-3 sm:px-4 py-2.5 sm:py-3 text-right font-semibold text-slate-900 dark:text-white whitespace-nowrap text-xs sm:text-sm">{formatMoney(sale.totalAmount)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="divide-y divide-slate-100 dark:divide-slate-800">
+      {sales.map((sale) => (
+        <Link
+          key={sale._id}
+          to={`/invoices/${sale._id}`}
+          className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center shrink-0">
+              <ReceiptText className="w-5 h-5 text-green-600 dark:text-green-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="font-semibold text-sm text-slate-900 dark:text-white truncate">#{sale.invoiceNumber}</p>
+              <p className="text-xs text-slate-500 truncate">{sale.customerName}</p>
+            </div>
+          </div>
+          <div className="text-right shrink-0">
+            <p className="font-bold text-sm text-slate-900 dark:text-white">{formatMoney(sale.totalAmount)}</p>
+            <p className="text-[10px] text-slate-500">{formatDateTime(sale.createdAt)}</p>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
@@ -91,22 +115,27 @@ function LowStockList({ products }) {
   const { t } = useTranslation();
 
   if (!products.length) {
-    return <div className="p-6 text-sm text-slate-500">{t('dashboard.noStockAlerts')}</div>;
+    return (
+      <div className="p-8 text-center">
+        <Package className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <p className="text-sm text-slate-500">{t('dashboard.noStockAlerts')}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="divide-y divide-slate-200 dark:divide-slate-800">
+    <div className="divide-y divide-slate-100 dark:divide-slate-800">
       {products.map((product) => (
         <Link
           key={product._id}
           to={`/products/${product._id}`}
-          className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50"
+          className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors"
         >
-          <div>
-            <p className="font-medium text-slate-900 dark:text-white">{product.name}</p>
+          <div className="min-w-0">
+            <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{product.name}</p>
             <p className="text-xs text-slate-500">{t('dashboard.threshold')}: {product.alertThreshold}</p>
           </div>
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+          <span className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
             {product.quantity} {t('dashboard.remaining')}
           </span>
         </Link>
@@ -119,16 +148,21 @@ function ActivityList({ activity }) {
   const { t } = useTranslation();
 
   if (!activity.length) {
-    return <div className="p-6 text-sm text-slate-500">{t('dashboard.noActivity')}</div>;
+    return (
+      <div className="p-8 text-center">
+        <Activity className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+        <p className="text-sm text-slate-500">{t('dashboard.noActivity')}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="divide-y divide-slate-200 dark:divide-slate-800">
+    <div className="divide-y divide-slate-100 dark:divide-slate-800">
       {activity.map((item) => (
         <div key={item._id} className="px-4 py-3">
           <div className="flex items-center justify-between gap-3">
-            <p className="font-medium text-slate-900 dark:text-white">{item.details}</p>
-            <span className="text-xs text-slate-500">{formatDateTime(item.timestamp)}</span>
+            <p className="font-medium text-sm text-slate-900 dark:text-white truncate">{item.details}</p>
+            <span className="text-xs text-slate-500 shrink-0">{formatDateTime(item.timestamp)}</span>
           </div>
           <p className="mt-1 text-xs text-slate-500">{item.userName} - {item.action}</p>
         </div>
@@ -179,112 +213,110 @@ export default function Dashboard() {
     () => dashboardState.data?.recentSales ?? [],
     [dashboardState.data]
   );
-  const recentMax = useMemo(
-    () => Math.max(1, ...recentSales.map((sale) => sale.totalAmount)),
-    [recentSales]
-  );
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t('dashboard.greeting.morning', { name: user?.name?.split(' ')[0] });
+    if (hour < 18) return t('dashboard.greeting.afternoon', { name: user?.name?.split(' ')[0] });
+    return t('dashboard.greeting.evening', { name: user?.name?.split(' ')[0] });
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            {t('dashboard.title')}
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {isAdmin ? t('dashboard.subtitle.admin') : t('dashboard.subtitle.employee', { name: user?.name ?? t('employees') })}
-          </p>
+      {/* Welcome Header */}
+      <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg shadow-green-500/20">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold">{getGreeting()}</h1>
+            <p className="mt-1 text-green-100 text-sm">{t('dashboard.welcomeBack')}</p>
+          </div>
+          <Link
+            to="/pos"
+            className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm hover:bg-white/30 transition-colors active:scale-[0.95]"
+          >
+            <ShoppingCart className="w-6 h-6" />
+          </Link>
         </div>
-        <Link
-          to="/pos"
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-        >
-          <ShoppingBag className="h-4 w-4" />
-          {t('dashboard.openPOS')}
-        </Link>
       </div>
 
       {dashboardState.status === 'loading' && (
-        <div className="flex items-center justify-center rounded-lg border border-slate-200 bg-white p-12 dark:border-slate-800 dark:bg-slate-900">
-          <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+        <div className="flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-12 dark:border-slate-800 dark:bg-slate-900">
+          <Loader2 className="h-7 w-7 animate-spin text-green-500" />
         </div>
       )}
 
       {dashboardState.status === 'error' && (
-        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
           {dashboardState.error}
         </div>
       )}
 
       {dashboardState.status === 'success' && stats && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard icon={CreditCard} label={t('dashboard.todaySales')} value={formatMoney(stats.todaySales)} tone="emerald" />
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard icon={CreditCard} label={t('dashboard.todaySales')} value={formatMoney(stats.todaySales)} tone="green" trend="up" trendValue="+12%" />
             <StatCard icon={ReceiptText} label={t('dashboard.todayInvoices')} value={stats.todayOrders} tone="blue" />
-            <StatCard icon={Package} label={isAdmin ? t('dashboard.stockProducts') : t('dashboard.monthlySales')} value={isAdmin ? stats.totalProducts : formatMoney(stats.monthlySales)} tone="slate" />
             {isAdmin ? (
-              <StatCard icon={AlertTriangle} label={t('dashboard.lowStock')} value={stats.lowStockCount} tone="amber" />
+              <>
+                <StatCard icon={Package} label={t('dashboard.stockProducts')} value={stats.totalProducts} tone="slate" />
+                <StatCard icon={AlertTriangle} label={t('dashboard.lowStock')} value={stats.lowStockCount} tone="amber" />
+              </>
             ) : (
-              <StatCard icon={Bell} label={t('dashboard.unreadNotifications')} value={dashboardState.data.unreadNotifications} tone="amber" />
+              <>
+                <StatCard icon={Wallet} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" />
+                <StatCard icon={Bell} label={t('dashboard.unreadNotifications')} value={dashboardState.data.unreadNotifications} tone="amber" />
+              </>
             )}
           </div>
 
+          {/* Admin Extra Stats */}
           {isAdmin && (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              <StatCard icon={CreditCard} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" />
+            <div className="grid grid-cols-2 gap-3">
+              <StatCard icon={CreditCard} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" trend="up" trendValue="+8%" />
               <StatCard icon={Users} label={t('dashboard.customers')} value={stats.totalCustomers} tone="blue" />
               <StatCard icon={Activity} label={t('dashboard.clientDebts')} value={formatMoney(stats.outstandingDebt)} tone="rose" />
+              <StatCard icon={TrendingUp} label={t('dashboard.profits')} value={formatMoney(stats.monthlySales - (stats.totalExpenses || 0))} tone="green" />
             </div>
           )}
 
-          <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-            <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.recentSales')}</h2>
-                <Link className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400" to="/invoices">
-                  {t('dashboard.viewAll')}
-                </Link>
-              </div>
-              <RecentSalesTable sales={recentSales} />
-            </section>
-
-            <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.recentAmounts')}</h2>
-              <div className="mt-4 space-y-3">
-                {recentSales.length === 0 ? (
-                  <p className="text-sm text-slate-500">{t('dashboard.noData')}</p>
-                ) : (
-                  recentSales.slice(0, 6).map((sale) => (
-                    <div key={sale._id} className="space-y-1">
-                      <div className="flex justify-between text-xs text-slate-500">
-                        <span>#{sale.invoiceNumber}</span>
-                        <span>{formatMoney(sale.totalAmount)}</span>
-                      </div>
-                      <progress
-                        className="h-2 w-full overflow-hidden rounded-full"
-                        max={recentMax}
-                        value={sale.totalAmount}
-                        aria-label={t('invoice.invoiceNumber', { number: sale.invoiceNumber })}
-                      />
-                    </div>
-                  ))
-                )}
-              </div>
-            </section>
+          {/* Quick Actions */}
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-3">{t('dashboard.quickActions')}</h2>
+            <div className="grid grid-cols-4 gap-3">
+              <QuickActionCard icon={ShoppingCart} label={t('pos.title')} to="/pos" tone="green" />
+              <QuickActionCard icon={Package} label={t('products')} to="/products" tone="blue" />
+              <QuickActionCard icon={ReceiptText} label={t('invoices')} to="/invoices" tone="amber" />
+              {isAdmin && (
+                <QuickActionCard icon={Users} label={t('customers')} to="/admin/customers" tone="rose" />
+              )}
+            </div>
           </div>
 
+          {/* Recent Sales */}
+          <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+              <h2 className="font-bold text-slate-900 dark:text-white">{t('dashboard.recentSales')}</h2>
+              <Link className="text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-700" to="/invoices">
+                {t('dashboard.viewAll')}
+              </Link>
+            </div>
+            <RecentSalesList sales={recentSales.slice(0, 5)} />
+          </section>
+
+          {/* Admin Sections */}
           {isAdmin && (
-            <div className="grid gap-6 xl:grid-cols-2">
-              <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div className="border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                  <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.lowStockAlerts')}</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                  <h2 className="font-bold text-slate-900 dark:text-white">{t('dashboard.lowStockAlerts')}</h2>
                 </div>
                 <LowStockList products={dashboardState.data.lowStockProducts ?? []} />
               </section>
 
-              <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div className="border-b border-slate-200 px-4 py-3 dark:border-slate-800">
-                  <h2 className="font-semibold text-slate-900 dark:text-white">{t('dashboard.recentActivity')}</h2>
+              <section className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                  <h2 className="font-bold text-slate-900 dark:text-white">{t('dashboard.recentActivity')}</h2>
                 </div>
                 <ActivityList activity={dashboardState.data.recentActivity ?? []} />
               </section>

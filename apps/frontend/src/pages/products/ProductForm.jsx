@@ -77,7 +77,7 @@ export default function ProductForm() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-green-500" />
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={100}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
               />
             </label>
 
@@ -129,7 +129,7 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={50}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
               />
               <datalist id="categories">
                 <option value="Épicerie" />
@@ -148,7 +148,7 @@ export default function ProductForm() {
                 value={formData.price} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
               />
             </label>
 
@@ -161,7 +161,7 @@ export default function ProductForm() {
                 value={formData.quantity} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
               />
             </label>
 
@@ -173,7 +173,7 @@ export default function ProductForm() {
                 min="0"
                 value={formData.alertThreshold} 
                 onChange={handleChange} 
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-blue-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-slate-900 focus:ring-2 focus:ring-green-500/50 dark:border-slate-800 dark:bg-slate-950 dark:text-white outline-none"
               />
             </label>
           </div>
@@ -188,7 +188,7 @@ export default function ProductForm() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm shadow-blue-500/20 font-medium transition-all disabled:opacity-70"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-sm shadow-green-500/20 font-medium transition-all disabled:opacity-70"
             >
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {isEdit ? 'Update Product' : 'Create Product'}
