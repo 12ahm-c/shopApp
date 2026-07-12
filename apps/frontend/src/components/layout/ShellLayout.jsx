@@ -22,7 +22,6 @@ import {
   Settings,
   MoreHorizontal,
   X,
-  Check
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
@@ -89,9 +88,9 @@ export default function ShellLayout() {
   const isMoreActive = moreNavItems.some(item => location.pathname === item.to);
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="h-dvh flex flex-col bg-slate-50 dark:bg-slate-900 overflow-hidden">
-      {/* ========== MOBILE LAYOUT ========== */}
-      <header className="md:hidden flex items-center justify-between px-4 h-12 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0 z-10">
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col bg-slate-50 dark:bg-slate-900 h-dvh">
+      {/* ========== MOBILE HEADER ========== */}
+      <header className="md:hidden flex items-center justify-between px-4 h-12 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0 z-10 safe-area-top">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center text-white">
             <Store className="w-4 h-4" />
@@ -117,6 +116,7 @@ export default function ShellLayout() {
         </div>
       </header>
 
+      {/* ========== MOBILE MAIN ========== */}
       <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-4 pb-20 scrollbar-hide">
         <Outlet />
       </main>
@@ -128,7 +128,7 @@ export default function ShellLayout() {
             <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-green-500/25">
               <Store className="w-5 h-5" />
             </div>
-            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
+            <span className="font-bold-lg tracking-tight text-slate-900 dark:text-white">
               {storeName}
             </span>
           </div>
@@ -189,9 +189,9 @@ export default function ShellLayout() {
         </div>
       </main>
 
-      {/* ========== BOTTOM TAB BAR ========== */}
-      <nav className="md:hidden shrink-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 z-40">
-        <div className="flex items-center h-16 px-1">
+      {/* ========== BOTTOM TAB BAR (fixed) ========== */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 z-40 safe-area-bottom">
+        <div className="flex items-center h-14 px-1">
           {mainNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.to ||
