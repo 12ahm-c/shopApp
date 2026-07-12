@@ -89,7 +89,7 @@ export default function ShellLayout() {
   const isMoreActive = moreNavItems.some(item => location.pathname === item.to);
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="h-[100dvh] flex flex-col bg-slate-50 dark:bg-slate-900">
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="h-dvh flex flex-col bg-slate-50 dark:bg-slate-900 overflow-hidden">
       {/* ========== MOBILE LAYOUT ========== */}
       <header className="md:hidden flex items-center justify-between px-4 h-12 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0 z-10">
         <div className="flex items-center gap-2">
@@ -117,7 +117,7 @@ export default function ShellLayout() {
         </div>
       </header>
 
-      <main className="md:hidden flex-1 overflow-y-auto p-4 pb-20 scrollbar-hide">
+      <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-4 pb-20 scrollbar-hide">
         <Outlet />
       </main>
 
