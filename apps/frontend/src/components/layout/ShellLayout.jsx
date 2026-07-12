@@ -21,10 +21,13 @@ import {
   Wallet,
   Settings,
   MoreHorizontal,
-  X
+  X,
+  Check
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { notificationApi } from '../../api/notification';
+import { formatDateTime } from '../../lib/format';
 
 export default function ShellLayout() {
   const { user, role, logout } = useAuthStore();
@@ -36,6 +39,25 @@ export default function ShellLayout() {
   const isRtl = i18n.language === 'ar';
   const location = useLocation();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loadingNotifs, setLoadingNotifs] = useState(false);
+
+  const loadNotifications = useCallback(async () => {
+    setLoadingNotifs(true);
+    try {
+      const res = await notificationApi.getNotifications({ limit: 20 });
+      setNotifications(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingNotifs(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showNotifications) loadNotifications();
+  }, [showNotifications, loadNotifications]);
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -55,7 +77,6 @@ export default function ShellLayout() {
 
   const moreNavItems = [
     { to: '/settings', icon: Settings, label: t('settings') },
-    { to: '/notifications', icon: Bell, label: t('notifications') },
     { to: '/activity-logs', icon: Activity, label: t('activityLog.title') },
     ...(role === 'admin' ? [
       { to: '/admin/customers', icon: Users, label: t('customers') },
@@ -68,10 +89,9 @@ export default function ShellLayout() {
   const isMoreActive = moreNavItems.some(item => location.pathname === item.to);
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="h-[100dvh] flex flex-col bg-slate-50 dark:bg-slate-900 overflow-hidden">
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="h-[100dvh] flex flex-col bg-slate-50 dark:bg-slate-900">
       {/* ========== MOBILE LAYOUT ========== */}
-      {/* Mobile Header - Minimal */}
-      <header className="md:hidden flex items-center justify-between px-4 h-12 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0">
+      <header className="md:hidden flex items-center justify-between px-4 h-12 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shrink-0 z-10">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center text-white">
             <Store className="w-4 h-4" />
@@ -79,13 +99,14 @@ export default function ShellLayout() {
           <span className="font-bold text-sm text-slate-900 dark:text-white">{storeName}</span>
         </div>
         <div className="flex items-center gap-1">
-          <Link
-            to="/notifications"
+          <button
+            type="button"
+            onClick={() => setShowNotifications(true)}
             className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
             <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500"></span>
-          </Link>
+          </button>
           <button
             type="button"
             onClick={toggleTheme}
@@ -96,13 +117,12 @@ export default function ShellLayout() {
         </div>
       </header>
 
-      {/* Mobile Main Content */}
       <main className="md:hidden flex-1 overflow-y-auto p-4 pb-20 scrollbar-hide">
         <Outlet />
       </main>
 
       {/* ========== DESKTOP LAYOUT ========== */}
-      <header className="hidden md:flex h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 items-center justify-between px-6 shadow-sm shrink-0">
+      <header className="hidden md:flex h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 items-center justify-between px-6 shadow-sm shrink-0 z-10">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-green-500/25">
@@ -115,14 +135,15 @@ export default function ShellLayout() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link
-            to="/notifications"
+          <button
+            type="button"
+            onClick={() => setShowNotifications(true)}
             className="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title={t('notifications')}
           >
             <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
             <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-500"></span>
-          </Link>
+          </button>
 
           <button
             type="button"
@@ -169,7 +190,7 @@ export default function ShellLayout() {
       </main>
 
       {/* ========== BOTTOM TAB BAR ========== */}
-      <nav className="md:hidden shrink-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 safe-area-bottom">
+      <nav className="md:hidden shrink-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 z-40">
         <div className="flex items-center h-16 px-1">
           {mainNavItems.map((item) => {
             const Icon = item.icon;
@@ -193,7 +214,6 @@ export default function ShellLayout() {
             );
           })}
 
-          {/* Plus Tab */}
           <button
             type="button"
             onClick={() => setShowMoreMenu(true)}
@@ -211,6 +231,59 @@ export default function ShellLayout() {
         </div>
       </nav>
 
+      {/* ========== NOTIFICATIONS PANEL ========== */}
+      {showNotifications && (
+        <div className="fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+            onClick={() => setShowNotifications(false)}
+          />
+          <div className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-white dark:bg-slate-950 shadow-2xl flex flex-col animate-slide-left">
+            <div className="flex items-center justify-between px-5 h-14 border-b border-slate-200 dark:border-slate-800 shrink-0">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('notifications')}</h2>
+              <button
+                type="button"
+                onClick={() => setShowNotifications(false)}
+                className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-[0.95]"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {loadingNotifs ? (
+                <div className="flex items-center justify-center p-10">
+                  <div className="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : notifications.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-10 text-slate-400">
+                  <Bell className="w-12 h-12 mb-3 opacity-30" />
+                  <p className="text-sm">{t('notification.noNotifications')}</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {notifications.map((notif) => (
+                    <div key={notif._id} className="px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center shrink-0 mt-0.5">
+                          <Bell className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-slate-900 dark:text-white line-clamp-2">{notif.message}</p>
+                          <p className="text-xs text-slate-500 mt-1">{formatDateTime(notif.createdAt)}</p>
+                        </div>
+                        {!notif.read && (
+                          <div className="w-2 h-2 rounded-full bg-green-500 shrink-0 mt-2"></div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ========== PLUS MENU ========== */}
       {showMoreMenu && (
         <div className="fixed inset-0 z-50 md:hidden">
@@ -218,7 +291,7 @@ export default function ShellLayout() {
             className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
             onClick={() => setShowMoreMenu(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-slate-950 rounded-t-3xl max-h-[75vh] flex flex-col animate-slide-up">
+          <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-slate-950 rounded-t-3xl max-h-[70vh] flex flex-col animate-slide-up">
             <div className="flex items-center justify-center pt-3 pb-2">
               <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
             </div>
@@ -256,7 +329,6 @@ export default function ShellLayout() {
                   );
                 })}
 
-                {/* Language */}
                 <button
                   type="button"
                   onClick={() => { toggleLanguage(); setShowMoreMenu(false); }}
@@ -266,7 +338,6 @@ export default function ShellLayout() {
                   <span className="text-xs font-medium text-center leading-tight">{language === 'fr' ? 'العربية' : 'Français'}</span>
                 </button>
 
-                {/* Logout */}
                 <button
                   type="button"
                   onClick={() => { logout(); setShowMoreMenu(false); }}
