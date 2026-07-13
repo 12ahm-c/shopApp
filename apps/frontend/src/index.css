@@ -119,10 +119,12 @@
 
 /* Form inputs - theme aware */
 input, select, textarea {
-  @apply border rounded-xl px-4 py-2.5 outline-none transition-all;
+  @apply border outline-none transition-all;
   border-color: var(--input);
   background-color: var(--surface);
   color: var(--text-primary);
+  padding: 0.625rem 1rem;
+  border-radius: 0.75rem;
 }
 input:focus, select:focus, textarea:focus {
   border-color: hsl(var(--ring));

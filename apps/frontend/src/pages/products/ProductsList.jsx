@@ -93,7 +93,7 @@ export default function ProductsList() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="pl-9 pr-8 py-2.5 appearance-none rounded-xl text-sm font-medium"
+                className="pl-9 pr-8 py-3 appearance-none rounded-xl text-sm font-medium"
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (
@@ -110,7 +110,7 @@ export default function ProductsList() {
                   onChange={(e) => setLowStockOnly(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                <div className="w-11 h-6 bg-surface-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
               </div>
               <span className="text-sm font-medium text-text-secondary flex items-center gap-1.5 whitespace-nowrap">
                 <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />

@@ -1,28 +1,38 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './stores/authStore';
 import useLanguageStore from './stores/languageStore';
 import useSettingsStore from './stores/settingsStore';
 import { authApi } from './api/auth';
+import { Loader2 } from 'lucide-react';
 
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import ActivityLogs from './pages/ActivityLogs';
-import Invoices from './pages/Invoices';
-import InvoiceDetail from './pages/InvoiceDetail';
-import Notifications from './pages/Notifications';
-import Employees from './pages/admin/Employees';
-import Settings from './pages/Settings';
-import Customers from './pages/admin/Customers';
-import CustomerDetail from './pages/admin/CustomerDetail';
-import Suppliers from './pages/admin/Suppliers';
-import Expenses from './pages/Expenses';
-import SupplierDetail from './pages/admin/SupplierDetail';
-import ProductsList from './pages/products/ProductsList';
-import ProductForm from './pages/products/ProductForm';
-import ProductDetail from './pages/products/ProductDetail';
-import POS from './pages/pos/POS';
 import ShellLayout from './components/layout/ShellLayout';
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ActivityLogs = lazy(() => import('./pages/ActivityLogs'));
+const Invoices = lazy(() => import('./pages/Invoices'));
+const InvoiceDetail = lazy(() => import('./pages/InvoiceDetail'));
+const Notifications = lazy(() => import('./pages/Notifications'));
+const Employees = lazy(() => import('./pages/admin/Employees'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Customers = lazy(() => import('./pages/admin/Customers'));
+const CustomerDetail = lazy(() => import('./pages/admin/CustomerDetail'));
+const Suppliers = lazy(() => import('./pages/admin/Suppliers'));
+const Expenses = lazy(() => import('./pages/Expenses'));
+const SupplierDetail = lazy(() => import('./pages/admin/SupplierDetail'));
+const ProductsList = lazy(() => import('./pages/products/ProductsList'));
+const ProductForm = lazy(() => import('./pages/products/ProductForm'));
+const ProductDetail = lazy(() => import('./pages/products/ProductDetail'));
+const POS = lazy(() => import('./pages/pos/POS'));
+
+function PageLoader() {
+  return (
+    <div className="flex h-[60dvh] items-center justify-center">
+      <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+    </div>
+  );
+}
 
 // Simple Role Guard
 function RoleGuard({ children, allowedRoles }) {
@@ -79,78 +89,96 @@ export default function App() {
     }
   }, [language, dir]);
 
+  if (!authReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        
-        {/* Protected Routes Wrapper */}
-        <Route element={<ShellLayout />}>
-          <Route path="/" element={<RootRedirect />} />
-          <Route path="/dashboard" element={<RootRedirect />} />
-          <Route 
-            path="/admin" 
-            element={<RoleGuard allowedRoles={['admin']}><Dashboard /></RoleGuard>} 
-          />
-          <Route 
-            path="/employee" 
-            element={<RoleGuard allowedRoles={['employee']}><Dashboard /></RoleGuard>} 
-          />
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
           
-          {/* Admin only routes */}
-          <Route 
-            path="/employees" 
-            element={<RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard>} 
-          />
-          <Route 
-            path="/admin/employees" 
-            element={<RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard>} 
-          />
-          <Route path="/activity-logs" element={<ActivityLogs />} />
-          <Route path="/invoices" element={<Invoices />} />
-          <Route path="/invoices/:id" element={<InvoiceDetail />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route 
-            path="/admin/customers" 
-            element={<RoleGuard allowedRoles={['admin']}><Customers /></RoleGuard>} 
-          />
-          <Route 
-            path="/admin/customers/:id" 
-            element={<RoleGuard allowedRoles={['admin']}><CustomerDetail /></RoleGuard>} 
-          />
-          <Route 
-            path="/admin/suppliers" 
-            element={<RoleGuard allowedRoles={['admin']}><Suppliers /></RoleGuard>} 
-          />
-          <Route
-            path="/admin/suppliers/:id"
-            element={<RoleGuard allowedRoles={['admin']}><SupplierDetail /></RoleGuard>}
-          />
-          <Route
-            path="/expenses"
-            element={<RoleGuard allowedRoles={['admin']}><Expenses /></RoleGuard>}
-          />
+          {/* Protected Routes Wrapper - blocked until auth is ready */}
+          {!authReady ? (
+            <Route path="*" element={
+              <div className="min-h-screen flex items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+              </div>
+            } />
+          ) : (
+            <Route element={<ShellLayout />}>
+              <Route path="/" element={<RootRedirect />} />
+              <Route path="/dashboard" element={<RootRedirect />} />
+              <Route 
+                path="/admin" 
+                element={<RoleGuard allowedRoles={['admin']}><Dashboard /></RoleGuard>} 
+              />
+              <Route 
+                path="/employee" 
+                element={<RoleGuard allowedRoles={['employee']}><Dashboard /></RoleGuard>} 
+              />
+              
+              {/* Admin only routes */}
+              <Route 
+                path="/employees" 
+                element={<RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard>} 
+              />
+              <Route 
+                path="/admin/employees" 
+                element={<RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard>} 
+              />
+              <Route path="/activity-logs" element={<ActivityLogs />} />
+              <Route path="/invoices" element={<Invoices />} />
+              <Route path="/invoices/:id" element={<InvoiceDetail />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route 
+                path="/admin/customers" 
+                element={<RoleGuard allowedRoles={['admin']}><Customers /></RoleGuard>} 
+              />
+              <Route 
+                path="/admin/customers/:id" 
+                element={<RoleGuard allowedRoles={['admin']}><CustomerDetail /></RoleGuard>} 
+              />
+              <Route 
+                path="/admin/suppliers" 
+                element={<RoleGuard allowedRoles={['admin']}><Suppliers /></RoleGuard>} 
+              />
+              <Route
+                path="/admin/suppliers/:id"
+                element={<RoleGuard allowedRoles={['admin']}><SupplierDetail /></RoleGuard>}
+              />
+              <Route
+                path="/expenses"
+                element={<RoleGuard allowedRoles={['admin']}><Expenses /></RoleGuard>}
+              />
 
-          {/* Product Routes */}
-          <Route path="/products" element={<ProductsList />} />
-          <Route path="/products/:id" element={<ProductDetail />} />
-          <Route 
-            path="/products/new" 
-            element={<RoleGuard allowedRoles={['admin']}><ProductForm /></RoleGuard>} 
-          />
-          <Route 
-            path="/products/:id/edit" 
-            element={<RoleGuard allowedRoles={['admin']}><ProductForm /></RoleGuard>} 
-          />
+              {/* Product Routes */}
+              <Route path="/products" element={<ProductsList />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
+              <Route 
+                path="/products/new" 
+                element={<RoleGuard allowedRoles={['admin']}><ProductForm /></RoleGuard>} 
+              />
+              <Route 
+                path="/products/:id/edit" 
+                element={<RoleGuard allowedRoles={['admin']}><ProductForm /></RoleGuard>} 
+              />
 
-          {/* POS Route */}
-          <Route path="/pos" element={<POS />} />
-        </Route>
-        
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+              {/* POS Route */}
+              <Route path="/pos" element={<POS />} />
+            </Route>
+          )}
+          
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

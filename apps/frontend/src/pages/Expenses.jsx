@@ -97,7 +97,7 @@ export default function Expenses() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t('expenses.searchPlaceholder')}
-              className="w-full pl-9 pr-4 py-2 rounded-xl text-sm"
+              className="w-full rounded-xl pl-9 pr-4 py-3 text-sm"
             />
           </div>
         </div>
@@ -279,11 +279,11 @@ function ExpenseFormModal({ expense, onClose, onSubmit }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block space-y-2">
         <span className="text-sm font-medium text-text-secondary">{t('expenses.form.description')}</span>
-        <input type="text" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required className="w-full rounded-xl px-4 py-3 text-base" />
+        <input type="text" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required className="w-full rounded-xl px-4 py-3" />
       </label>
       <label className="block space-y-2">
         <span className="text-sm font-medium text-text-secondary">{t('expenses.form.category')}</span>
-        <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required className="w-full rounded-xl px-4 py-3 text-base">
+        <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required className="w-full rounded-xl px-4 py-3">
           {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
             <option key={key} value={key}>{t(label)}</option>
           ))}
@@ -292,16 +292,16 @@ function ExpenseFormModal({ expense, onClose, onSubmit }) {
       <div className="grid grid-cols-2 gap-4">
         <label className="block space-y-2">
           <span className="text-sm font-medium text-text-secondary">{t('expenses.form.amount')}</span>
-          <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl px-4 py-3 text-base tabular-nums" />
+          <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl px-4 py-3 tabular-nums" />
         </label>
         <label className="block space-y-2">
           <span className="text-sm font-medium text-text-secondary">{t('expenses.form.date')}</span>
-          <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required className="w-full rounded-xl px-4 py-3 text-base" />
+          <input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required className="w-full rounded-xl px-4 py-3" />
         </label>
       </div>
       <label className="block space-y-2">
         <span className="text-sm font-medium text-text-secondary">{t('expenses.form.note')}</span>
-        <textarea value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} rows="2" className="w-full rounded-xl px-4 py-3 text-base resize-none" />
+        <textarea value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} rows="2" className="w-full rounded-xl px-4 py-3 resize-none" />
       </label>
       <div className="flex justify-end gap-3 mt-6 pb-4">
         <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">{t('expenses.cancel')}</button>

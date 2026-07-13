@@ -155,7 +155,7 @@ export default function Settings() {
                     value={displayName}
                     onChange={(e) => setNameOverride(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4"
+                    className="w-full rounded-xl pl-10 pr-4 py-3"
                   />
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function Settings() {
                     value={displayPhone}
                     onChange={(e) => setPhoneOverride(e.target.value)}
                     required
-                    className="w-full pl-10 pr-4"
+                    className="w-full rounded-xl pl-10 pr-4 py-3"
                   />
                 </div>
               </div>
@@ -187,7 +187,7 @@ export default function Settings() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={t('profile.passwordPlaceholder')}
-                    className="w-full pl-10 pr-4"
+                    className="w-full rounded-xl pl-10 pr-4 py-3"
                   />
                 </div>
               </div>
@@ -250,7 +250,7 @@ export default function Settings() {
                         type="text"
                         value={displayStoreName}
                         onChange={(e) => setStoreNameOverride(e.target.value)}
-                        className="w-full"
+                        className="w-full rounded-xl py-3"
                       />
                     </div>
 
@@ -262,7 +262,7 @@ export default function Settings() {
                         type="text"
                         value={displayStorePhone}
                         onChange={(e) => setStorePhoneOverride(e.target.value)}
-                        className="w-full"
+                        className="w-full rounded-xl py-3"
                       />
                     </div>
 
@@ -276,7 +276,7 @@ export default function Settings() {
                           type="text"
                           value={displayStoreAddress}
                           onChange={(e) => setStoreAddressOverride(e.target.value)}
-                          className="w-full pl-10 pr-4"
+                          className="w-full rounded-xl pl-10 pr-4 py-3"
                         />
                       </div>
                     </div>
@@ -290,7 +290,7 @@ export default function Settings() {
                         <select
                           value={displayCurrency}
                           onChange={(e) => setCurrencyOverride(e.target.value)}
-                          className="w-full pl-10 pr-4"
+                          className="w-full rounded-xl pl-10 pr-4 py-3"
                         >
                           <option value="MRU">MRU</option>
                         </select>
@@ -306,7 +306,7 @@ export default function Settings() {
                         <select
                           value={displayLanguage}
                           onChange={(e) => setLanguageOverride(e.target.value)}
-                          className="w-full pl-10 pr-4"
+                          className="w-full rounded-xl pl-10 pr-4 py-3"
                         >
                           <option value="fr">Français</option>
                           <option value="ar">العربية</option>
@@ -324,7 +324,7 @@ export default function Settings() {
                           value={displayInvoiceFooter}
                           onChange={(e) => setInvoiceFooterOverride(e.target.value)}
                           rows={3}
-                          className="w-full pl-10 pr-4 resize-none"
+                          className="w-full rounded-xl pl-10 pr-4 py-3 resize-none"
                         />
                       </div>
                     </div>

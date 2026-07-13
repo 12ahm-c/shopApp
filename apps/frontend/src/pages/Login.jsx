@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../stores/authStore';
@@ -18,8 +18,8 @@ export default function Login() {
   const isRtl = i18n.language === 'ar';
 
   useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
+    if (!settings) fetchSettings();
+  }, [fetchSettings, settings]);
 
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -27,10 +27,10 @@ export default function Login() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const toggleLanguage = () => {
+  const toggleLanguage = useCallback(() => {
     const newLang = i18n.language === 'fr' ? 'ar' : 'fr';
     i18n.changeLanguage(newLang);
-  };
+  }, [i18n]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,9 +42,9 @@ export default function Login() {
       login(res.data.user, res.data.accessToken);
 
       if (res.data.user.role === 'admin') {
-        navigate('/admin');
+        navigate('/admin', { replace: true });
       } else {
-        navigate('/pos');
+        navigate('/pos', { replace: true });
       }
     } catch (err) {
       setError(err.message || t('login.error'));
@@ -118,6 +118,8 @@ export default function Login() {
                 </span>
                 <input
                   type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder={isRtl ? '33 44 55 66' : '33 44 55 66'}
@@ -136,6 +138,7 @@ export default function Login() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
                   required
                   className="w-full py-3.5 px-4 rounded-xl text-sm"
                 />

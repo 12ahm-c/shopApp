@@ -236,7 +236,7 @@ export default function Employees() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder={t('employeesPage.searchPlaceholder')}
-              className="w-full rounded-xl py-2 pl-9 pr-4 text-sm"
+              className="w-full rounded-xl py-3 pl-9 pr-4 text-sm"
             />
           </label>
           <span className="text-sm text-muted-foreground">
@@ -485,7 +485,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full rounded-xl px-4 py-2.5"
+            className="w-full rounded-xl px-4 py-3"
           />
         </label>
 
@@ -497,7 +497,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
             value={formData.phone}
             onChange={handleChange}
             required
-            className="w-full rounded-xl px-4 py-2.5"
+            className="w-full rounded-xl px-4 py-3"
           />
         </label>
 
@@ -524,7 +524,7 @@ function EmployeeFormModal({ mode, formData, mutationState, onChange, onClose, o
             value={formData.password}
             onChange={handleChange}
             required={mode === 'create'}
-            className="w-full rounded-xl px-4 py-2.5"
+            className="w-full rounded-xl px-4 py-3"
           />
         </label>
 
@@ -562,7 +562,7 @@ function AttendanceModal({ employee, attendanceData, mutationState, onChange, on
             value={attendanceData.date}
             onChange={handleChange}
             required
-            className="w-full rounded-xl px-4 py-2.5"
+            className="w-full rounded-xl px-4 py-3"
           />
         </label>
 
