@@ -119,11 +119,11 @@ export default function Notifications() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white">
+          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-text-primary">
             <Bell className="h-6 w-6 text-blue-400" />
             {t('notification.title')}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-muted-foreground">
             {notificationsState.meta?.unreadCount != null
               ? `${notificationsState.meta.unreadCount} ${t('notification.unreadOnly').toLowerCase()}`
               : ''}
@@ -134,7 +134,7 @@ export default function Notifications() {
             type="button"
             onClick={handleMarkAllRead}
             disabled={actionState.status === 'loading'}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/[0.06]"
+            className="inline-flex items-center gap-2 rounded-xl border border-surface-border bg-surface px-3 py-2 text-sm font-medium text-text-secondary hover:bg-surface-hover"
           >
             {actionState.status === 'loading' && actionState.id === 'all' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -146,13 +146,13 @@ export default function Notifications() {
         )}
       </div>
 
-      <section className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
+      <section className="rounded-2xl border border-surface-border bg-card p-4">
+        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-text-primary">
           <Filter className="h-4 w-4" />
           {t('notification.filters')}
         </div>
         <div className="flex flex-wrap items-end gap-4">
-          <label className="flex items-center gap-2 text-sm font-medium text-slate-300">
+          <label className="flex items-center gap-2 text-sm font-medium text-text-secondary">
             <input
               type="checkbox"
               name="unreadOnly"
@@ -166,7 +166,7 @@ export default function Notifications() {
             name="type"
             value={filters.type}
             onChange={handleFilterChange}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="rounded-xl border border-surface-border bg-surface px-3 py-2 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
           >
             {notificationTypes.map((type) => (
               <option key={type.value || 'all'} value={type.value}>
@@ -177,7 +177,7 @@ export default function Notifications() {
           <button
             type="button"
             onClick={resetFilters}
-            className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 hover:bg-white/5"
+            className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent"
           >
             <SearchX className="h-4 w-4" />
             {t('activityLog.reset')}
@@ -187,7 +187,7 @@ export default function Notifications() {
 
       <section className="space-y-3">
         {notificationsState.status === 'loading' && (
-          <div className="flex items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-12">
+          <div className="flex items-center justify-center rounded-2xl border border-surface-border bg-card p-12">
             <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
           </div>
         )}
@@ -199,7 +199,7 @@ export default function Notifications() {
         )}
 
         {notificationsState.status === 'success' && notificationsState.data.length === 0 && (
-          <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-12 text-center text-sm text-slate-500">
+          <div className="rounded-2xl border border-surface-border bg-card p-12 text-center text-sm text-muted-foreground">
             {t('notification.noNotifications')}
           </div>
         )}
@@ -208,7 +208,7 @@ export default function Notifications() {
           notificationsState.data.map((notification) => (
             <div
               key={notification._id}
-              className="flex items-start gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-4 transition-all hover:bg-white/[0.06]"
+              className="flex items-start gap-4 rounded-2xl border border-surface-border bg-card p-4 transition-all hover:bg-surface-hover"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
                 <Bell className="h-5 w-5" />
@@ -216,20 +216,20 @@ export default function Notifications() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-white">{notification.title}</p>
-                    <p className="mt-0.5 text-sm text-slate-400">{notification.body}</p>
+                    <p className="text-sm font-semibold text-text-primary">{notification.title}</p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{notification.body}</p>
                   </div>
-                  <span className="shrink-0 rounded-lg bg-white/5 px-2.5 py-0.5 text-xs font-medium text-slate-300">
+                  <span className="shrink-0 rounded-lg bg-surface px-2.5 py-0.5 text-xs font-medium text-text-secondary">
                     {typeLabels[notification.type] || notification.type}
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-slate-500">{formatDateTime(notification.createdAt)}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{formatDateTime(notification.createdAt)}</p>
               </div>
               <button
                 type="button"
                 onClick={() => handleMarkRead(notification._id)}
                 disabled={actionState.status === 'loading'}
-                className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-blue-500/10 hover:text-blue-400 disabled:opacity-50"
+                className="shrink-0 rounded-lg p-2 text-muted-foreground hover:bg-blue-500/10 hover:text-blue-400 disabled:opacity-50"
                 aria-label="Marquer comme lu"
               >
                 {actionState.status === 'loading' && actionState.id === notification._id ? (

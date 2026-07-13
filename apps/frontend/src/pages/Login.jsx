@@ -3,15 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../stores/authStore';
 import useSettingsStore from '../stores/settingsStore';
+import useThemeStore from '../stores/themeStore';
 import { authApi } from '../api/auth';
-import { Loader2, Eye, EyeOff, Store, Globe } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Store, Globe, Sun, Moon } from 'lucide-react';
 
 export default function Login() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const { settings, fetchSettings } = useSettingsStore();
+  const { theme, toggleTheme } = useThemeStore();
   const storeName = settings?.storeName || t('store_name');
+  const storeLogo = settings?.storeLogo || null;
   const isRtl = i18n.language === 'ar';
 
   useEffect(() => {
@@ -51,7 +54,7 @@ export default function Login() {
   };
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#060a14]">
+    <div dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">
       {/* Background orbs */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-blue-600/8 blur-[120px]" />
@@ -59,46 +62,59 @@ export default function Login() {
         <div className="absolute top-1/4 right-0 w-[400px] h-[400px] rounded-full bg-indigo-600/5 blur-[80px]" />
       </div>
 
-      {/* Language toggle */}
-      <button
-        type="button"
-        onClick={toggleLanguage}
-        className={`absolute top-5 ${isRtl ? 'left-5' : 'right-5'} z-20 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all text-sm backdrop-blur-sm`}
-      >
-        <Globe className="w-4 h-4" />
-        {isRtl ? 'FR' : 'ع'}
-      </button>
+      {/* Top buttons */}
+      <div className={`absolute top-5 ${isRtl ? 'left-5' : 'right-5'} z-20 flex items-center gap-2`}>
+        <button
+          type="button"
+          onClick={toggleLanguage}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface/50 border border-surface-border text-muted-foreground hover:text-text-primary hover:bg-surface transition-all text-sm backdrop-blur-sm"
+        >
+          <Globe className="w-4 h-4" />
+          {isRtl ? 'FR' : 'ع'}
+        </button>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="p-2 rounded-xl bg-surface/50 border border-surface-border text-muted-foreground hover:text-text-primary hover:bg-surface transition-all backdrop-blur-sm"
+        >
+          {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        </button>
+      </div>
 
       <div className="relative z-10 w-full max-w-[420px] mx-4">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 mb-5 shadow-xl shadow-blue-500/25">
-            <Store className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">
+          {storeLogo ? (
+            <img src={storeLogo} alt={storeName} className="w-16 h-16 rounded-2xl object-cover mx-auto mb-5 shadow-xl" />
+          ) : (
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 mb-5 shadow-xl shadow-blue-500/25">
+              <Store className="w-8 h-8 text-white" />
+            </div>
+          )}
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">
             {storeName}
           </h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             {t('login.subtitle')}
           </p>
         </div>
 
         {/* Login card */}
-        <div className="bg-white/[0.03] backdrop-blur-2xl rounded-3xl border border-white/[0.06] p-8 shadow-2xl shadow-black/40">
+        <div className="bg-card/80 backdrop-blur-2xl rounded-3xl border border-surface-border p-8 shadow-2xl">
           {error && (
-            <div className="mb-6 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
+            <div className="mb-6 px-4 py-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {t('phone')}
               </label>
               <div className="relative">
-                <span className={`absolute inset-y-0 ${isRtl ? 'right-0 pl-3' : 'left-0 pr-3'} flex items-center text-slate-500 text-sm font-medium pointer-events-none`}>
-                  <span className={`px-3 ${isRtl ? 'border-l' : 'border-r'} border-white/10`}>+222</span>
+                <span className={`absolute inset-y-0 ${isRtl ? 'right-0 pl-3' : 'left-0 pr-3'} flex items-center text-muted-foreground text-sm font-medium pointer-events-none`}>
+                  <span className={`px-3 ${isRtl ? 'border-l' : 'border-r'} border-surface-border`}>+222</span>
                 </span>
                 <input
                   type="tel"
@@ -106,13 +122,13 @@ export default function Login() {
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder={isRtl ? '33 44 55 66' : '33 44 55 66'}
                   required
-                  className={`w-full py-3.5 ${isRtl ? 'pr-20 pl-4' : 'pl-20 pr-4'} rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all text-sm`}
+                  className={`w-full py-3.5 ${isRtl ? 'pr-20 pl-4' : 'pl-20 pr-4'} rounded-xl text-sm`}
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {t('password')}
               </label>
               <div className="relative">
@@ -121,12 +137,12 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full py-3.5 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all text-sm"
+                  className="w-full py-3.5 px-4 rounded-xl text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className={`absolute inset-y-0 ${isRtl ? 'left-0' : 'right-0'} flex items-center px-4 text-slate-500 hover:text-slate-300 transition-colors`}
+                  className={`absolute inset-y-0 ${isRtl ? 'left-0' : 'right-0'} flex items-center px-4 text-muted-foreground hover:text-text-primary transition-colors`}
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -148,7 +164,7 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-slate-600 mt-6">
+        <p className="text-center text-xs text-muted-foreground mt-6">
           {storeName} &copy; {new Date().getFullYear()}
         </p>
       </div>

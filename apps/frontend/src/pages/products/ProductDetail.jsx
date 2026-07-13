@@ -65,21 +65,21 @@ export default function ProductDetail() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/products')}
-            className="p-2 rounded-xl hover:bg-white/5 transition-colors text-slate-400"
+            className="p-2 rounded-xl hover:bg-accent transition-colors text-muted-foreground"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-white">
+              <h1 className="text-2xl font-bold tracking-tight text-text-primary">
                 {product.name}
               </h1>
-              <span className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-white/5 text-slate-300 border border-white/5">
+              <span className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-accent text-text-secondary border border-surface-border">
                 {product.category}
               </span>
             </div>
-            <p className="text-sm text-slate-500 mt-1 flex items-center gap-2">
-              <span className="font-mono text-xs text-slate-500">ID: {product._id}</span>
+            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+              <span className="font-mono text-xs text-muted-foreground">ID: {product._id}</span>
             </p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function ProductDetail() {
           <div className="flex items-center gap-3">
             <Link
               to={`/products/${product._id}/edit`}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 text-sm font-medium rounded-xl transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-accent border border-surface-border hover:bg-surface-hover text-text-secondary text-sm font-medium rounded-xl transition-all"
             >
               <Edit className="w-4 h-4" />
               Edit
@@ -96,7 +96,7 @@ export default function ProductDetail() {
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-rose-400 text-sm font-medium rounded-xl transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-sm font-medium rounded-xl transition-all disabled:opacity-50"
             >
               {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
               Delete
@@ -107,8 +107,8 @@ export default function ProductDetail() {
 
       {deleteError && (
         <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-          <div className="text-sm text-rose-400">
+          <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+          <div className="text-sm text-rose-600 dark:text-rose-400">
             <strong>Cannot delete product:</strong> {deleteError}
           </div>
         </div>
@@ -117,10 +117,10 @@ export default function ProductDetail() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Price Card */}
-        <div className="bg-white/[0.03] p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
-          <span className="text-sm font-medium text-slate-400">Unit Price</span>
-          <div className="text-3xl font-bold text-white mt-2 tabular-nums">
-            {product.price.toLocaleString()} <span className="text-lg font-medium text-slate-500">MRU</span>
+        <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
+          <span className="text-sm font-medium text-muted-foreground">Unit Price</span>
+          <div className="text-3xl font-bold text-text-primary mt-2 tabular-nums">
+            {product.price.toLocaleString()} <span className="text-lg font-medium text-muted-foreground">MRU</span>
           </div>
         </div>
         
@@ -128,37 +128,37 @@ export default function ProductDetail() {
         <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
           isLowStock 
             ? 'bg-amber-500/5 border-amber-500/20 relative overflow-hidden' 
-            : 'bg-white/[0.03] border-white/5'
+            : 'bg-card border-surface-border'
         }`}>
           {isLowStock && (
             <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 rounded-bl-full flex items-start justify-end p-2">
-              <AlertTriangle className="w-5 h-5 text-amber-400" />
+              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
           )}
-          <span className="text-sm font-medium text-slate-400">Current Stock</span>
+          <span className="text-sm font-medium text-muted-foreground">Current Stock</span>
           <div className="flex items-baseline gap-2 mt-2">
-            <span className={`text-3xl font-bold ${isLowStock ? 'text-amber-400' : 'text-white'}`}>
+            <span className={`text-3xl font-bold ${isLowStock ? 'text-amber-600 dark:text-amber-400' : 'text-text-primary'}`}>
               {product.quantity}
             </span>
-            <span className="text-sm font-medium text-slate-500">units</span>
+            <span className="text-sm font-medium text-muted-foreground">units</span>
           </div>
         </div>
 
         {/* Threshold Card */}
-        <div className="bg-white/[0.03] p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
-          <span className="text-sm font-medium text-slate-400">Alert Threshold</span>
+        <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
+          <span className="text-sm font-medium text-muted-foreground">Alert Threshold</span>
           <div className="flex items-center gap-2 mt-2">
-            <AlertTriangle className="w-5 h-5 text-slate-500" />
-            <span className="text-xl font-semibold text-slate-300">{product.alertThreshold}</span>
+            <AlertTriangle className="w-5 h-5 text-muted-foreground" />
+            <span className="text-xl font-semibold text-text-secondary">{product.alertThreshold}</span>
           </div>
         </div>
 
         {/* Created At Card */}
-        <div className="bg-white/[0.03] p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
-          <span className="text-sm font-medium text-slate-400">Added On</span>
+        <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
+          <span className="text-sm font-medium text-muted-foreground">Added On</span>
           <div className="flex items-center gap-2 mt-2">
-            <Calendar className="w-5 h-5 text-slate-500" />
-            <span className="text-lg font-medium text-slate-300">
+            <Calendar className="w-5 h-5 text-muted-foreground" />
+            <span className="text-lg font-medium text-text-secondary">
               {new Date(product.createdAt).toLocaleDateString()}
             </span>
           </div>

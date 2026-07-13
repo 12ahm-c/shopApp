@@ -22,30 +22,30 @@ import { formatMoney, formatDateTime } from '../lib/format';
 
 function StatCard({ icon: Icon, label, value, tone = 'blue', trend, trendValue }) {
   const tones = {
-    blue: 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20',
-    emerald: 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20',
-    amber: 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20',
-    rose: 'bg-rose-500/10 text-rose-400 ring-1 ring-rose-500/20',
-    slate: 'bg-white/5 text-slate-400 ring-1 ring-white/10',
-    cyan: 'bg-cyan-500/10 text-cyan-400 ring-1 ring-cyan-500/20'
+    blue: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 ring-1 ring-blue-500/20',
+    emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/20',
+    amber: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/20',
+    rose: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 ring-1 ring-rose-500/20',
+    slate: 'bg-accent text-muted-foreground ring-1 ring-surface-border',
+    cyan: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 ring-1 ring-cyan-500/20'
   };
 
   return (
-    <div className="bg-white/[0.03] backdrop-blur-sm rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-colors">
+    <div className="bg-card backdrop-blur-sm rounded-2xl p-4 border border-surface-border hover:border-primary/20 transition-colors">
       <div className="flex items-center justify-between">
         <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${tones[tone]}`}>
           <Icon className="w-5 h-5" />
         </div>
         {trend && (
-          <div className={`flex items-center gap-0.5 text-xs font-semibold ${trend === 'up' ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <div className={`flex items-center gap-0.5 text-xs font-semibold ${trend === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
             {trend === 'up' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
             {trendValue}
           </div>
         )}
       </div>
       <div className="mt-3">
-        <p className="text-[13px] text-slate-500">{label}</p>
-        <p className="mt-0.5 text-xl font-bold text-white tabular-nums">{value}</p>
+        <p className="text-[13px] text-muted-foreground">{label}</p>
+        <p className="mt-0.5 text-xl font-bold text-text-primary tabular-nums">{value}</p>
       </div>
     </div>
   );
@@ -53,22 +53,22 @@ function StatCard({ icon: Icon, label, value, tone = 'blue', trend, trendValue }
 
 function QuickActionCard({ icon: Icon, label, to, tone = 'blue' }) {
   const tones = {
-    blue: 'bg-blue-500/10 text-blue-400',
-    emerald: 'bg-emerald-500/10 text-emerald-400',
-    amber: 'bg-amber-500/10 text-amber-400',
-    rose: 'bg-rose-500/10 text-rose-400',
-    cyan: 'bg-cyan-500/10 text-cyan-400'
+    blue: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+    emerald: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+    amber: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+    rose: 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
+    cyan: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400'
   };
 
   return (
     <Link
       to={to}
-      className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-200 active:scale-[0.97]"
+      className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-card border border-surface-border hover:bg-accent hover:border-primary/20 transition-all duration-200 active:scale-[0.97]"
     >
       <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${tones[tone]}`}>
         <Icon className="w-5 h-5" />
       </div>
-      <span className="text-[11px] font-medium text-slate-400 text-center">{label}</span>
+      <span className="text-[11px] font-medium text-muted-foreground text-center">{label}</span>
     </Link>
   );
 }
@@ -79,32 +79,32 @@ function RecentSalesList({ sales }) {
   if (!sales.length) {
     return (
       <div className="p-8 text-center">
-        <ShoppingBag className="w-10 h-10 mx-auto text-slate-700 mb-3" />
-        <p className="text-sm text-slate-500">{t('dashboard.noSales')}</p>
+        <ShoppingBag className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
+        <p className="text-sm text-muted-foreground">{t('dashboard.noSales')}</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-white/5">
+    <div className="divide-y divide-surface-border">
       {sales.map((sale) => (
         <Link
           key={sale._id}
           to={`/invoices/${sale._id}`}
-          className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors"
+          className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-accent transition-colors"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-              <ReceiptText className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <ReceiptText className="w-5 h-5 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="font-semibold text-sm text-white truncate">#{sale.invoiceNumber}</p>
-              <p className="text-xs text-slate-500 truncate">{sale.customerName}</p>
+              <p className="font-semibold text-sm text-text-primary truncate">#{sale.invoiceNumber}</p>
+              <p className="text-xs text-muted-foreground truncate">{sale.customerName}</p>
             </div>
           </div>
           <div className="text-right shrink-0">
-            <p className="font-bold text-sm text-white tabular-nums">{formatMoney(sale.totalAmount)}</p>
-            <p className="text-[10px] text-slate-600">{formatDateTime(sale.createdAt)}</p>
+            <p className="font-bold text-sm text-text-primary tabular-nums">{formatMoney(sale.totalAmount)}</p>
+            <p className="text-[10px] text-muted-foreground">{formatDateTime(sale.createdAt)}</p>
           </div>
         </Link>
       ))}
@@ -118,25 +118,25 @@ function LowStockList({ products }) {
   if (!products.length) {
     return (
       <div className="p-8 text-center">
-        <Package className="w-10 h-10 mx-auto text-slate-700 mb-3" />
-        <p className="text-sm text-slate-500">{t('dashboard.noStockAlerts')}</p>
+        <Package className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
+        <p className="text-sm text-muted-foreground">{t('dashboard.noStockAlerts')}</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-white/5">
+    <div className="divide-y divide-surface-border">
       {products.map((product) => (
         <Link
           key={product._id}
           to={`/products/${product._id}`}
-          className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors"
+          className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-accent transition-colors"
         >
           <div className="min-w-0">
-            <p className="font-medium text-sm text-white truncate">{product.name}</p>
-            <p className="text-xs text-slate-500">{t('dashboard.threshold')}: {product.alertThreshold}</p>
+            <p className="font-medium text-sm text-text-primary truncate">{product.name}</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.threshold')}: {product.alertThreshold}</p>
           </div>
-          <span className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-lg bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20">
+          <span className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/20">
             {product.quantity} {t('dashboard.remaining')}
           </span>
         </Link>
@@ -151,21 +151,21 @@ function ActivityList({ activity }) {
   if (!activity.length) {
     return (
       <div className="p-8 text-center">
-        <Activity className="w-10 h-10 mx-auto text-slate-700 mb-3" />
-        <p className="text-sm text-slate-500">{t('dashboard.noActivity')}</p>
+        <Activity className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
+        <p className="text-sm text-muted-foreground">{t('dashboard.noActivity')}</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-white/5">
+    <div className="divide-y divide-surface-border">
       {activity.map((item) => (
         <div key={item._id} className="px-4 py-3.5">
           <div className="flex items-center justify-between gap-3">
-            <p className="font-medium text-sm text-white truncate">{item.details}</p>
-            <span className="text-xs text-slate-600 shrink-0">{formatDateTime(item.timestamp)}</span>
+            <p className="font-medium text-sm text-text-primary truncate">{item.details}</p>
+            <span className="text-xs text-muted-foreground shrink-0">{formatDateTime(item.timestamp)}</span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">{item.userName} - {item.action}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{item.userName} - {item.action}</p>
         </div>
       ))}
     </div>
@@ -242,13 +242,13 @@ export default function Dashboard() {
       </div>
 
       {dashboardState.status === 'loading' && (
-        <div className="flex items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-12">
-          <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+        <div className="flex items-center justify-center rounded-2xl border border-surface-border bg-card p-12">
+          <Loader2 className="h-7 w-7 animate-spin text-primary" />
         </div>
       )}
 
       {dashboardState.status === 'error' && (
-        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-400">
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
           {dashboardState.error}
         </div>
       )}
@@ -284,7 +284,7 @@ export default function Dashboard() {
 
           {/* Quick Actions */}
           <div>
-            <h2 className="text-[15px] font-semibold text-white mb-3">{t('dashboard.quickActions')}</h2>
+            <h2 className="text-[15px] font-semibold text-text-primary mb-3">{t('dashboard.quickActions')}</h2>
             <div className="grid grid-cols-4 gap-3">
               <QuickActionCard icon={ShoppingCart} label={t('pos.title')} to="/pos" tone="blue" />
               <QuickActionCard icon={Package} label={t('products')} to="/products" tone="cyan" />
@@ -296,10 +296,10 @@ export default function Dashboard() {
           </div>
 
           {/* Recent Sales */}
-          <section className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-              <h2 className="font-semibold text-white">{t('dashboard.recentSales')}</h2>
-              <Link className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors" to="/invoices">
+          <section className="bg-card rounded-2xl border border-surface-border overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-surface-border">
+              <h2 className="font-semibold text-text-primary">{t('dashboard.recentSales')}</h2>
+              <Link className="text-sm font-medium text-primary hover:opacity-80 transition-opacity" to="/invoices">
                 {t('dashboard.viewAll')}
               </Link>
             </div>
@@ -309,16 +309,16 @@ export default function Dashboard() {
           {/* Admin Sections */}
           {isAdmin && (
             <div className="grid gap-4 md:grid-cols-2">
-              <section className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
-                <div className="px-4 py-3 border-b border-white/5">
-                  <h2 className="font-semibold text-white">{t('dashboard.lowStockAlerts')}</h2>
+              <section className="bg-card rounded-2xl border border-surface-border overflow-hidden">
+                <div className="px-4 py-3 border-b border-surface-border">
+                  <h2 className="font-semibold text-text-primary">{t('dashboard.lowStockAlerts')}</h2>
                 </div>
                 <LowStockList products={dashboardState.data.lowStockProducts ?? []} />
               </section>
 
-              <section className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
-                <div className="px-4 py-3 border-b border-white/5">
-                  <h2 className="font-semibold text-white">{t('dashboard.recentActivity')}</h2>
+              <section className="bg-card rounded-2xl border border-surface-border overflow-hidden">
+                <div className="px-4 py-3 border-b border-surface-border">
+                  <h2 className="font-semibold text-text-primary">{t('dashboard.recentActivity')}</h2>
                 </div>
                 <ActivityList activity={dashboardState.data.recentActivity ?? []} />
               </section>

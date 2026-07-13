@@ -87,25 +87,25 @@ export default function ProductForm() {
       <div className="flex items-center gap-4">
         <button 
           onClick={() => navigate('/products')}
-          className="p-2 rounded-xl hover:bg-white/5 transition-colors text-slate-400"
+          className="p-2 rounded-xl hover:bg-accent transition-colors text-muted-foreground"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">
             {isEdit ? 'Edit Product' : 'Add New Product'}
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             {isEdit ? 'Update the product details below.' : 'Fill out the details to create a new product.'}
           </p>
         </div>
       </div>
 
-      <div className="bg-white/[0.03] rounded-2xl border border-white/5 p-6">
+      <div className="bg-card rounded-2xl border border-surface-border p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <label className="block space-y-2 md:col-span-2">
-              <span className="text-sm font-medium text-slate-300">Product Name *</span>
+              <span className="text-sm font-medium text-text-secondary">Product Name *</span>
               <input 
                 type="text" 
                 name="name" 
@@ -114,12 +114,12 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={100}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none"
+                className="w-full rounded-xl px-4 py-2.5"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-300">Category *</span>
+              <span className="text-sm font-medium text-text-secondary">Category *</span>
               <input 
                 type="text" 
                 name="category" 
@@ -129,7 +129,7 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={50}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none"
+                className="w-full rounded-xl px-4 py-2.5"
               />
               <datalist id="categories">
                 <option value="Épicerie" />
@@ -140,7 +140,7 @@ export default function ProductForm() {
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-300">Price (MRU) *</span>
+              <span className="text-sm font-medium text-text-secondary">Price (MRU) *</span>
               <input 
                 type="number" 
                 name="price" 
@@ -148,12 +148,12 @@ export default function ProductForm() {
                 value={formData.price} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none tabular-nums"
+                className="w-full rounded-xl px-4 py-2.5 tabular-nums"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-300">Initial Quantity *</span>
+              <span className="text-sm font-medium text-text-secondary">Initial Quantity *</span>
               <input 
                 type="number" 
                 name="quantity" 
@@ -161,30 +161,30 @@ export default function ProductForm() {
                 value={formData.quantity} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none tabular-nums"
+                className="w-full rounded-xl px-4 py-2.5 tabular-nums"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-300">Low Stock Alert Threshold</span>
+              <span className="text-sm font-medium text-text-secondary">Low Stock Alert Threshold</span>
               <input 
                 type="number" 
                 name="alertThreshold" 
                 min="0"
                 value={formData.alertThreshold} 
                 onChange={handleChange} 
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 outline-none tabular-nums"
+                className="w-full rounded-xl px-4 py-2.5 tabular-nums"
               />
             </label>
           </div>
 
           {error && (
-            <div className="p-3 text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl">
+            <div className="p-3 text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl">
               {error}
             </div>
           )}
 
-          <div className="flex items-center justify-end pt-4 border-t border-white/5">
+          <div className="flex items-center justify-end pt-4 border-t border-surface-border">
             <button
               type="submit"
               disabled={saving}

@@ -119,35 +119,35 @@ export default function ActivityLogs() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">
             {t('activityLog.title')}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-muted-foreground">
             {isAdmin
               ? t('activityLog.subtitle.admin')
               : t('activityLog.subtitle.employee', { name: currentUser?.name ?? t('employees') })}
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-sm text-slate-300">
+        <div className="inline-flex items-center gap-2 rounded-xl border border-surface-border bg-surface px-3 py-2 text-sm text-text-secondary">
           <Activity className="h-4 w-4" />
           {logsState.meta?.total ?? logsState.data.length} {t('activityLog.events')}
         </div>
       </div>
 
-      <section className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-white">
+      <section className="rounded-2xl border border-surface-border bg-card p-4">
+        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-text-primary">
           <Filter className="h-4 w-4" />
           {t('activityLog.filters')}
         </div>
 
         <div className="grid gap-3 md:grid-cols-4">
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-300">{t('activityLog.action')}</span>
+            <span className="text-sm font-medium text-text-secondary">{t('activityLog.action')}</span>
             <select
               name="action"
               value={filters.action}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
             >
               {logActions.map((action) => (
                 <option key={action.value || 'all'} value={action.value}>
@@ -158,35 +158,35 @@ export default function ActivityLogs() {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-300">{t('activityLog.from')}</span>
+            <span className="text-sm font-medium text-text-secondary">{t('activityLog.from')}</span>
             <input
               type="date"
               name="from"
               value={filters.from}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-300">{t('activityLog.to')}</span>
+            <span className="text-sm font-medium text-text-secondary">{t('activityLog.to')}</span>
             <input
               type="date"
               name="to"
               value={filters.to}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </label>
 
           {isAdmin && (
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-300">{t('activityLog.user')}</span>
+              <span className="text-sm font-medium text-text-secondary">{t('activityLog.user')}</span>
               <select
                 name="userId"
                 value={filters.userId}
                 onChange={handleFilterChange}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500/30"
+                className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
               >
                 <option value="">{t('activityLog.allUsers')}</option>
                 {employeesState.data.map((employee) => (
@@ -203,7 +203,7 @@ export default function ActivityLogs() {
           <button
             type="button"
             onClick={resetFilters}
-            className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-white/5"
+            className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent"
           >
             <SearchX className="h-4 w-4" />
             {t('activityLog.reset')}
@@ -211,7 +211,7 @@ export default function ActivityLogs() {
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-white/5 bg-white/[0.03]">
+      <section className="overflow-hidden rounded-2xl border border-surface-border bg-card">
         {logsState.status === 'loading' && (
           <div className="flex items-center justify-center p-10" aria-live="polite" aria-busy="true">
             <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
@@ -225,7 +225,7 @@ export default function ActivityLogs() {
         )}
 
         {logsState.status === 'success' && logsState.data.length === 0 && (
-          <div className="p-8 text-center text-sm text-slate-500">
+          <div className="p-8 text-center text-sm text-muted-foreground">
             {t('activityLog.noEvents')}
           </div>
         )}
@@ -233,7 +233,7 @@ export default function ActivityLogs() {
         {logsState.status === 'success' && logsState.data.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="text-slate-400">
+              <thead className="text-muted-foreground">
                 <tr>
                   <th className="px-3 sm:px-6 py-4 font-medium">{t('table.date')}</th>
                   <th className="px-3 sm:px-6 py-4 font-medium hidden sm:table-cell">{t('table.user')}</th>
@@ -242,18 +242,18 @@ export default function ActivityLogs() {
                   <th className="px-3 sm:px-6 py-4 text-right font-medium">{t('table.amount')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-surface-border">
                 {logsState.data.map((log) => (
-                  <tr key={log._id} className="transition-colors hover:bg-white/[0.03]">
-                    <td className="px-3 sm:px-6 py-4 text-slate-400 text-sm whitespace-nowrap">{formatDateTime(log.timestamp)}</td>
-                    <td className="px-3 sm:px-6 py-4 font-medium text-white hidden sm:table-cell">{log.userName}</td>
+                  <tr key={log._id} className="transition-colors hover:bg-accent">
+                    <td className="px-3 sm:px-6 py-4 text-muted-foreground text-sm whitespace-nowrap">{formatDateTime(log.timestamp)}</td>
+                    <td className="px-3 sm:px-6 py-4 font-medium text-text-primary hidden sm:table-cell">{log.userName}</td>
                     <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex rounded-lg bg-white/5 px-2.5 py-0.5 text-xs font-medium text-slate-300">
+                      <span className="inline-flex rounded-lg bg-surface px-2.5 py-0.5 text-xs font-medium text-text-secondary">
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-3 sm:px-6 py-4 text-slate-400 hidden md:table-cell max-w-[200px] truncate">{log.details}</td>
-                    <td className="px-3 sm:px-6 py-4 text-right font-medium text-white whitespace-nowrap tabular-nums">
+                    <td className="px-3 sm:px-6 py-4 text-muted-foreground hidden md:table-cell max-w-[200px] truncate">{log.details}</td>
+                    <td className="px-3 sm:px-6 py-4 text-right font-medium text-text-primary whitespace-nowrap tabular-nums">
                       {log.amount == null ? '-' : `${formatNumber(log.amount)} MRU`}
                     </td>
                   </tr>

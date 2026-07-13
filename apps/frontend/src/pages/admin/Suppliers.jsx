@@ -56,10 +56,10 @@ export default function Suppliers() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">
             Fournisseurs
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Gérez vos fournisseurs et vos dettes envers eux.</p>
+          <p className="text-muted-foreground text-sm mt-1">Gérez vos fournisseurs et vos dettes envers eux.</p>
         </div>
         <button
           onClick={() => setIsAddOpen(true)}
@@ -70,53 +70,53 @@ export default function Suppliers() {
         </button>
       </div>
 
-      <div className="bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden">
-        <div className="p-4 border-b border-white/5 flex items-center gap-4">
+      <div className="bg-card rounded-2xl border border-surface-border overflow-hidden">
+        <div className="p-4 border-b border-surface-border flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Rechercher..."
-              className="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/5 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              className="w-full pl-9 pr-4 py-2 rounded-xl text-sm"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           {/* Mobile Card View */}
-          <div className="sm:hidden divide-y divide-white/5">
+          <div className="sm:hidden divide-y divide-surface-border">
             {loading ? (
               <div className="p-8 text-center">
-                <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
+                <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
               </div>
             ) : filteredSuppliers.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-sm">
+              <div className="p-8 text-center text-muted-foreground text-sm">
                 Aucun fournisseur trouvé.
               </div>
             ) : (
               filteredSuppliers.map(supplier => (
-                <div key={supplier._id} className="px-4 py-3 hover:bg-white/[0.03]">
+                <div key={supplier._id} className="px-4 py-3 hover:bg-accent">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-white text-sm">{supplier.name}</div>
-                    <span className={`font-medium text-sm tabular-nums ${supplier.totalDebt > 0 ? 'text-rose-400' : 'text-white'}`}>
+                    <div className="font-medium text-text-primary text-sm">{supplier.name}</div>
+                    <span className={`font-medium text-sm tabular-nums ${supplier.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
                       {supplier.totalDebt.toLocaleString()} MRU
                     </span>
                   </div>
-                  <div className="text-xs text-slate-500 mb-2">{supplier.address || '-'}</div>
+                  <div className="text-xs text-muted-foreground mb-2">{supplier.address || '-'}</div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-500">{formatPhoneNumber(supplier.phone) || '-'}</span>
+                    <span className="text-xs text-muted-foreground">{formatPhoneNumber(supplier.phone) || '-'}</span>
                     <div className="flex gap-2">
                       <button
                         onClick={() => { setSelectedSupplier(supplier); setIsManageDebtOpen(true); }}
-                        className="px-3 py-1.5 text-xs bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg transition-colors active:scale-[0.97]"
+                        className="px-3 py-1.5 text-xs bg-accent hover:bg-surface-hover text-text-secondary rounded-lg transition-colors active:scale-[0.97]"
                       >
                         Dette
                       </button>
                       <Link
                         to={`/admin/suppliers/${supplier._id}`}
-                        className="px-3 py-1.5 flex items-center justify-center text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors active:scale-[0.97]"
+                        className="px-3 py-1.5 flex items-center justify-center text-xs bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors active:scale-[0.97]"
                       >
                         Détails
                       </Link>
@@ -129,7 +129,7 @@ export default function Suppliers() {
 
           {/* Desktop Table View */}
           <table className="w-full text-sm text-left hidden sm:table">
-            <thead className="text-slate-400 font-medium">
+            <thead className="text-muted-foreground font-medium">
               <tr>
                 <th className="px-6 py-4 font-medium">Nom & Adresse</th>
                 <th className="px-6 py-4 font-medium">Téléphone</th>
@@ -137,29 +137,29 @@ export default function Suppliers() {
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-surface-border">
               {loading ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-12 text-center">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-blue-500" />
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
                   </td>
                 </tr>
               ) : filteredSuppliers.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan="4" className="px-6 py-12 text-center text-muted-foreground">
                     Aucun fournisseur trouvé.
                   </td>
                 </tr>
               ) : (
                 filteredSuppliers.map(supplier => (
-                  <tr key={supplier._id} className="hover:bg-white/[0.03] transition-colors">
+                  <tr key={supplier._id} className="hover:bg-accent transition-colors">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-white">{supplier.name}</div>
-                      <div className="text-xs text-slate-500">{supplier.address || '-'}</div>
+                      <div className="font-medium text-text-primary">{supplier.name}</div>
+                      <div className="text-xs text-muted-foreground">{supplier.address || '-'}</div>
                     </td>
-                    <td className="px-6 py-4 text-slate-300">{formatPhoneNumber(supplier.phone) || '-'}</td>
+                    <td className="px-6 py-4 text-text-secondary">{formatPhoneNumber(supplier.phone) || '-'}</td>
                     <td className="px-6 py-4 text-right">
-                      <span className={`font-medium tabular-nums ${supplier.totalDebt > 0 ? 'text-rose-400' : 'text-white'}`}>
+                      <span className={`font-medium tabular-nums ${supplier.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
                         {supplier.totalDebt.toLocaleString()}
                       </span>
                     </td>
@@ -167,13 +167,13 @@ export default function Suppliers() {
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => { setSelectedSupplier(supplier); setIsManageDebtOpen(true); }}
-                          className="px-3 py-1 text-sm bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg transition-colors"
+                          className="px-3 py-1 text-sm bg-accent hover:bg-surface-hover text-text-secondary rounded-lg transition-colors"
                         >
                           Dette
                         </button>
                         <Link
                           to={`/admin/suppliers/${supplier._id}`}
-                          className="px-3 py-1 flex items-center justify-center bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors"
+                          className="px-3 py-1 flex items-center justify-center bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors"
                         >
                           Détails
                         </Link>
@@ -219,23 +219,23 @@ function AddSupplierModal({ onClose, onSubmit }) {
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-300">Nom / Raison sociale</span>
-        <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
+        <span className="text-sm font-medium text-text-secondary">Nom / Raison sociale</span>
+        <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required className="w-full rounded-xl px-4 py-3 text-base" />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-300">Téléphone</span>
-        <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
+        <span className="text-sm font-medium text-text-secondary">Téléphone</span>
+        <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full rounded-xl px-4 py-3 text-base" />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-300">Adresse</span>
-        <input type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
+        <span className="text-sm font-medium text-text-secondary">Adresse</span>
+        <input type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full rounded-xl px-4 py-3 text-base" />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-300">Dette initiale (MRU)</span>
-        <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none tabular-nums" />
+        <span className="text-sm font-medium text-text-secondary">Dette initiale (MRU)</span>
+        <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl px-4 py-3 text-base tabular-nums" />
       </label>
       <div className="flex justify-end gap-3 mt-6 pb-4">
-        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-400 hover:bg-white/5 rounded-lg">Annuler</button>
+        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">Annuler</button>
         <button type="submit" disabled={submitting} className="px-4 py-3 text-sm bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:from-blue-500 hover:to-cyan-400 flex gap-2 items-center disabled:opacity-70 shadow-lg shadow-blue-500/25">
           {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Créer
         </button>
@@ -249,10 +249,10 @@ function AddSupplierModal({ onClose, onSubmit }) {
         {formContent}
       </BottomSheet>
       <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-black/50 p-4">
-        <div className="w-full max-w-md rounded-2xl bg-[#0d1424] p-6 shadow-xl border border-white/5">
+        <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl border border-surface-border">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Nouveau fournisseur</h2>
-            <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-white/5"><X className="w-5 h-5" /></button>
+            <h2 className="text-lg font-semibold text-text-primary">Nouveau fournisseur</h2>
+            <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-accent"><X className="w-5 h-5" /></button>
           </div>
           {formContent}
         </div>
@@ -287,18 +287,18 @@ function ManageDebtModal({ supplier, onClose, onSubmit }) {
 
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="p-3 bg-white/[0.03] rounded-xl border border-white/5 mb-4">
-        <span className="text-sm text-slate-400 block mb-1">Dette actuelle vers {supplier.name}</span>
-        <span className="text-xl font-bold text-white tabular-nums">{supplier.totalDebt.toLocaleString()} MRU</span>
+      <div className="p-3 bg-card rounded-xl border border-surface-border mb-4">
+        <span className="text-sm text-muted-foreground block mb-1">Dette actuelle vers {supplier.name}</span>
+        <span className="text-xl font-bold text-text-primary tabular-nums">{supplier.totalDebt.toLocaleString()} MRU</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'increase' ? 'border-rose-500/30 bg-rose-500/10 text-rose-400' : 'border-white/5 text-slate-400 hover:bg-white/[0.03]'}`}>
+        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'increase' ? 'border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'border-surface-border text-muted-foreground hover:bg-accent'}`}>
           <input type="radio" name="type" value="increase" checked={formData.type === 'increase'} onChange={() => setFormData({...formData, type: 'increase'})} className="sr-only" />
           <ArrowUpRight className="w-5 h-5" />
           <span className="text-sm font-medium text-center">Augmenter la dette (Achat à crédit)</span>
         </label>
-        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'decrease' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-white/5 text-slate-400 hover:bg-white/[0.03]'}`}>
+        <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'decrease' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'border-surface-border text-muted-foreground hover:bg-accent'}`}>
           <input type="radio" name="type" value="decrease" checked={formData.type === 'decrease'} onChange={() => setFormData({...formData, type: 'decrease'})} className="sr-only" />
           <ArrowDownRight className="w-5 h-5" />
           <span className="text-sm font-medium text-center">Rembourser (Paiement)</span>
@@ -306,19 +306,19 @@ function ManageDebtModal({ supplier, onClose, onSubmit }) {
       </div>
 
       <label className="block space-y-2 mt-4">
-        <span className="text-sm font-medium text-slate-300">Montant (MRU)</span>
-        <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none tabular-nums" />
+        <span className="text-sm font-medium text-text-secondary">Montant (MRU)</span>
+        <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl px-4 py-3 text-base tabular-nums" />
       </label>
 
-      {error && <p className="text-sm text-rose-400 mt-2">{error}</p>}
+      {error && <p className="text-sm text-rose-600 dark:text-rose-400 mt-2">{error}</p>}
 
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-300">Note (optionnel)</span>
-        <input type="text" value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} placeholder="Ex: Paiement facture N° 12" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
+        <span className="text-sm font-medium text-text-secondary">Note (optionnel)</span>
+        <input type="text" value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} placeholder="Ex: Paiement facture N° 12" className="w-full rounded-xl px-4 py-3 text-base" />
       </label>
 
       <div className="flex justify-end gap-3 mt-6 pb-4">
-        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-slate-400 hover:bg-white/5 rounded-lg">Annuler</button>
+        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">Annuler</button>
         <button type="submit" disabled={submitting} className={`px-4 py-3 text-sm text-white rounded-lg flex gap-2 items-center disabled:opacity-70 shadow-lg ${formData.type === 'increase' ? 'bg-rose-600 hover:bg-rose-500 shadow-rose-500/25' : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/25'}`}>
           {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Valider
         </button>
@@ -332,10 +332,10 @@ function ManageDebtModal({ supplier, onClose, onSubmit }) {
         {formContent}
       </BottomSheet>
       <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-black/50 p-4">
-        <div className="w-full max-w-md rounded-2xl bg-[#0d1424] p-6 shadow-xl border border-white/5">
+        <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl border border-surface-border">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Gérer la dette fournisseur</h2>
-            <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-white/5"><X className="w-5 h-5" /></button>
+            <h2 className="text-lg font-semibold text-text-primary">Gérer la dette fournisseur</h2>
+            <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-accent"><X className="w-5 h-5" /></button>
           </div>
           {formContent}
         </div>

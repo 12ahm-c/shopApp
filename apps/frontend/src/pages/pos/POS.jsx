@@ -137,12 +137,12 @@ export default function POS() {
       <div className="mx-auto max-w-3xl space-y-5">
         <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">{t('pos.saleComplete')}</h2>
-              <p className="text-sm text-slate-400">
+              <h2 className="text-xl font-bold text-text-primary">{t('pos.saleComplete')}</h2>
+              <p className="text-sm text-muted-foreground">
                 {t('pos.invoiceGenerated', { number: receiptData.invoiceNumber })}
               </p>
             </div>
@@ -162,7 +162,7 @@ export default function POS() {
           </button>
           <Link
             to={`/invoices/${receiptData._id}`}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-5 py-3 text-sm font-semibold text-slate-300 hover:bg-white/10 transition-all"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent border border-surface-border px-5 py-3 text-sm font-semibold text-text-secondary hover:bg-surface-hover transition-all"
           >
             <ReceiptText className="h-5 w-5" />
             {t('pos.viewDetail')}
@@ -176,16 +176,16 @@ export default function POS() {
     <div className="h-[calc(100dvh-8rem)] sm:h-[calc(100vh-4rem)] flex flex-col lg:flex-row gap-4 sm:gap-6">
       
       {/* Left side: Products catalog */}
-      <div className="flex-1 flex flex-col bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden min-h-0">
-        <div className="p-3 sm:p-4 border-b border-white/5">
+      <div className="flex-1 flex flex-col bg-card rounded-2xl border border-surface-border overflow-hidden min-h-0">
+        <div className="p-3 sm:p-4 border-b border-surface-border">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input 
               type="text" 
               placeholder={t('pos.searchProducts')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/5 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all text-sm sm:text-base"
+              className="w-full pl-10 pr-4 py-3 rounded-xl transition-all text-sm sm:text-base"
             />
           </div>
         </div>
@@ -196,7 +196,7 @@ export default function POS() {
               <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
             </div>
           ) : products.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-slate-500">
+            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
               <Package className="w-12 h-12 mb-2 opacity-20" />
               <p className="text-sm">{t('pos.noProducts')}</p>
             </div>
@@ -214,22 +214,22 @@ export default function POS() {
                     disabled={!canAdd}
                     className={`text-left p-3 rounded-2xl border transition-all flex flex-col justify-between min-h-[100px] sm:min-h-[120px] ${
                       canAdd 
-                        ? 'bg-white/[0.03] border-white/5 hover:border-blue-500/30 hover:bg-white/[0.06] cursor-pointer active:scale-[0.98]' 
-                        : 'bg-white/[0.01] border-white/5 opacity-40 cursor-not-allowed'
+                        ? 'bg-card border-surface-border hover:border-primary/30 hover:bg-accent cursor-pointer active:scale-[0.98]' 
+                        : 'bg-card border-surface-border opacity-40 cursor-not-allowed'
                     }`}
                   >
                     <div>
-                      <h3 className="font-medium text-white line-clamp-2 text-xs sm:text-sm leading-tight">
+                      <h3 className="font-medium text-text-primary line-clamp-2 text-xs sm:text-sm leading-tight">
                         {product.name}
                       </h3>
-                      <p className="text-[10px] sm:text-xs text-slate-500 mt-1 line-clamp-1">{product.category}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 line-clamp-1">{product.category}</p>
                     </div>
                     <div className="flex items-end justify-between w-full mt-2">
-                      <span className="font-bold text-blue-400 text-xs sm:text-sm tabular-nums">
+                      <span className="font-bold text-primary text-xs sm:text-sm tabular-nums">
                         {product.price} MRU
                       </span>
                       <span className={`text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-lg ${
-                        isOutOfStock ? 'bg-rose-500/10 text-rose-400' : 'bg-white/5 text-slate-400'
+                        isOutOfStock ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'bg-accent text-muted-foreground'
                       }`}>
                         {product.quantity}
                       </span>
@@ -243,24 +243,24 @@ export default function POS() {
       </div>
 
       {/* Right side: Cart & Checkout */}
-      <div className="w-full lg:w-96 flex flex-col bg-white/[0.03] rounded-2xl border border-white/5 overflow-hidden max-h-[50vh] sm:max-h-[60vh] lg:max-h-none">
+      <div className="w-full lg:w-96 flex flex-col bg-card rounded-2xl border border-surface-border overflow-hidden max-h-[50vh] sm:max-h-[60vh] lg:max-h-none">
         
         {/* Customer Selection */}
-        <div className="p-4 border-b border-white/5 relative">
+        <div className="p-4 border-b border-surface-border relative">
           {selectedCustomer ? (
-            <div className="flex items-center justify-between bg-blue-500/10 p-3 rounded-xl border border-blue-500/20">
+            <div className="flex items-center justify-between bg-primary/10 p-3 rounded-xl border border-primary/20">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-medium text-sm text-white">{selectedCustomer.name}</p>
-                  <p className="text-xs text-slate-400">{formatPhoneNumber(selectedCustomer.phone)}</p>
+                  <p className="font-medium text-sm text-text-primary">{selectedCustomer.name}</p>
+                  <p className="text-xs text-muted-foreground">{formatPhoneNumber(selectedCustomer.phone)}</p>
                 </div>
               </div>
               <button 
                 onClick={() => setCustomer(null)}
-                className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-rose-400 transition-colors"
+                className="p-2 hover:bg-surface-hover rounded-xl text-muted-foreground hover:text-rose-600 dark:text-rose-400 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -276,10 +276,10 @@ export default function POS() {
                   setShowCustomerDropdown(true);
                 }}
                 onFocus={() => setShowCustomerDropdown(true)}
-                className="w-full px-4 py-2.5 bg-white/5 border border-white/5 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                className="w-full px-4 py-2.5 rounded-xl text-sm"
               />
               {showCustomerDropdown && customers.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-[#0d1424] border border-white/10 shadow-2xl rounded-xl overflow-hidden">
+                <div className="absolute z-10 w-full mt-1 bg-surface border border-surface-border shadow-2xl rounded-xl overflow-hidden">
                   {customers.map(c => (
                     <button
                       key={c._id}
@@ -288,10 +288,10 @@ export default function POS() {
                         setCustomerSearch('');
                         setShowCustomerDropdown(false);
                       }}
-                      className="w-full text-left px-4 py-3 hover:bg-white/5 transition-colors flex justify-between items-center"
+                      className="w-full text-left px-4 py-3 hover:bg-accent transition-colors flex justify-between items-center"
                     >
-                      <span className="font-medium text-sm text-white">{c.name}</span>
-                      <span className="text-xs text-slate-500">{formatPhoneNumber(c.phone)}</span>
+                      <span className="font-medium text-sm text-text-primary">{c.name}</span>
+                      <span className="text-xs text-muted-foreground">{formatPhoneNumber(c.phone)}</span>
                     </button>
                   ))}
                 </div>
@@ -303,18 +303,18 @@ export default function POS() {
         {/* Cart Items */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3">
           {cartItems.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-slate-600 space-y-3 py-8">
+            <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-3 py-8">
               <ShoppingCart className="w-14 h-14 sm:w-16 sm:h-16 opacity-10" />
               <p className="text-sm">Cart is empty</p>
             </div>
           ) : (
             cartItems.map(item => (
-              <div key={item.productId} className="flex flex-col gap-2 p-3 border border-white/5 rounded-xl bg-white/[0.02]">
+              <div key={item.productId} className="flex flex-col gap-2 p-3 border border-surface-border rounded-xl bg-card">
                 <div className="flex justify-between items-start">
-                  <h4 className="font-medium text-sm text-white leading-tight pr-4 line-clamp-2">{item.name}</h4>
+                  <h4 className="font-medium text-sm text-text-primary leading-tight pr-4 line-clamp-2">{item.name}</h4>
                   <button 
                     onClick={() => deleteItem(item.productId)}
-                    className="p-1.5 text-slate-500 hover:text-rose-400 transition-colors shrink-0"
+                    className="p-1.5 text-muted-foreground hover:text-rose-600 dark:text-rose-400 transition-colors shrink-0"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -326,22 +326,22 @@ export default function POS() {
                       min="0"
                       value={item.unitPrice}
                       onChange={(e) => setUnitPrice(item.productId, Math.max(0, parseInt(e.target.value) || 0))}
-                      className="w-16 sm:w-20 text-sm font-semibold text-blue-400 bg-transparent border border-white/10 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500/30 tabular-nums"
+                      className="w-16 sm:w-20 text-sm font-semibold text-primary bg-transparent border border-surface-border rounded-lg px-2 py-1.5 focus:outline-none tabular-nums"
                     />
-                    <span className="text-xs text-slate-500">MRU</span>
+                    <span className="text-xs text-muted-foreground">MRU</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg p-0.5">
+                  <div className="flex items-center gap-2 bg-accent border border-surface-border rounded-lg p-0.5">
                     <button 
                       onClick={() => removeItem(item.productId)}
-                      className="p-1.5 rounded-md hover:bg-white/10 text-slate-400"
+                      className="p-1.5 rounded-md hover:bg-surface-hover text-muted-foreground"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="text-sm font-semibold w-6 text-center text-white tabular-nums">{item.quantity}</span>
+                    <span className="text-sm font-semibold w-6 text-center text-text-primary tabular-nums">{item.quantity}</span>
                     <button 
                       onClick={() => addItem({ _id: item.productId, quantity: item.maxStock })}
                       disabled={item.quantity >= item.maxStock}
-                      className="p-1.5 rounded-md hover:bg-white/10 text-slate-400 disabled:opacity-30"
+                      className="p-1.5 rounded-md hover:bg-surface-hover text-muted-foreground disabled:opacity-30"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -353,16 +353,16 @@ export default function POS() {
         </div>
 
         {/* Checkout Section */}
-        <div className="p-3 sm:p-4 border-t border-white/5 shrink-0">
+        <div className="p-3 sm:p-4 border-t border-surface-border shrink-0">
           {checkoutError && (
-            <div className="mb-3 p-3 bg-rose-500/10 text-rose-400 text-sm rounded-xl border border-rose-500/20">
+            <div className="mb-3 p-3 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-sm rounded-xl border border-rose-500/20">
               {checkoutError}
             </div>
           )}
 
           <div className="flex justify-between items-center mb-3">
-            <span className="text-slate-400 font-medium text-sm">{t('table.total')}</span>
-            <span className="text-xl sm:text-2xl font-bold text-white tabular-nums">
+            <span className="text-muted-foreground font-medium text-sm">{t('table.total')}</span>
+            <span className="text-xl sm:text-2xl font-bold text-text-primary tabular-nums">
               {formatMoney(getTotalAmount())}
             </span>
           </div>
@@ -376,8 +376,8 @@ export default function POS() {
                   onClick={() => setPaymentMethod(method)}
                   className={`py-2.5 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
                     paymentMethod === method 
-                      ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' 
-                      : 'bg-white/[0.03] border-white/5 text-slate-400 hover:border-white/10'
+                      ? 'bg-primary/10 border-primary/30 text-primary' 
+                      : 'bg-card border-surface-border text-muted-foreground hover:border-surface-border'
                   }`}
                 >
                   <Icon className="w-5 h-5" />

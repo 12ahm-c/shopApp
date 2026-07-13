@@ -24,9 +24,52 @@ import {
   X,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { notificationApi } from '../../api/notification';
 import { formatDateTime } from '../../lib/format';
+
+const ToastContext = createContext(null);
+export function useToast() { return useContext(ToastContext); }
+
+function ToastProvider({ children }) {
+  const [toasts, setToasts] = useState([]);
+
+  const addToast = useCallback((message, type = 'info') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  }, []);
+
+  const removeToast = useCallback((id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  return (
+    <ToastContext.Provider value={addToast}>
+      {children}
+      {/* Toast container */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none w-[calc(100%-2rem)] max-w-md">
+        {toasts.map(toast => (
+          <div
+            key={toast.id}
+            className="animate-slide-down pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl bg-surface/95 border-surface-border text-text-primary"
+          >
+            <div className={`w-2 h-2 rounded-full shrink-0 ${
+              toast.type === 'success' ? 'bg-emerald-500' :
+              toast.type === 'error' ? 'bg-rose-500' : 'bg-blue-500'
+            }`} />
+            <p className="text-sm font-medium flex-1">{toast.message}</p>
+            <button onClick={() => removeToast(toast.id)} className="p-1 rounded-lg hover:bg-accent shrink-0">
+              <X className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </ToastContext.Provider>
+  );
+}
 
 export default function ShellLayout() {
   const { user, role, logout } = useAuthStore();
@@ -35,6 +78,7 @@ export default function ShellLayout() {
   const { theme, toggleTheme } = useThemeStore();
   const { t, i18n } = useTranslation();
   const storeName = settings?.storeName || t('store_name');
+  const storeLogo = settings?.storeLogo || null;
   const isRtl = i18n.language === 'ar';
   const location = useLocation();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -87,274 +131,283 @@ export default function ShellLayout() {
 
   const isMoreActive = moreNavItems.some(item => location.pathname === item.to);
 
+  const renderLogo = (size = 'w-8 h-8') => {
+    if (storeLogo) {
+      return <img src={storeLogo} alt={storeName} className={`${size} rounded-xl object-cover`} />;
+    }
+    return (
+      <div className={`${size} bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25`}>
+        <Store className="w-1/2 h-1/2 text-white" />
+      </div>
+    );
+  };
+
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col bg-[#0a0f1a] min-h-dvh">
-      {/* ========== MOBILE HEADER ========== */}
-      <header className="md:hidden flex items-center justify-between px-5 h-14 bg-[#0a0f1a]/80 backdrop-blur-xl border-b border-white/5 shrink-0 z-10 safe-area-top">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-            <Store className="w-4 h-4 text-white" />
+    <ToastProvider>
+      <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col bg-background min-h-dvh">
+        {/* ========== MOBILE HEADER ========== */}
+        <header className="md:hidden flex items-center justify-between px-5 h-14 bg-surface/80 backdrop-blur-xl border-b border-surface-border shrink-0 z-10 safe-area-top">
+          <div className="flex items-center gap-3">
+            {renderLogo('w-8 h-8')}
+            <span className="font-semibold text-[15px] text-text-primary">{storeName}</span>
           </div>
-          <span className="font-semibold text-[15px] text-white">{storeName}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => setShowNotifications(true)}
-            className="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-          >
-            <Bell className="w-5 h-5 text-slate-400" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
-          </button>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-          >
-            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-400" /> : <Moon className="w-5 h-5 text-slate-400" />}
-          </button>
-        </div>
-      </header>
-
-      {/* ========== MOBILE MAIN ========== */}
-      <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-5 pb-24 scrollbar-hide">
-        <Outlet />
-      </main>
-
-      {/* ========== DESKTOP LAYOUT ========== */}
-      <header className="hidden md:flex h-16 border-b border-white/5 bg-[#0a0f1a]/80 backdrop-blur-xl items-center justify-between px-6 shrink-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-            <Store className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setShowNotifications(true)}
+              className="relative p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+            >
+              <Bell className="w-5 h-5 text-muted-foreground" />
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
+            </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-muted-foreground" /> : <Moon className="w-5 h-5 text-muted-foreground" />}
+            </button>
           </div>
-          <span className="font-bold text-lg tracking-tight text-white">
-            {storeName}
-          </span>
-        </div>
+        </header>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowNotifications(true)}
-            className="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-            title={t('notifications')}
-          >
-            <Bell className="w-5 h-5 text-slate-400" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
-          </button>
-
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-sm font-medium transition-colors text-slate-400"
-          >
-            <Globe className="w-4 h-4 shrink-0" />
-            <span className="uppercase">{language}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-          >
-            {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-400" /> : <Moon className="w-5 h-5 text-slate-400" />}
-          </button>
-
-          <div className="h-6 w-px bg-white/10 mx-1"></div>
-
-          <div className="flex items-center gap-2.5 pl-1">
-            <div className="w-8 h-8 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center ring-1 ring-blue-500/20">
-              <User className="w-4 h-4" />
-            </div>
-            <span className="text-sm font-medium text-slate-200">{user.name}</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={logout}
-            className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/10 hover:text-red-400 transition-colors text-slate-400"
-            title={t('logout')}
-          >
-            <LogOut className="w-5 h-5" />
-          </button>
-        </div>
-      </header>
-
-      <main className="hidden md:block flex-1 overflow-auto p-6">
-        <div className="max-w-6xl mx-auto">
+        {/* ========== MOBILE MAIN ========== */}
+        <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-5 pb-24 scrollbar-hide">
           <Outlet />
-        </div>
-      </main>
+        </main>
 
-      {/* ========== BOTTOM TAB BAR ========== */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 safe-area-bottom">
-        <div className="bg-[#0a0f1a]/90 backdrop-blur-xl border-t border-white/5">
-          <div className="flex items-center h-16 px-2">
-            {mainNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.to ||
-                (item.to === (role === 'admin' ? '/admin' : '/employee') && location.pathname === '/admin');
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
-                    isActive
-                      ? 'text-blue-400'
-                      : 'text-slate-500 active:text-slate-300'
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl transition-all duration-200 ${
-                    isActive ? 'bg-blue-500/10 shadow-lg shadow-blue-500/10' : ''
-                  }`}>
-                    <Icon className="w-5 h-5" strokeWidth={isActive ? 2.2 : 1.8} />
-                  </div>
-                  <span className="text-[10px] font-medium leading-tight">{item.label}</span>
-                </Link>
-              );
-            })}
+        {/* ========== DESKTOP LAYOUT ========== */}
+        <header className="hidden md:flex h-16 border-b border-surface-border bg-surface/80 backdrop-blur-xl items-center justify-between px-6 shrink-0 z-10">
+          <div className="flex items-center gap-3">
+            {renderLogo('w-9 h-9')}
+            <span className="font-bold text-lg tracking-tight text-text-primary">
+              {storeName}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowNotifications(true)}
+              className="relative p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+              title={t('notifications')}
+            >
+              <Bell className="w-5 h-5 text-muted-foreground" />
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
+            </button>
 
             <button
               type="button"
-              onClick={() => setShowMoreMenu(true)}
-              className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
-                isMoreActive
-                  ? 'text-blue-400'
-                  : 'text-slate-500 active:text-slate-300'
-              }`}
+              onClick={toggleLanguage}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-accent hover:bg-surface-hover text-sm font-medium transition-colors text-muted-foreground"
             >
-              <div className={`p-2 rounded-xl transition-all duration-200 ${
-                isMoreActive ? 'bg-blue-500/10 shadow-lg shadow-blue-500/10' : ''
-              }`}>
-                <MoreHorizontal className="w-5 h-5" strokeWidth={isMoreActive ? 2.2 : 1.8} />
+              <Globe className="w-4 h-4 shrink-0" />
+              <span className="uppercase">{language}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-muted-foreground" /> : <Moon className="w-5 h-5 text-muted-foreground" />}
+            </button>
+
+            <div className="h-6 w-px bg-surface-border mx-1"></div>
+
+            <div className="flex items-center gap-2.5 pl-1">
+              <div className="w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center ring-1 ring-primary/20">
+                <User className="w-4 h-4" />
               </div>
-              <span className="text-[10px] font-medium leading-tight">{t('more')}</span>
+              <span className="text-sm font-medium text-text-primary">{user.name}</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={logout}
+              className="p-2.5 rounded-xl bg-accent hover:bg-destructive/10 hover:text-destructive transition-colors text-muted-foreground"
+              title={t('logout')}
+            >
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
-        </div>
-      </nav>
+        </header>
 
-      {/* ========== NOTIFICATIONS PANEL ========== */}
-      {showNotifications && (
-        <div className="fixed inset-0 z-50 animate-fade-in">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setShowNotifications(false)}
-          />
-          <div className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-[#0d1424] border-l border-white/5 shadow-2xl flex flex-col animate-slide-left">
-            <div className="flex items-center justify-between px-5 h-14 border-b border-white/5 shrink-0 safe-area-top">
-              <h2 className="text-lg font-bold text-white">{t('notifications')}</h2>
+        <main className="hidden md:block flex-1 overflow-auto p-6">
+          <div className="max-w-6xl mx-auto">
+            <Outlet />
+          </div>
+        </main>
+
+        {/* ========== BOTTOM TAB BAR ========== */}
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 safe-area-bottom">
+          <div className="bg-surface/90 backdrop-blur-xl border-t border-surface-border">
+            <div className="flex items-center h-16 px-2">
+              {mainNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.to ||
+                  (item.to === (role === 'admin' ? '/admin' : '/employee') && location.pathname === '/admin');
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
+                      isActive
+                        ? 'text-primary'
+                        : 'text-muted-foreground active:text-text-secondary'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-xl transition-all duration-200 ${
+                      isActive ? 'bg-primary/10 shadow-lg shadow-primary/10' : ''
+                    }`}>
+                      <Icon className="w-5 h-5" strokeWidth={isActive ? 2.2 : 1.8} />
+                    </div>
+                    <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+                  </Link>
+                );
+              })}
+
               <button
                 type="button"
-                onClick={() => setShowNotifications(false)}
-                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                onClick={() => setShowMoreMenu(true)}
+                className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
+                  isMoreActive
+                    ? 'text-primary'
+                    : 'text-muted-foreground active:text-text-secondary'
+                }`}
               >
-                <X className="w-5 h-5 text-slate-400" />
+                <div className={`p-2 rounded-xl transition-all duration-200 ${
+                  isMoreActive ? 'bg-primary/10 shadow-lg shadow-primary/10' : ''
+                }`}>
+                  <MoreHorizontal className="w-5 h-5" strokeWidth={isMoreActive ? 2.2 : 1.8} />
+                </div>
+                <span className="text-[10px] font-medium leading-tight">{t('more')}</span>
               </button>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {loadingNotifs ? (
-                <div className="flex items-center justify-center p-10">
-                  <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              ) : notifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center p-10 text-slate-500">
-                  <Bell className="w-12 h-12 mb-3 opacity-20" />
-                  <p className="text-sm">{t('notification.noNotifications')}</p>
-                </div>
-              ) : (
-                <div className="divide-y divide-white/5">
-                  {notifications.map((notif) => (
-                    <div key={notif._id} className="px-5 py-4 hover:bg-white/5 transition-colors">
-                      <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                          <Bell className="w-4 h-4 text-blue-400" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-slate-200 line-clamp-2">{notif.message}</p>
-                          <p className="text-xs text-slate-500 mt-1">{formatDateTime(notif.createdAt)}</p>
-                        </div>
-                        {!notif.read && (
-                          <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2 shadow-lg shadow-blue-500/50"></div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
-        </div>
-      )}
+        </nav>
 
-      {/* ========== PLUS MENU ========== */}
-      {showMoreMenu && (
-        <div className="fixed inset-0 z-50 md:hidden animate-fade-in">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setShowMoreMenu(false)}
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-[#0d1424] border-t border-white/5 rounded-t-3xl max-h-[70vh] flex flex-col animate-slide-up">
-            <div className="flex items-center justify-center pt-3 pb-2">
-              <div className="w-10 h-1 rounded-full bg-white/10" />
-            </div>
-
-            <div className="flex items-center justify-between px-5 pb-4 border-b border-white/5">
-              <h2 className="text-lg font-bold text-white">{t('more')}</h2>
-              <button
-                type="button"
-                onClick={() => setShowMoreMenu(false)}
-                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-              >
-                <X className="w-5 h-5 text-slate-400" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-5">
-              <div className="grid grid-cols-3 gap-3">
-                {moreNavItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname === item.to;
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      onClick={() => setShowMoreMenu(false)}
-                      className={`flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl transition-all duration-200 ${
-                        isActive
-                          ? 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20'
-                          : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200'
-                      }`}
-                    >
-                      <Icon className="w-6 h-6" />
-                      <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
-                    </Link>
-                  );
-                })}
-
+        {/* ========== NOTIFICATIONS PANEL ========== */}
+        {showNotifications && (
+          <div className="fixed inset-0 z-50 animate-fade-in">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowNotifications(false)}
+            />
+            <div className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-surface border-l border-surface-border shadow-2xl flex flex-col animate-slide-left">
+              <div className="flex items-center justify-between px-5 h-14 border-b border-surface-border shrink-0 safe-area-top">
+                <h2 className="text-lg font-bold text-text-primary">{t('notifications')}</h2>
                 <button
                   type="button"
-                  onClick={() => { toggleLanguage(); setShowMoreMenu(false); }}
-                  className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-white/5 text-slate-400 hover:bg-white/10 hover:text-slate-200 transition-all duration-200"
+                  onClick={() => setShowNotifications(false)}
+                  className="p-2 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
                 >
-                  <Globe className="w-6 h-6" />
-                  <span className="text-xs font-medium text-center leading-tight">{language === 'fr' ? 'العربية' : 'Français'}</span>
+                  <X className="w-5 h-5 text-muted-foreground" />
                 </button>
-
-                <button
-                  type="button"
-                  onClick={() => { logout(); setShowMoreMenu(false); }}
-                  className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all duration-200"
-                >
-                  <LogOut className="w-6 h-6" />
-                  <span className="text-xs font-medium text-center leading-tight">{t('logout')}</span>
-                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                {loadingNotifs ? (
+                  <div className="flex items-center justify-center p-10">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : notifications.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center p-10 text-muted-foreground">
+                    <Bell className="w-12 h-12 mb-3 opacity-20" />
+                    <p className="text-sm">{t('notification.noNotifications')}</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-surface-border">
+                    {notifications.map((notif) => (
+                      <div key={notif._id} className="px-5 py-4 hover:bg-accent transition-colors">
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <Bell className="w-4 h-4 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-text-primary line-clamp-2">{notif.message}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{formatDateTime(notif.createdAt)}</p>
+                          </div>
+                          {!notif.read && (
+                            <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2 shadow-lg shadow-blue-500/50"></div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* ========== PLUS MENU ========== */}
+        {showMoreMenu && (
+          <div className="fixed inset-0 z-50 md:hidden animate-fade-in">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowMoreMenu(false)}
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-surface border-t border-surface-border rounded-t-3xl max-h-[70vh] flex flex-col animate-slide-up">
+              <div className="flex items-center justify-center pt-3 pb-2">
+                <div className="w-10 h-1 rounded-full bg-surface-border" />
+              </div>
+
+              <div className="flex items-center justify-between px-5 pb-4 border-b border-surface-border">
+                <h2 className="text-lg font-bold text-text-primary">{t('more')}</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowMoreMenu(false)}
+                  className="p-2 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+                >
+                  <X className="w-5 h-5 text-muted-foreground" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-5">
+                <div className="grid grid-cols-3 gap-3">
+                  {moreNavItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname === item.to;
+                    return (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setShowMoreMenu(false)}
+                        className={`flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl transition-all duration-200 ${
+                          isActive
+                            ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
+                            : 'bg-accent text-muted-foreground hover:bg-surface-hover hover:text-text-primary'
+                        }`}
+                      >
+                        <Icon className="w-6 h-6" />
+                        <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+
+                  <button
+                    type="button"
+                    onClick={() => { toggleLanguage(); setShowMoreMenu(false); }}
+                    className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-accent text-muted-foreground hover:bg-surface-hover hover:text-text-primary transition-all duration-200"
+                  >
+                    <Globe className="w-6 h-6" />
+                    <span className="text-xs font-medium text-center leading-tight">{language === 'fr' ? 'العربية' : 'Français'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { logout(); setShowMoreMenu(false); }}
+                    className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all duration-200"
+                  >
+                    <LogOut className="w-6 h-6" />
+                    <span className="text-xs font-medium text-center leading-tight">{t('logout')}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </ToastProvider>
   );
 }

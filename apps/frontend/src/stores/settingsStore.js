@@ -36,6 +36,11 @@ const useSettingsStore = create((set) => ({
       set({ error: err.message || 'Failed to update settings' });
       throw err;
     }
+  },
+
+  getStoreLogo: () => {
+    const state = useSettingsStore.getState();
+    return state.settings?.storeLogo || null;
   }
 }));
 
