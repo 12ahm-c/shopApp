@@ -158,7 +158,7 @@ export default function Notifications() {
               name="unreadOnly"
               checked={filters.unreadOnly}
               onChange={handleFilterChange}
-              className="h-4 w-4 rounded border-white/10 bg-white/5 text-blue-500 focus:ring-blue-500/30"
+              className="h-4 w-4 rounded text-blue-500 focus:ring-blue-500/30"
             />
             {t('notification.unreadOnly')}
           </label>
@@ -166,7 +166,6 @@ export default function Notifications() {
             name="type"
             value={filters.type}
             onChange={handleFilterChange}
-              className="rounded-xl border border-surface-border bg-surface px-3 py-2 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
           >
             {notificationTypes.map((type) => (
               <option key={type.value || 'all'} value={type.value}>

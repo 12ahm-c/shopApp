@@ -147,7 +147,6 @@ export default function ActivityLogs() {
               name="action"
               value={filters.action}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
             >
               {logActions.map((action) => (
                 <option key={action.value || 'all'} value={action.value}>
@@ -164,7 +163,6 @@ export default function ActivityLogs() {
               name="from"
               value={filters.from}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </label>
 
@@ -175,7 +173,6 @@ export default function ActivityLogs() {
               name="to"
               value={filters.to}
               onChange={handleFilterChange}
-              className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </label>
 
@@ -186,7 +183,6 @@ export default function ActivityLogs() {
                 name="userId"
                 value={filters.userId}
                 onChange={handleFilterChange}
-                className="w-full rounded-xl border border-surface-border bg-surface px-3 py-2.5 text-sm text-text-primary outline-none focus:ring-2 focus:ring-blue-500/30"
               >
                 <option value="">{t('activityLog.allUsers')}</option>
                 {employeesState.data.map((employee) => (

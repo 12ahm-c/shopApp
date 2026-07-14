@@ -112,9 +112,9 @@ export default function Login() {
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 {t('phone')}
               </label>
-              <div className="relative">
-                <span className={`absolute inset-y-0 ${isRtl ? 'right-0 pl-3' : 'left-0 pr-3'} flex items-center text-muted-foreground text-sm font-medium pointer-events-none`}>
-                  <span className={`px-3 ${isRtl ? 'border-l' : 'border-r'} border-surface-border`}>+222</span>
+              <div className="flex items-center rounded-xl border border-[var(--input)] bg-surface overflow-hidden focus-within:border-[hsl(var(--ring))] focus-within:shadow-[0_0_0_2px_hsl(var(--ring)/0.15)] transition-all">
+                <span className="flex items-center gap-1 px-3 text-sm font-medium text-muted-foreground border-r border-[var(--input)] bg-accent/50 shrink-0 h-full min-h-[44px]">
+                  +222
                 </span>
                 <input
                   type="tel"
@@ -122,9 +122,9 @@ export default function Login() {
                   autoComplete="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder={isRtl ? '33 44 55 66' : '33 44 55 66'}
+                  placeholder="33 44 55 66"
                   required
-                  className={`w-full py-3.5 ${isRtl ? 'pr-20 pl-4' : 'pl-20 pr-4'} rounded-xl text-sm`}
+                  className="!border-0 !rounded-none !ring-0 !shadow-none bg-transparent px-3 py-3 flex-1 min-w-0"
                 />
               </div>
             </div>
@@ -140,12 +140,12 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                   required
-                  className="w-full py-3.5 px-4 rounded-xl text-sm"
+                  className="pr-11"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className={`absolute inset-y-0 ${isRtl ? 'left-0' : 'right-0'} flex items-center px-4 text-muted-foreground hover:text-text-primary transition-colors`}
+                  className={`absolute inset-y-0 ${isRtl ? 'left-0' : 'right-0'} flex items-center px-3 text-muted-foreground hover:text-text-primary transition-colors`}
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

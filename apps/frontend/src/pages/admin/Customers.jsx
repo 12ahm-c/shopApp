@@ -80,13 +80,13 @@ export default function Customers() {
       <div className="bg-card rounded-2xl border border-surface-border overflow-hidden">
         <div className="p-4 border-b border-surface-border flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Rechercher par nom ou téléphone..."
-              className="w-full rounded-xl pl-9 pr-4 py-3 text-sm"
+              className="!pl-9 !pr-4 !py-2.5"
             />
           </div>
         </div>
@@ -231,15 +231,15 @@ function AddCustomerModal({ onClose, onSubmit }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block space-y-2">
         <span className="text-sm font-medium text-text-secondary">Nom complet</span>
-        <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required className="w-full rounded-xl px-4 py-3" />
+        <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
       </label>
       <label className="block space-y-2">
         <span className="text-sm font-medium text-text-secondary">Téléphone (optionnel)</span>
-        <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full rounded-xl px-4 py-3" />
+        <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
       </label>
       <label className="block space-y-2">
         <span className="text-sm font-medium text-text-secondary">Dette initiale (MRU)</span>
-        <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="w-full rounded-xl px-4 py-3 tabular-nums" />
+        <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="!tabular-nums" />
       </label>
       <div className="flex justify-end gap-3 mt-6 pb-4">
         <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">Annuler</button>
@@ -317,14 +317,14 @@ function ManageDebtModal({ customer, onClose, onSubmit }) {
 
       <label className="block space-y-2 mt-4">
         <span className="text-sm font-medium text-text-secondary">Montant (MRU)</span>
-        <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="w-full rounded-xl px-4 py-3 tabular-nums" />
+        <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="!tabular-nums" />
       </label>
 
       {error && <p className="text-sm text-rose-600 dark:text-rose-400 mt-2">{error}</p>}
 
       <label className="block space-y-2">
         <span className="text-sm font-medium text-text-secondary">Note (optionnel)</span>
-        <input type="text" value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} placeholder="Ex: Paiement en espèces" className="w-full rounded-xl px-4 py-3" />
+        <input type="text" value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} placeholder="Ex: Paiement en espèces" />
       </label>
 
       <div className="flex justify-end gap-3 mt-6 pb-4">

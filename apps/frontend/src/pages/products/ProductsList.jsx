@@ -83,7 +83,7 @@ export default function ProductsList() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products..."
-              className="w-full pl-9 pr-4 py-3 rounded-xl text-sm"
+              className="!pl-9 !pr-4 !py-2.5"
             />
           </div>
           
@@ -93,7 +93,7 @@ export default function ProductsList() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="pl-9 pr-8 py-3 appearance-none rounded-xl text-sm font-medium"
+                className="!pl-9 !pr-8 !py-2.5 !appearance-none !rounded-xl !text-sm !font-medium"
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (

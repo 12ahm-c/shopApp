@@ -140,7 +140,7 @@ export default function Invoices() {
               name="from"
               value={filters.from}
               onChange={handleFilterChange}
-              className="w-full rounded-xl px-3 py-2.5 text-sm"
+              className="!rounded-xl"
             />
           </label>
 
@@ -151,7 +151,7 @@ export default function Invoices() {
               name="to"
               value={filters.to}
               onChange={handleFilterChange}
-              className="w-full rounded-xl px-3 py-2.5 text-sm"
+              className="!rounded-xl"
             />
           </label>
 
@@ -162,7 +162,7 @@ export default function Invoices() {
                 name="employeeId"
                 value={filters.employeeId}
                 onChange={handleFilterChange}
-                className="w-full rounded-xl px-3 py-2.5 text-sm"
+                className="!rounded-xl"
               >
                 <option value="">{t('invoice.allEmployees')}</option>
                 {employeesState.data.map((employee) => (

@@ -114,7 +114,6 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={100}
-                className="w-full rounded-xl px-4 py-3"
               />
             </label>
 
@@ -129,7 +128,6 @@ export default function ProductForm() {
                 required
                 minLength={2}
                 maxLength={50}
-                className="w-full rounded-xl px-4 py-3"
               />
               <datalist id="categories">
                 <option value="Épicerie" />
@@ -148,7 +146,7 @@ export default function ProductForm() {
                 value={formData.price} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl px-4 py-2.5 tabular-nums"
+                className="!tabular-nums"
               />
             </label>
 
@@ -161,7 +159,7 @@ export default function ProductForm() {
                 value={formData.quantity} 
                 onChange={handleChange} 
                 required
-                className="w-full rounded-xl px-4 py-2.5 tabular-nums"
+                className="!tabular-nums"
               />
             </label>
 
@@ -173,7 +171,7 @@ export default function ProductForm() {
                 min="0"
                 value={formData.alertThreshold} 
                 onChange={handleChange} 
-                className="w-full rounded-xl px-4 py-2.5 tabular-nums"
+                className="!tabular-nums"
               />
             </label>
           </div>

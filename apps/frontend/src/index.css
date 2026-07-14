@@ -119,12 +119,15 @@
 
 /* Form inputs - theme aware */
 input, select, textarea {
-  @apply border outline-none transition-all;
-  border-color: var(--input);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  border: 1px solid var(--input);
   background-color: var(--surface);
   color: var(--text-primary);
-  padding: 0.625rem 1rem;
   border-radius: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  width: 100%;
+  font-size: 0.9375rem;
 }
 input:focus, select:focus, textarea:focus {
   border-color: hsl(var(--ring));
@@ -132,6 +135,14 @@ input:focus, select:focus, textarea:focus {
 }
 input::placeholder, textarea::placeholder {
   color: var(--text-muted);
+}
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
 }
 
 /* Safe area insets for mobile */
