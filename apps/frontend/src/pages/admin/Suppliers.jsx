@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supplierApi } from '../../api/supplier';
 import { Plus, Search, Loader2, X, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -6,6 +7,7 @@ import { formatPhoneNumber } from '../../lib/utils';
 import BottomSheet from '../../components/ui/BottomSheet';
 
 export default function Suppliers() {
+  const { t } = useTranslation();
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,16 +59,16 @@ export default function Suppliers() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-            Fournisseurs
+            {t('suppliersPage.title')}
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">Gérez vos fournisseurs et vos dettes envers eux.</p>
+          <p className="text-muted-foreground text-sm mt-1">{t('suppliersPage.description')}</p>
         </div>
         <button
           onClick={() => setIsAddOpen(true)}
           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all active:scale-[0.97]"
         >
           <Plus className="w-4 h-4" />
-          Nouveau fournisseur
+          {t('suppliersPage.addButton')}
         </button>
       </div>
 
@@ -78,7 +80,7 @@ export default function Suppliers() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Rechercher..."
+              placeholder={t('suppliersPage.searchPlaceholder')}
               className="!pl-9 !pr-4 !py-2.5"
             />
           </div>
@@ -93,7 +95,7 @@ export default function Suppliers() {
               </div>
             ) : filteredSuppliers.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground text-sm">
-                Aucun fournisseur trouvé.
+                {t('suppliersPage.emptyState')}
               </div>
             ) : (
               filteredSuppliers.map(supplier => (
@@ -112,13 +114,13 @@ export default function Suppliers() {
                         onClick={() => { setSelectedSupplier(supplier); setIsManageDebtOpen(true); }}
                         className="px-3 py-1.5 text-xs bg-accent hover:bg-surface-hover text-text-secondary rounded-lg transition-colors active:scale-[0.97]"
                       >
-                        Dette
+                        {t('suppliersPage.debt')}
                       </button>
                       <Link
                         to={`/admin/suppliers/${supplier._id}`}
                         className="px-3 py-1.5 flex items-center justify-center text-xs bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors active:scale-[0.97]"
                       >
-                        Détails
+                        {t('suppliersPage.details')}
                       </Link>
                     </div>
                   </div>
@@ -131,10 +133,10 @@ export default function Suppliers() {
           <table className="w-full text-sm text-left hidden sm:table">
             <thead className="text-muted-foreground font-medium">
               <tr>
-                <th className="px-6 py-4 font-medium">Nom & Adresse</th>
-                <th className="px-6 py-4 font-medium">Téléphone</th>
-                <th className="px-6 py-4 font-medium text-right">Dette (MRU)</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                <th className="px-6 py-4 font-medium">{t('suppliersPage.nameAddress')}</th>
+                <th className="px-6 py-4 font-medium">{t('suppliersPage.phone')}</th>
+                <th className="px-6 py-4 font-medium text-right">{t('suppliersPage.debt')} (MRU)</th>
+                <th className="px-6 py-4 font-medium text-right">{t('table.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-surface-border">
@@ -147,7 +149,7 @@ export default function Suppliers() {
               ) : filteredSuppliers.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-12 text-center text-muted-foreground">
-                    Aucun fournisseur trouvé.
+                    {t('suppliersPage.emptyState')}
                   </td>
                 </tr>
               ) : (
@@ -169,13 +171,13 @@ export default function Suppliers() {
                           onClick={() => { setSelectedSupplier(supplier); setIsManageDebtOpen(true); }}
                           className="px-3 py-1 text-sm bg-accent hover:bg-surface-hover text-text-secondary rounded-lg transition-colors"
                         >
-                          Dette
+                          {t('suppliersPage.debt')}
                         </button>
                         <Link
                           to={`/admin/suppliers/${supplier._id}`}
                           className="px-3 py-1 flex items-center justify-center bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors"
                         >
-                          Détails
+                          {t('suppliersPage.details')}
                         </Link>
                       </div>
                     </td>
@@ -203,6 +205,7 @@ export default function Suppliers() {
 }
 
 function AddSupplierModal({ onClose, onSubmit }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({ name: '', phone: '', address: '', initialDebt: '' });
   const [submitting, setSubmitting] = useState(false);
 
@@ -219,25 +222,25 @@ function AddSupplierModal({ onClose, onSubmit }) {
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-text-secondary">Nom / Raison sociale</span>
+        <span className="text-sm font-medium text-text-secondary">{t('suppliersPage.name')}</span>
         <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-text-secondary">Téléphone</span>
+        <span className="text-sm font-medium text-text-secondary">{t('suppliersPage.phone')}</span>
         <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-text-secondary">Adresse</span>
+        <span className="text-sm font-medium text-text-secondary">{t('suppliersPage.address')}</span>
         <input type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
       </label>
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-text-secondary">Dette initiale (MRU)</span>
+        <span className="text-sm font-medium text-text-secondary">{t('suppliersPage.initialDebt')}</span>
         <input type="number" min="0" value={formData.initialDebt} onChange={e => setFormData({...formData, initialDebt: e.target.value})} className="!tabular-nums" />
       </label>
       <div className="flex justify-end gap-3 mt-6 pb-4">
-        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">Annuler</button>
+        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">{t('suppliersPage.cancel')}</button>
         <button type="submit" disabled={submitting} className="px-4 py-3 text-sm bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-lg hover:from-blue-500 hover:to-cyan-400 flex gap-2 items-center disabled:opacity-70 shadow-lg shadow-blue-500/25">
-          {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Créer
+          {submitting && <Loader2 className="w-4 h-4 animate-spin" />} {t('suppliersPage.create')}
         </button>
       </div>
     </form>
@@ -245,13 +248,13 @@ function AddSupplierModal({ onClose, onSubmit }) {
 
   return (
     <>
-      <BottomSheet isOpen={true} onClose={onClose} title="Nouveau fournisseur">
+      <BottomSheet isOpen={true} onClose={onClose} title={t('suppliersPage.addTitle')}>
         {formContent}
       </BottomSheet>
       <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-black/50 p-4">
         <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl border border-surface-border">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-text-primary">Nouveau fournisseur</h2>
+            <h2 className="text-lg font-semibold text-text-primary">{t('suppliersPage.addTitle')}</h2>
             <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-accent"><X className="w-5 h-5" /></button>
           </div>
           {formContent}
@@ -262,6 +265,7 @@ function AddSupplierModal({ onClose, onSubmit }) {
 }
 
 function ManageDebtModal({ supplier, onClose, onSubmit }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({ amount: '', type: 'increase', note: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -288,7 +292,7 @@ function ManageDebtModal({ supplier, onClose, onSubmit }) {
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="p-3 bg-card rounded-xl border border-surface-border mb-4">
-        <span className="text-sm text-muted-foreground block mb-1">Dette actuelle vers {supplier.name}</span>
+        <span className="text-sm text-muted-foreground block mb-1">{t('suppliersPage.currentDebt', { name: supplier.name })}</span>
         <span className="text-xl font-bold text-text-primary tabular-nums">{supplier.totalDebt.toLocaleString()} MRU</span>
       </div>
 
@@ -296,31 +300,31 @@ function ManageDebtModal({ supplier, onClose, onSubmit }) {
         <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'increase' ? 'border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'border-surface-border text-muted-foreground hover:bg-accent'}`}>
           <input type="radio" name="type" value="increase" checked={formData.type === 'increase'} onChange={() => setFormData({...formData, type: 'increase'})} className="sr-only" />
           <ArrowUpRight className="w-5 h-5" />
-          <span className="text-sm font-medium text-center">Augmenter la dette (Achat à crédit)</span>
+          <span className="text-sm font-medium text-center">{t('suppliersPage.increaseDebt')}</span>
         </label>
         <label className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${formData.type === 'decrease' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'border-surface-border text-muted-foreground hover:bg-accent'}`}>
           <input type="radio" name="type" value="decrease" checked={formData.type === 'decrease'} onChange={() => setFormData({...formData, type: 'decrease'})} className="sr-only" />
           <ArrowDownRight className="w-5 h-5" />
-          <span className="text-sm font-medium text-center">Rembourser (Paiement)</span>
+          <span className="text-sm font-medium text-center">{t('suppliersPage.repayDebt')}</span>
         </label>
       </div>
 
       <label className="block space-y-2 mt-4">
-        <span className="text-sm font-medium text-text-secondary">Montant (MRU)</span>
+        <span className="text-sm font-medium text-text-secondary">{t('suppliersPage.amount')}</span>
         <input type="number" min="1" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} required className="!tabular-nums" />
       </label>
 
       {error && <p className="text-sm text-rose-600 dark:text-rose-400 mt-2">{error}</p>}
 
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-text-secondary">Note (optionnel)</span>
+        <span className="text-sm font-medium text-text-secondary">{t('suppliersPage.note')}</span>
         <input type="text" value={formData.note} onChange={e => setFormData({...formData, note: e.target.value})} placeholder="Ex: Paiement facture N° 12" />
       </label>
 
       <div className="flex justify-end gap-3 mt-6 pb-4">
-        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">Annuler</button>
+        <button type="button" onClick={onClose} className="px-4 py-3 text-sm text-muted-foreground hover:bg-accent rounded-lg">{t('suppliersPage.cancel')}</button>
         <button type="submit" disabled={submitting} className={`px-4 py-3 text-sm text-white rounded-lg flex gap-2 items-center disabled:opacity-70 shadow-lg ${formData.type === 'increase' ? 'bg-rose-600 hover:bg-rose-500 shadow-rose-500/25' : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/25'}`}>
-          {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Valider
+          {submitting && <Loader2 className="w-4 h-4 animate-spin" />} {t('suppliersPage.validate')}
         </button>
       </div>
     </form>
@@ -328,13 +332,13 @@ function ManageDebtModal({ supplier, onClose, onSubmit }) {
 
   return (
     <>
-      <BottomSheet isOpen={true} onClose={onClose} title="Gérer la dette fournisseur">
+      <BottomSheet isOpen={true} onClose={onClose} title={t('suppliersPage.manageDebt')}>
         {formContent}
       </BottomSheet>
       <div className="hidden sm:flex fixed inset-0 z-50 items-center justify-center bg-black/50 p-4">
         <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl border border-surface-border">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-text-primary">Gérer la dette fournisseur</h2>
+            <h2 className="text-lg font-semibold text-text-primary">{t('suppliersPage.manageDebt')}</h2>
             <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-accent"><X className="w-5 h-5" /></button>
           </div>
           {formContent}

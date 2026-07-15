@@ -58,13 +58,13 @@
     --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 214 32% 87%;
+    --input: 214 32% 87%;
     --ring: 217 91% 60%;
 
     --surface: 0 0% 100%;
     --surface-hover: 210 40% 96%;
-    --surface-border: 214 32% 91%;
+    --surface-border: 214 32% 87%;
     --text-primary: 222 47% 11%;
     --text-secondary: 215 20% 45%;
     --text-muted: 215 16% 60%;
@@ -95,13 +95,13 @@
     --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --border: 217 33% 22%;
+    --input: 217 33% 22%;
     --ring: 217 91% 60%;
 
     --surface: 222 47% 9%;
     --surface-hover: 217 33% 14%;
-    --surface-border: 217 33% 17%;
+    --surface-border: 217 33% 22%;
     --text-primary: 210 40% 96%;
     --text-secondary: 215 20% 55%;
     --text-muted: 215 16% 45%;
@@ -121,7 +121,7 @@
 input, select, textarea {
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
-  border: 1px solid var(--input);
+  border: 1.5px solid var(--input);
   background-color: var(--surface);
   color: var(--text-primary);
   border-radius: 0.75rem;
@@ -131,7 +131,7 @@ input, select, textarea {
 }
 input:focus, select:focus, textarea:focus {
   border-color: hsl(var(--ring));
-  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.15);
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.2);
 }
 input::placeholder, textarea::placeholder {
   color: var(--text-muted);

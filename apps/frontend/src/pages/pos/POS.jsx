@@ -305,7 +305,7 @@ export default function POS() {
           {cartItems.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-3 py-8">
               <ShoppingCart className="w-14 h-14 sm:w-16 sm:h-16 opacity-10" />
-              <p className="text-sm">Cart is empty</p>
+              <p className="text-sm">{t('posPage.cartEmpty')}</p>
             </div>
           ) : (
             cartItems.map(item => (

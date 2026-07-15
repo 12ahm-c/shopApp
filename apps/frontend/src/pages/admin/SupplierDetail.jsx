@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supplierApi } from '../../api/supplier';
 import { Loader2, ArrowLeft, Trash2, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -8,6 +9,7 @@ import { formatPhoneNumber } from '../../lib/utils';
 export default function SupplierDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,7 +22,7 @@ export default function SupplierDetail() {
   }, [id]);
 
   const handleDelete = async () => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer ce fournisseur ?")) {
+    if (confirm(t('suppliersPage.deleteConfirm'))) {
       const res = await supplierApi.deleteSupplier(id);
       if (res.success) navigate('/admin/suppliers');
     }
@@ -30,7 +32,7 @@ export default function SupplierDetail() {
     return <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>;
   }
   if (!data?.supplier) {
-    return <div className="p-12 text-center text-muted-foreground">Fournisseur introuvable</div>;
+    return <div className="p-12 text-center text-muted-foreground">{t('suppliersPage.notFound')}</div>;
   }
 
   const { supplier } = data;
@@ -43,7 +45,7 @@ export default function SupplierDetail() {
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">{supplier.name}</h1>
-          <p className="text-sm text-muted-foreground">{formatPhoneNumber(supplier.phone) || 'Aucun téléphone'} • {supplier.address || 'Aucune adresse'}</p>
+          <p className="text-sm text-muted-foreground">{formatPhoneNumber(supplier.phone) || t('suppliersPage.noPhone')} • {supplier.address || t('suppliersPage.noAddress')}</p>
         </div>
         <button onClick={handleDelete} className="p-2 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors">
           <Trash2 className="w-5 h-5" />
@@ -52,7 +54,7 @@ export default function SupplierDetail() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-card p-6 rounded-2xl border border-surface-border">
-          <h3 className="text-sm font-medium text-muted-foreground">Dette (Ce que vous devez)</h3>
+          <h3 className="text-sm font-medium text-muted-foreground">{t('suppliersPage.debtOwed')}</h3>
           <p className={`text-3xl font-bold mt-2 tabular-nums ${supplier.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
             {supplier.totalDebt.toLocaleString()} <span className="text-lg">MRU</span>
           </p>
@@ -62,7 +64,7 @@ export default function SupplierDetail() {
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground">Fournisseur depuis</h3>
+            <h3 className="text-sm font-medium text-muted-foreground">{t('suppliersPage.supplierSince')}</h3>
             <p className="text-lg font-medium text-text-primary">
               {new Date(supplier.createdAt).toLocaleDateString('fr-FR')}
             </p>
@@ -72,11 +74,11 @@ export default function SupplierDetail() {
 
       <div className="bg-card rounded-2xl border border-surface-border overflow-hidden">
         <div className="px-6 py-4 border-b border-surface-border">
-          <h2 className="text-lg font-semibold text-text-primary">Historique des dettes et paiements</h2>
+          <h2 className="text-lg font-semibold text-text-primary">{t('suppliersPage.transactionHistory')}</h2>
         </div>
         <div className="divide-y divide-surface-border">
           {supplier.transactions.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">Aucune transaction trouvée.</div>
+            <div className="p-8 text-center text-muted-foreground">{t('suppliersPage.noTransactions')}</div>
           ) : (
             [...supplier.transactions].reverse().map((tx, index) => (
               <div key={index} className="px-6 py-4 flex items-center justify-between">
@@ -86,7 +88,7 @@ export default function SupplierDetail() {
                   </div>
                   <div>
                     <p className="font-medium text-text-primary">
-                      {tx.type === 'increase' ? 'Achat à crédit (Dette augmentée)' : 'Paiement (Dette remboursée)'}
+                      {tx.type === 'increase' ? t('suppliersPage.creditPurchase') : t('suppliersPage.paymentMade')}
                     </p>
                     <div className="flex gap-2 text-sm text-muted-foreground">
                       <span>{new Date(tx.date).toLocaleDateString('fr-FR')}</span>
@@ -98,7 +100,7 @@ export default function SupplierDetail() {
                   <p className={`font-medium tabular-nums ${tx.type === 'increase' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                     {tx.type === 'increase' ? '+' : '-'}{tx.amount.toLocaleString()} MRU
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">Nouveau solde: {tx.newTotalDebt.toLocaleString()} MRU</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">{t('suppliersPage.newBalance')}: {tx.newTotalDebt.toLocaleString()} MRU</p>
                 </div>
               </div>
             ))

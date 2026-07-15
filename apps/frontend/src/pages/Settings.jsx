@@ -41,7 +41,7 @@ export default function Settings() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
-      setError('Logo must be less than 2MB');
+                      setError(t('settingsPage.logoMaxSize'));
       return;
     }
     const reader = new FileReader();
@@ -201,7 +201,7 @@ export default function Settings() {
 
                   {/* Logo Upload */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-text-secondary">Store Logo</label>
+                    <label className="text-sm font-medium text-text-secondary">{t('settingsPage.storeLogo')}</label>
                     <div className="flex items-center gap-4">
                       <div
                         onClick={() => logoInputRef.current?.click()}
@@ -217,7 +217,7 @@ export default function Settings() {
                         ) : (
                           <div className="flex flex-col items-center gap-1 text-muted-foreground">
                             <Image className="w-6 h-6" />
-                            <span className="text-[10px]">Upload</span>
+                            <span className="text-[10px]">{t('settingsPage.upload')}</span>
                           </div>
                         )}
                       </div>
@@ -237,7 +237,7 @@ export default function Settings() {
                           <X className="w-4 h-4" />
                         </button>
                       )}
-                      <p className="text-xs text-muted-foreground">PNG, JPG up to 2MB</p>
+                      <p className="text-xs text-muted-foreground">{t('settingsPage.uploadHelp')}</p>
                     </div>
                   </div>
 
