@@ -71,7 +71,7 @@ export default function ProductForm() {
       }
       navigate('/products');
     } catch (err) {
-      setError(err?.response?.data?.error?.message || err?.message || t('products.saveFailed'));
+      setError(err?.response?.data?.error?.message || err?.message || t('productPage.saveFailed'));
       setSaving(false);
     }
   };
@@ -95,10 +95,10 @@ export default function ProductForm() {
         </button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-            {isEdit ? t('products.editProduct') : t('products.addNewProduct')}
+            {isEdit ? t('productPage.editProduct') : t('productPage.addNewProduct')}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {isEdit ? t('products.editSubtitle') : t('products.addSubtitle')}
+            {isEdit ? t('productPage.editSubtitle') : t('productPage.addSubtitle')}
           </p>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function ProductForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <label className="block space-y-2 md:col-span-2">
-              <span className="text-sm font-medium text-text-secondary">{t('products.name')} *</span>
+              <span className="text-sm font-medium text-text-secondary">{t('productPage.name')} *</span>
               <input 
                 type="text" 
                 name="name" 
@@ -120,7 +120,7 @@ export default function ProductForm() {
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-text-secondary">{t('products.category')} *</span>
+              <span className="text-sm font-medium text-text-secondary">{t('productPage.category')} *</span>
               <input 
                 type="text" 
                 name="category" 
@@ -140,7 +140,7 @@ export default function ProductForm() {
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-text-secondary">{t('products.price')} *</span>
+              <span className="text-sm font-medium text-text-secondary">{t('productPage.price')} *</span>
               <input 
                 type="number" 
                 name="price" 
@@ -153,7 +153,7 @@ export default function ProductForm() {
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-text-secondary">{t('products.initialQuantity')} *</span>
+              <span className="text-sm font-medium text-text-secondary">{t('productPage.initialQuantity')} *</span>
               <input 
                 type="number" 
                 name="quantity" 
@@ -166,7 +166,7 @@ export default function ProductForm() {
             </label>
 
             <label className="block space-y-2">
-              <span className="text-sm font-medium text-text-secondary">{t('products.lowStockThreshold')}</span>
+              <span className="text-sm font-medium text-text-secondary">{t('productPage.lowStockThreshold')}</span>
               <input 
                 type="number" 
                 name="alertThreshold" 
@@ -191,7 +191,7 @@ export default function ProductForm() {
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-xl shadow-lg shadow-blue-500/25 font-semibold transition-all disabled:opacity-70 active:scale-[0.98]"
             >
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-              {isEdit ? t('products.updateProduct') : t('products.createProduct')}
+              {isEdit ? t('productPage.updateProduct') : t('productPage.createProduct')}
             </button>
           </div>
         </form>

@@ -59,9 +59,9 @@ export default function ProductsList() {
             <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
               <Package className="w-5 h-5 text-primary" />
             </div>
-            {t('products.catalog')}
+            {t('productPage.catalog')}
           </h1>
-          <p className="text-muted-foreground text-sm mt-1 ml-12">{t('products.manageInventory')}</p>
+          <p className="text-muted-foreground text-sm mt-1 ml-12">{t('productPage.manageInventory')}</p>
         </div>
         
         {role === 'admin' && (
@@ -70,7 +70,7 @@ export default function ProductsList() {
             className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all active:scale-[0.97]"
           >
             <Plus className="w-4 h-4" />
-            {t('products.addProduct')}
+            {t('productPage.addProduct')}
           </Link>
         )}
       </div>
@@ -84,7 +84,7 @@ export default function ProductsList() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('products.search')}
+              placeholder={t('productPage.search')}
               className="!pl-9 !pr-4 !py-2.5"
             />
           </div>
@@ -97,7 +97,7 @@ export default function ProductsList() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="!pl-9 !pr-8 !py-2.5 !appearance-none !rounded-xl !text-sm !font-medium"
               >
-                <option value="">{t('products.allCategories')}</option>
+                <option value="">{t('productPage.allCategories')}</option>
                 {categories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
@@ -116,7 +116,7 @@ export default function ProductsList() {
               </div>
               <span className="text-sm font-medium text-text-secondary flex items-center gap-1.5 whitespace-nowrap">
                 <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                {t('products.lowStock')}
+                {t('productPage.lowStock')}
               </span>
             </label>
           </div>
@@ -132,7 +132,7 @@ export default function ProductsList() {
               </div>
             ) : products.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground text-sm">
-                {t('products.noProducts')}
+                {t('productPage.noProducts')}
               </div>
             ) : (
               products.map(product => {
@@ -155,7 +155,7 @@ export default function ProductsList() {
                             ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
                             : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                         }`}>
-                          {product.quantity} {t('products.inStock')}
+                          {product.quantity} {t('productPage.inStock')}
                         </span>
                       </div>
                     </div>
@@ -172,10 +172,10 @@ export default function ProductsList() {
           <table className="w-full text-sm text-left hidden sm:table">
             <thead className="text-muted-foreground font-medium">
               <tr>
-                <th className="px-3 sm:px-6 py-4">{t('products.productName')}</th>
-                <th className="px-3 sm:px-6 py-4 hidden sm:table-cell">{t('products.category')}</th>
-                <th className="px-3 sm:px-6 py-4 text-right">{t('products.price')}</th>
-                <th className="px-3 sm:px-6 py-4 text-right">{t('products.stock')}</th>
+                <th className="px-3 sm:px-6 py-4">{t('productPage.productName')}</th>
+                <th className="px-3 sm:px-6 py-4 hidden sm:table-cell">{t('productPage.category')}</th>
+                <th className="px-3 sm:px-6 py-4 text-right">{t('productPage.price')}</th>
+                <th className="px-3 sm:px-6 py-4 text-right">{t('productPage.stock')}</th>
                 <th className="px-3 sm:px-6 py-4 text-center">{t('table.actions')}</th>
               </tr>
             </thead>
@@ -189,7 +189,7 @@ export default function ProductsList() {
               ) : products.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="px-3 sm:px-6 py-12 text-center text-muted-foreground">
-                    {t('products.noProductsMatch')}
+                    {t('productPage.noProductsMatch')}
                   </td>
                 </tr>
               ) : (
@@ -222,7 +222,7 @@ export default function ProductsList() {
                         <Link 
                           to={`/products/${product._id}`}
                           className="inline-flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                          title={t('products.viewDetails')}
+                          title={t('productPage.viewDetails')}
                         >
                           <Eye className="w-4 h-4" />
                         </Link>

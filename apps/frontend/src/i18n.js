@@ -260,7 +260,7 @@ const resources = {
         uploadHelp: "PNG, JPG jusqu'à 2MB",
         logoMaxSize: "Le logo doit faire moins de 2MB"
       },
-      products: {
+      productPage: {
         catalog: "Catalogue de produits",
         manageInventory: "Gérez l'inventaire et les produits de votre magasin.",
         addProduct: "Ajouter un produit",
@@ -628,7 +628,7 @@ const resources = {
         uploadHelp: "PNG, JPG حتى 2MB",
         logoMaxSize: "يجب أن يكون الشعار أقل من 2MB"
       },
-      products: {
+      productPage: {
         catalog: "المنتجات",
         manageInventory: "أدر مخزون ومنتجات متجرك.",
         addProduct: "إضافة منتج",

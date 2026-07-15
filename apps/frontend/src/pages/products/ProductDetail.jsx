@@ -33,7 +33,7 @@ export default function ProductDetail() {
   }, [id, navigate]);
 
   const handleDelete = async () => {
-    if (!window.confirm(t('products.deleteConfirm'))) {
+    if (!window.confirm(t('productPage.deleteConfirm'))) {
       return;
     }
     
@@ -43,7 +43,7 @@ export default function ProductDetail() {
       await productApi.deleteProduct(id);
       navigate('/products');
     } catch (err) {
-      setDeleteError(err?.response?.data?.error?.message || err?.message || t('products.deleteFailed'));
+      setDeleteError(err?.response?.data?.error?.message || err?.message || t('productPage.deleteFailed'));
       setDeleting(false);
     }
   };
@@ -93,7 +93,7 @@ export default function ProductDetail() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-accent border border-surface-border hover:bg-surface-hover text-text-secondary text-sm font-medium rounded-xl transition-all"
             >
               <Edit className="w-4 h-4" />
-              {t('products.edit')}
+              {t('productPage.edit')}
             </Link>
             <button
               onClick={handleDelete}
@@ -101,7 +101,7 @@ export default function ProductDetail() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-sm font-medium rounded-xl transition-all disabled:opacity-50"
             >
               {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-              {t('products.delete')}
+              {t('productPage.delete')}
             </button>
           </div>
         )}
@@ -111,7 +111,7 @@ export default function ProductDetail() {
         <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
           <div className="text-sm text-rose-600 dark:text-rose-400">
-            <strong>{t('products.delete')}:</strong> {deleteError}
+            <strong>{t('productPage.delete')}:</strong> {deleteError}
           </div>
         </div>
       )}
@@ -120,7 +120,7 @@ export default function ProductDetail() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Price Card */}
         <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
-          <span className="text-sm font-medium text-muted-foreground">{t('products.unitPrice')}</span>
+          <span className="text-sm font-medium text-muted-foreground">{t('productPage.unitPrice')}</span>
           <div className="text-3xl font-bold text-text-primary mt-2 tabular-nums">
             {product.price.toLocaleString()} <span className="text-lg font-medium text-muted-foreground">MRU</span>
           </div>
@@ -137,18 +137,18 @@ export default function ProductDetail() {
               <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
           )}
-          <span className="text-sm font-medium text-muted-foreground">{t('products.currentStock')}</span>
+          <span className="text-sm font-medium text-muted-foreground">{t('productPage.currentStock')}</span>
           <div className="flex items-baseline gap-2 mt-2">
             <span className={`text-3xl font-bold ${isLowStock ? 'text-amber-600 dark:text-amber-400' : 'text-text-primary'}`}>
               {product.quantity}
             </span>
-            <span className="text-sm font-medium text-muted-foreground">{t('products.units')}</span>
+            <span className="text-sm font-medium text-muted-foreground">{t('productPage.units')}</span>
           </div>
         </div>
 
         {/* Threshold Card */}
         <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
-          <span className="text-sm font-medium text-muted-foreground">{t('products.alertThreshold')}</span>
+          <span className="text-sm font-medium text-muted-foreground">{t('productPage.alertThreshold')}</span>
           <div className="flex items-center gap-2 mt-2">
             <AlertTriangle className="w-5 h-5 text-muted-foreground" />
             <span className="text-xl font-semibold text-text-secondary">{product.alertThreshold}</span>
@@ -157,7 +157,7 @@ export default function ProductDetail() {
 
         {/* Created At Card */}
         <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
-          <span className="text-sm font-medium text-muted-foreground">{t('products.addedOn')}</span>
+          <span className="text-sm font-medium text-muted-foreground">{t('productPage.addedOn')}</span>
           <div className="flex items-center gap-2 mt-2">
             <Calendar className="w-5 h-5 text-muted-foreground" />
             <span className="text-lg font-medium text-text-secondary">
