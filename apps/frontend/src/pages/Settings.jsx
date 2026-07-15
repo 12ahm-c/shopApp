@@ -40,16 +40,12 @@ export default function Settings() {
   const handleLogoUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-                      setError(t('settingsPage.logoMaxSize'));
-      return;
-    }
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxSize = 200;
+        const maxSize = 150;
         let { width, height } = img;
         if (width > height) {
           if (width > maxSize) { height = (height * maxSize) / width; width = maxSize; }
@@ -60,7 +56,12 @@ export default function Settings() {
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
-        setStoreLogoOverride(canvas.toDataURL('image/jpeg', 0.7));
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        if (dataUrl.length > 2 * 1024 * 1024) {
+          setError(t('settingsPage.logoMaxSize'));
+          return;
+        }
+        setStoreLogoOverride(dataUrl);
       };
       img.src = ev.target.result;
     };
