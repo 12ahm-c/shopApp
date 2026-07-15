@@ -7,12 +7,14 @@ const USE_MOCK_INVOICES = import.meta.env.VITE_USE_MOCK_API === 'true';
 
 const realInvoiceApi = {
   getInvoices: (params = {}) => saleApi.getSales(params),
-  getInvoiceById: (id) => apiClient(`/invoices/${id}`)
+  getInvoiceById: (id) => apiClient(`/invoices/${id}`),
+  getPublicInvoiceById: (id) => apiClient(`/invoices/public/${id}`)
 };
 
 const mockedInvoiceApi = {
   getInvoices: (params = {}) => saleApi.getSales(params),
-  getInvoiceById: (id) => mockSaleApi.getSaleById(id, useAuthStore.getState().user)
+  getInvoiceById: (id) => mockSaleApi.getSaleById(id, useAuthStore.getState().user),
+  getPublicInvoiceById: (id) => mockSaleApi.getSaleById(id, useAuthStore.getState().user)
 };
 
 export const invoiceApi = USE_MOCK_INVOICES ? mockedInvoiceApi : realInvoiceApi;

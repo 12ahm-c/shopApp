@@ -210,6 +210,13 @@ export const saleService = {
     return serializeSale(sale);
   },
 
+  async getPublicSaleById(id: string) {
+    ensureObjectId(id);
+    const sale = await Sale.findById(id);
+    if (!sale || sale.isDeleted) throw new AppError(404, "NOT_FOUND", "Sale does not exist");
+    return serializeSale(sale);
+  },
+
   async cancelSale(id: string, user: AuthUser) {
     const session = await mongoose.startSession();
     session.startTransaction();

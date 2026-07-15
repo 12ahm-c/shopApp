@@ -30,6 +30,11 @@ export const saleController = {
     successResponse(res, data);
   }),
 
+  getPublicInvoice: asyncHandler(async (req: Request, res: Response) => {
+    const data = await saleService.getPublicSaleById(String(req.params.id));
+    successResponse(res, data);
+  }),
+
   getPrintData: asyncHandler(async (_req: Request, res: Response) => {
     successResponse(res, { html: null, invoice: null });
   })

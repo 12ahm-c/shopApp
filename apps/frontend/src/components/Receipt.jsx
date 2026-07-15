@@ -219,6 +219,8 @@ export default function Receipt({ data, showActions = true, storeOverrides = {} 
       `  ${item.name}  x${item.quantity}  ${formatMoney(item.total)}`
     ).join('\n');
 
+    const invoiceUrl = `${window.location.origin}/invoices/view/${data._id}`;
+
     const message = `🛍️ *${storeName}*
 ━━━━━━━━━━━━━━━━━━
 📋 ${t('receipt.invoice')} #${data.invoiceNumber}
@@ -231,7 +233,9 @@ ${itemsText}
 💰 *${t('invoice.totalGeneral')}: ${formatMoney(totalAmount)}*
 💳 ${t('invoice.paymentMethod')}: ${paymentLabel}
 ━━━━━━━━━━━━━━━━━━
-${invoiceFooter}`;
+${invoiceFooter}
+
+🔗 ${invoiceUrl}`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;

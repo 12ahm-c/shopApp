@@ -54,15 +54,15 @@ function ToastProvider({ children }) {
         {toasts.map(toast => (
           <div
             key={toast.id}
-            className="animate-slide-down pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl bg-surface/95 border-surface-border text-text-primary"
+            className="animate-slide-down pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border border-border backdrop-blur-xl bg-card text-card-foreground"
           >
-            <div className={`w-2 h-2 rounded-full shrink-0 ${
+            <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
               toast.type === 'success' ? 'bg-emerald-500' :
               toast.type === 'error' ? 'bg-rose-500' : 'bg-blue-500'
             }`} />
             <p className="text-sm font-medium flex-1">{toast.message}</p>
-            <button onClick={() => removeToast(toast.id)} className="p-1 rounded-lg hover:bg-accent shrink-0">
-              <X className="w-4 h-4 text-muted-foreground" />
+            <button onClick={() => removeToast(toast.id)} className="p-1 rounded-lg hover:bg-secondary shrink-0">
+              <X className="w-4 h-4 text-secondary-foreground" />
             </button>
           </div>
         ))}
@@ -146,7 +146,7 @@ export default function ShellLayout() {
     <ToastProvider>
       <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col h-dvh bg-background overflow-hidden">
         {/* ========== MOBILE HEADER ========== */}
-        <header className="md:hidden flex items-center justify-between px-5 h-14 bg-surface/80 backdrop-blur-xl border-b border-surface-border shrink-0 z-10 safe-area-top">
+        <header className="md:hidden flex items-center justify-between px-5 h-14 bg-card/80 backdrop-blur-xl border-b border-border shrink-0 z-10 safe-area-top">
           <div className="flex items-center gap-3">
             {renderLogo('w-8 h-8')}
             <span className="font-semibold text-[15px] text-text-primary">{storeName}</span>
@@ -155,17 +155,17 @@ export default function ShellLayout() {
             <button
               type="button"
               onClick={() => setShowNotifications(true)}
-              className="relative p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+              className="relative p-2.5 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors"
             >
-              <Bell className="w-5 h-5 text-muted-foreground" />
+              <Bell className="w-5 h-5 text-secondary-foreground" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
             </button>
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+              className="p-2.5 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors"
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5 text-muted-foreground" /> : <Moon className="w-5 h-5 text-muted-foreground" />}
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-secondary-foreground" /> : <Moon className="w-5 h-5 text-secondary-foreground" />}
             </button>
           </div>
         </header>
@@ -176,7 +176,7 @@ export default function ShellLayout() {
         </main>
 
         {/* ========== DESKTOP LAYOUT ========== */}
-        <header className="hidden md:flex h-16 border-b border-surface-border bg-surface/80 backdrop-blur-xl items-center justify-between px-6 shrink-0 z-10">
+        <header className="hidden md:flex h-16 border-b border-border bg-card/80 backdrop-blur-xl items-center justify-between px-6 shrink-0 z-10">
           <div className="flex items-center gap-3">
             {renderLogo('w-9 h-9')}
             <span className="font-bold text-lg tracking-tight text-text-primary">
@@ -188,10 +188,10 @@ export default function ShellLayout() {
             <button
               type="button"
               onClick={() => setShowNotifications(true)}
-              className="relative p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+              className="relative p-2.5 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors"
               title={t('notifications')}
             >
-              <Bell className="w-5 h-5 text-muted-foreground" />
+              <Bell className="w-5 h-5 text-secondary-foreground" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></span>
             </button>
 
@@ -207,10 +207,10 @@ export default function ShellLayout() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+              className="p-2.5 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors"
               title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5 text-muted-foreground" /> : <Moon className="w-5 h-5 text-muted-foreground" />}
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-secondary-foreground" /> : <Moon className="w-5 h-5 text-secondary-foreground" />}
             </button>
 
             <div className="h-6 w-px bg-surface-border mx-1"></div>
@@ -225,7 +225,7 @@ export default function ShellLayout() {
             <button
               type="button"
               onClick={logout}
-              className="p-2.5 rounded-xl bg-accent hover:bg-destructive/10 hover:text-destructive transition-colors text-muted-foreground"
+              className="p-2.5 rounded-xl bg-secondary hover:bg-destructive/10 hover:text-destructive transition-colors text-secondary-foreground"
               title={t('logout')}
             >
               <LogOut className="w-5 h-5" />
@@ -241,7 +241,7 @@ export default function ShellLayout() {
 
         {/* ========== BOTTOM TAB BAR ========== */}
         <nav className="md:hidden shrink-0 z-40 safe-area-bottom">
-          <div className="bg-surface/90 backdrop-blur-xl border-t border-surface-border">
+          <div className="bg-card/95 backdrop-blur-xl border-t border-border">
             <div className="flex items-center h-16 px-2">
               {mainNavItems.map((item) => {
                 const Icon = item.icon;
@@ -254,7 +254,7 @@ export default function ShellLayout() {
                     className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
                       isActive
                         ? 'text-primary'
-                        : 'text-muted-foreground active:text-text-secondary'
+                        : 'text-muted-foreground active:text-secondary-foreground'
                     }`}
                   >
                     <div className={`p-2 rounded-xl transition-all duration-200 ${
@@ -273,7 +273,7 @@ export default function ShellLayout() {
                 className={`flex flex-col items-center justify-center gap-1 flex-1 h-14 rounded-2xl transition-all duration-200 ${
                   isMoreActive
                     ? 'text-primary'
-                    : 'text-muted-foreground active:text-text-secondary'
+                    : 'text-muted-foreground active:text-secondary-foreground'
                 }`}
               >
                 <div className={`p-2 rounded-xl transition-all duration-200 ${
@@ -294,15 +294,15 @@ export default function ShellLayout() {
               className="absolute inset-0"
               onClick={() => setShowNotifications(false)}
             />
-            <div className="absolute top-16 right-4 left-4 sm:left-auto sm:w-96 bg-surface border-surface-border rounded-2xl shadow-2xl flex flex-col max-h-[70vh] animate-slide-down">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-surface-border/50 shrink-0">
-                <h2 className="text-sm font-bold text-text-primary">{t('notifications')}</h2>
+            <div className="absolute top-16 right-3 left-3 sm:left-auto sm:w-96 bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[70vh] animate-slide-down overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
+                <h2 className="text-sm font-bold text-card-foreground">{t('notifications')}</h2>
                 <button
                   type="button"
                   onClick={() => setShowNotifications(false)}
-                  className="p-1.5 rounded-lg bg-accent hover:bg-surface-hover transition-colors"
+                  className="p-1.5 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
                 >
-                  <X className="w-4 h-4 text-muted-foreground" />
+                  <X className="w-4 h-4 text-secondary-foreground" />
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto">
@@ -312,19 +312,19 @@ export default function ShellLayout() {
                   </div>
                 ) : notifications.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-8 text-muted-foreground">
-                    <Bell className="w-10 h-10 mb-2 opacity-20" />
+                    <Bell className="w-10 h-10 mb-2 opacity-30" />
                     <p className="text-xs">{t('notification.noNotifications')}</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-surface-border/50">
+                  <div>
                     {notifications.map((notif) => (
-                      <div key={notif._id} className="px-4 py-3 hover:bg-accent transition-colors">
+                      <div key={notif._id} className="px-4 py-3 hover:bg-secondary/50 transition-colors border-b border-border last:border-b-0">
                         <div className="flex items-start gap-3">
                           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                             <Bell className="w-3.5 h-3.5 text-primary" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-medium text-text-primary line-clamp-2">{notif.message}</p>
+                            <p className="text-xs font-medium text-card-foreground line-clamp-2">{notif.message}</p>
                             <p className="text-[10px] text-muted-foreground mt-0.5">{formatDateTime(notif.createdAt)}</p>
                           </div>
                           {!notif.read && (
@@ -347,19 +347,19 @@ export default function ShellLayout() {
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setShowMoreMenu(false)}
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-surface border-t border-surface-border rounded-t-3xl max-h-[70vh] flex flex-col animate-slide-up">
+            <div className="absolute bottom-0 left-0 right-0 bg-card border-t border-border rounded-t-3xl max-h-[70vh] flex flex-col animate-slide-up">
               <div className="flex items-center justify-center pt-3 pb-2">
-                <div className="w-10 h-1 rounded-full bg-surface-border" />
+                <div className="w-10 h-1 rounded-full bg-border" />
               </div>
 
-              <div className="flex items-center justify-between px-5 pb-4 border-b border-surface-border">
-                <h2 className="text-lg font-bold text-text-primary">{t('more')}</h2>
+              <div className="flex items-center justify-between px-5 pb-4 border-b border-border">
+                <h2 className="text-lg font-bold text-card-foreground">{t('more')}</h2>
                 <button
                   type="button"
                   onClick={() => setShowMoreMenu(false)}
-                  className="p-2 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+                  className="p-2 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors"
                 >
-                  <X className="w-5 h-5 text-muted-foreground" />
+                  <X className="w-5 h-5 text-secondary-foreground" />
                 </button>
               </div>
 
@@ -376,7 +376,7 @@ export default function ShellLayout() {
                         className={`flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl transition-all duration-200 ${
                           isActive
                             ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
-                            : 'bg-accent text-muted-foreground hover:bg-surface-hover hover:text-text-primary'
+                            : 'bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-card-foreground'
                         }`}
                       >
                         <Icon className="w-6 h-6" />
@@ -388,7 +388,7 @@ export default function ShellLayout() {
                   <button
                     type="button"
                     onClick={() => { toggleLanguage(); setShowMoreMenu(false); }}
-                    className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-accent text-muted-foreground hover:bg-surface-hover hover:text-text-primary transition-all duration-200"
+                    className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-card-foreground transition-all duration-200"
                   >
                     <Globe className="w-6 h-6" />
                     <span className="text-xs font-medium text-center leading-tight">{language === 'fr' ? 'العربية' : 'Français'}</span>

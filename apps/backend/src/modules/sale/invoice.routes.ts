@@ -6,5 +6,6 @@ import { objectIdParamSchema } from "./sale.validation";
 
 export const invoiceRoutes = Router();
 
+invoiceRoutes.get("/public/:id", validate(objectIdParamSchema, "params"), saleController.getPublicInvoice);
 invoiceRoutes.get("/:id", requireAuth, validate(objectIdParamSchema, "params"), saleController.getInvoice);
 invoiceRoutes.get("/print/:id", requireAuth, validate(objectIdParamSchema, "params"), saleController.getPrintData);

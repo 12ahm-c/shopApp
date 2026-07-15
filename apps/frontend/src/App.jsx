@@ -25,6 +25,7 @@ const ProductsList = lazy(() => import('./pages/products/ProductsList'));
 const ProductForm = lazy(() => import('./pages/products/ProductForm'));
 const ProductDetail = lazy(() => import('./pages/products/ProductDetail'));
 const POS = lazy(() => import('./pages/pos/POS'));
+const PublicInvoice = lazy(() => import('./pages/PublicInvoice'));
 
 function PageLoader() {
   return (
@@ -101,6 +102,7 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
+          <Route path="/invoices/view/:id" element={<PublicInvoice />} />
           <Route path="/login" element={<Login />} />
           
           {/* Protected Routes Wrapper - blocked until auth is ready */}
