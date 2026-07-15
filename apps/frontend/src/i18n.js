@@ -168,6 +168,7 @@ const resources = {
         client: "Client",
         print: "Imprimer",
         download: "Télécharger PDF",
+        whatsapp: "Partager via WhatsApp",
         thanks: "Merci de votre visite !",
         generatedBy: "Généré par"
       },
@@ -536,6 +537,7 @@ const resources = {
         client: "العميل",
         print: "طباعة",
         download: "تحميل PDF",
+        whatsapp: "مشاركة عبر واتساب",
         thanks: "شكراً لزيارتكم!",
         generatedBy: "تم بواسطة"
       },

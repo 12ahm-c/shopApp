@@ -58,13 +58,13 @@
     --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 25% 82%;
-    --input: 214 25% 82%;
+    --border: 214 18% 76%;
+    --input: 214 18% 62%;
     --ring: 217 91% 60%;
 
     --surface: 0 0% 100%;
     --surface-hover: 210 40% 96%;
-    --surface-border: 214 25% 82%;
+    --surface-border: 214 18% 76%;
     --text-primary: 222 47% 11%;
     --text-secondary: 215 20% 45%;
     --text-muted: 215 16% 60%;
@@ -95,13 +95,13 @@
     --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 28%;
-    --input: 217 33% 28%;
+    --border: 217 28% 32%;
+    --input: 217 28% 40%;
     --ring: 217 91% 60%;
 
     --surface: 222 47% 9%;
     --surface-hover: 217 33% 14%;
-    --surface-border: 217 33% 28%;
+    --surface-border: 217 28% 32%;
     --text-primary: 210 40% 96%;
     --text-secondary: 215 20% 55%;
     --text-muted: 215 16% 45%;
@@ -121,7 +121,7 @@
 input, select, textarea {
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
-  border: 1.5px solid var(--input);
+  border: 2px solid var(--input);
   background-color: var(--surface);
   color: var(--text-primary);
   border-radius: 0.75rem;
@@ -130,7 +130,7 @@ input, select, textarea {
   font-size: 0.9375rem;
 }
 input:hover, select:hover, textarea:hover {
-  border-color: hsl(var(--ring) / 0.5);
+  border-color: hsl(var(--ring) / 0.6);
 }
 input:focus, select:focus, textarea:focus {
   border-color: hsl(var(--ring));

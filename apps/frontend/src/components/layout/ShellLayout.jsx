@@ -144,7 +144,7 @@ export default function ShellLayout() {
 
   return (
     <ToastProvider>
-      <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col bg-background min-h-dvh">
+      <div dir={isRtl ? 'rtl' : 'ltr'} className="flex flex-col h-dvh bg-background overflow-hidden">
         {/* ========== MOBILE HEADER ========== */}
         <header className="md:hidden flex items-center justify-between px-5 h-14 bg-surface/80 backdrop-blur-xl border-b border-surface-border shrink-0 z-10 safe-area-top">
           <div className="flex items-center gap-3">
@@ -171,7 +171,7 @@ export default function ShellLayout() {
         </header>
 
         {/* ========== MOBILE MAIN ========== */}
-        <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-5 pb-24 scrollbar-hide">
+        <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-5 scrollbar-hide">
           <Outlet />
         </main>
 
@@ -233,14 +233,14 @@ export default function ShellLayout() {
           </div>
         </header>
 
-        <main className="hidden md:block flex-1 overflow-auto p-6">
+        <main className="hidden md:block flex-1 min-h-0 overflow-auto p-6">
           <div className="max-w-6xl mx-auto">
             <Outlet />
           </div>
         </main>
 
         {/* ========== BOTTOM TAB BAR ========== */}
-        <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 safe-area-bottom">
+        <nav className="md:hidden shrink-0 z-40 safe-area-bottom">
           <div className="bg-surface/90 backdrop-blur-xl border-t border-surface-border">
             <div className="flex items-center h-16 px-2">
               {mainNavItems.map((item) => {
@@ -291,44 +291,44 @@ export default function ShellLayout() {
         {showNotifications && (
           <div className="fixed inset-0 z-50 animate-fade-in">
             <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0"
               onClick={() => setShowNotifications(false)}
             />
-            <div className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-surface border-l border-surface-border shadow-2xl flex flex-col animate-slide-left">
-              <div className="flex items-center justify-between px-5 h-14 border-b border-surface-border shrink-0 safe-area-top">
-                <h2 className="text-lg font-bold text-text-primary">{t('notifications')}</h2>
+            <div className="absolute top-16 right-4 left-4 sm:left-auto sm:w-96 bg-surface border-surface-border rounded-2xl shadow-2xl flex flex-col max-h-[70vh] animate-slide-down">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-surface-border/50 shrink-0">
+                <h2 className="text-sm font-bold text-text-primary">{t('notifications')}</h2>
                 <button
                   type="button"
                   onClick={() => setShowNotifications(false)}
-                  className="p-2 rounded-xl bg-accent hover:bg-surface-hover transition-colors"
+                  className="p-1.5 rounded-lg bg-accent hover:bg-surface-hover transition-colors"
                 >
-                  <X className="w-5 h-5 text-muted-foreground" />
+                  <X className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto">
                 {loadingNotifs ? (
-                  <div className="flex items-center justify-center p-10">
-                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <div className="flex items-center justify-center p-8">
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 ) : notifications.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center p-10 text-muted-foreground">
-                    <Bell className="w-12 h-12 mb-3 opacity-20" />
-                    <p className="text-sm">{t('notification.noNotifications')}</p>
+                  <div className="flex flex-col items-center justify-center p-8 text-muted-foreground">
+                    <Bell className="w-10 h-10 mb-2 opacity-20" />
+                    <p className="text-xs">{t('notification.noNotifications')}</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-surface-border">
+                  <div className="divide-y divide-surface-border/50">
                     {notifications.map((notif) => (
-                      <div key={notif._id} className="px-5 py-4 hover:bg-accent transition-colors">
+                      <div key={notif._id} className="px-4 py-3 hover:bg-accent transition-colors">
                         <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                            <Bell className="w-4 h-4 text-primary" />
+                          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <Bell className="w-3.5 h-3.5 text-primary" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-text-primary line-clamp-2">{notif.message}</p>
-                            <p className="text-xs text-muted-foreground mt-1">{formatDateTime(notif.createdAt)}</p>
+                            <p className="text-xs font-medium text-text-primary line-clamp-2">{notif.message}</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">{formatDateTime(notif.createdAt)}</p>
                           </div>
                           {!notif.read && (
-                            <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2 shadow-lg shadow-blue-500/50"></div>
+                            <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1.5 shadow-lg shadow-blue-500/50"></div>
                           )}
                         </div>
                       </div>
