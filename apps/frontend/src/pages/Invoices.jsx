@@ -140,7 +140,7 @@ export default function Invoices() {
               name="from"
               value={filters.from}
               onChange={handleFilterChange}
-              className="!rounded-lg !py-1.5 !px-2.5 !text-xs !h-8"
+              className="max-w-[200px]"
             />
           </label>
 
@@ -151,7 +151,7 @@ export default function Invoices() {
               name="to"
               value={filters.to}
               onChange={handleFilterChange}
-              className="!rounded-lg !py-1.5 !px-2.5 !text-xs !h-8"
+              className="max-w-[200px]"
             />
           </label>
 
@@ -162,7 +162,7 @@ export default function Invoices() {
                 name="employeeId"
                 value={filters.employeeId}
                 onChange={handleFilterChange}
-                className="!rounded-lg !py-1.5 !px-2.5 !text-xs !h-8"
+                className="max-w-[200px]"
               >
                 <option value="">{t('invoice.allEmployees')}</option>
                 {employeesState.data.map((employee) => (

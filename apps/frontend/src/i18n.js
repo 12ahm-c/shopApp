@@ -258,7 +258,7 @@ const resources = {
         failed: "Échec de la mise à jour des paramètres.",
         storeLogo: "Logo du magasin",
         upload: "Télécharger",
-        uploadHelp: "PNG, JPG jusqu'à 2MB",
+        uploadHelp: "PNG, JPG",
         logoMaxSize: "Le logo doit faire moins de 2MB"
       },
       productPage: {
@@ -627,7 +627,7 @@ const resources = {
         failed: "فشل تحديث الإعدادات.",
         storeLogo: "شعار المتجر",
         upload: "رفع",
-        uploadHelp: "PNG, JPG حتى 2MB",
+        uploadHelp: "PNG, JPG",
         logoMaxSize: "يجب أن يكون الشعار أقل من 2MB"
       },
       productPage: {

@@ -141,12 +141,13 @@ export default function ActivityLogs() {
         </div>
 
         <div className="grid gap-3 md:grid-cols-4">
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-text-secondary">{t('activityLog.action')}</span>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-text-secondary">{t('activityLog.action')}</span>
             <select
               name="action"
               value={filters.action}
               onChange={handleFilterChange}
+              className="max-w-[200px]"
             >
               {logActions.map((action) => (
                 <option key={action.value || 'all'} value={action.value}>
@@ -156,33 +157,36 @@ export default function ActivityLogs() {
             </select>
           </label>
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-text-secondary">{t('activityLog.from')}</span>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-text-secondary">{t('activityLog.from')}</span>
             <input
               type="date"
               name="from"
               value={filters.from}
               onChange={handleFilterChange}
+              className="max-w-[200px]"
             />
           </label>
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-text-secondary">{t('activityLog.to')}</span>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-text-secondary">{t('activityLog.to')}</span>
             <input
               type="date"
               name="to"
               value={filters.to}
               onChange={handleFilterChange}
+              className="max-w-[200px]"
             />
           </label>
 
           {isAdmin && (
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-text-secondary">{t('activityLog.user')}</span>
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-text-secondary">{t('activityLog.user')}</span>
               <select
                 name="userId"
                 value={filters.userId}
                 onChange={handleFilterChange}
+                className="max-w-[200px]"
               >
                 <option value="">{t('activityLog.allUsers')}</option>
                 {employeesState.data.map((employee) => (
