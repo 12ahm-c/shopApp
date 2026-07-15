@@ -44,22 +44,26 @@ export default function Settings() {
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const maxSize = 150;
-        let { width, height } = img;
-        if (width > height) {
-          if (width > maxSize) { height = (height * maxSize) / width; width = maxSize; }
-        } else {
-          if (height > maxSize) { width = (width * maxSize) / height; height = maxSize; }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        const compress = (maxSize, quality) => {
+          const canvas = document.createElement('canvas');
+          let { width, height } = img;
+          if (width > height) {
+            if (width > maxSize) { height = (height * maxSize) / width; width = maxSize; }
+          } else {
+            if (height > maxSize) { width = (width * maxSize) / height; height = maxSize; }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          return canvas.toDataURL('image/jpeg', quality);
+        };
+        let dataUrl = compress(200, 0.8);
         if (dataUrl.length > 2 * 1024 * 1024) {
-          setError(t('settingsPage.logoMaxSize'));
-          return;
+          dataUrl = compress(150, 0.6);
+        }
+        if (dataUrl.length > 2 * 1024 * 1024) {
+          dataUrl = compress(100, 0.4);
         }
         setStoreLogoOverride(dataUrl);
       };

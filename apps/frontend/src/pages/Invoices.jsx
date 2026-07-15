@@ -133,36 +133,36 @@ export default function Invoices() {
           {t('invoice.filters')}
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-text-secondary">{t('invoice.from')}</span>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-text-secondary">{t('invoice.from')}</span>
             <input
               type="date"
               name="from"
               value={filters.from}
               onChange={handleFilterChange}
-              className="!rounded-xl"
+              className="!rounded-lg !py-1.5 !px-2.5 !text-xs !h-8"
             />
           </label>
 
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-text-secondary">{t('invoice.to')}</span>
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-text-secondary">{t('invoice.to')}</span>
             <input
               type="date"
               name="to"
               value={filters.to}
               onChange={handleFilterChange}
-              className="!rounded-xl"
+              className="!rounded-lg !py-1.5 !px-2.5 !text-xs !h-8"
             />
           </label>
 
           {isAdmin && (
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-text-secondary">{t('invoice.employee')}</span>
+            <label className="block space-y-1">
+              <span className="text-xs font-medium text-text-secondary">{t('invoice.employee')}</span>
               <select
                 name="employeeId"
                 value={filters.employeeId}
                 onChange={handleFilterChange}
-                className="!rounded-xl"
+                className="!rounded-lg !py-1.5 !px-2.5 !text-xs !h-8"
               >
                 <option value="">{t('invoice.allEmployees')}</option>
                 {employeesState.data.map((employee) => (

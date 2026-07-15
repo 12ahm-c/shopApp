@@ -318,14 +318,32 @@ export default function ShellLayout() {
                 ) : (
                   <div>
                     {notifications.map((notif) => (
-                      <div key={notif._id} className="px-4 py-3 hover:bg-secondary/50 transition-colors border-b border-border last:border-b-0">
+                      <div
+                        key={notif._id}
+                        onClick={() => {
+                          if (!notif.read) {
+                            notificationApi.markAsRead(notif._id);
+                            notif.read = true;
+                          }
+                        }}
+                        className={`px-4 py-3 transition-colors border-b border-border last:border-b-0 cursor-pointer ${
+                          notif.read ? 'bg-card' : 'bg-primary/5'
+                        } hover:bg-secondary/50`}
+                      >
                         <div className="flex items-start gap-3">
-                          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                            <Bell className="w-3.5 h-3.5 text-primary" />
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                            notif.read ? 'bg-secondary' : 'bg-primary/10'
+                          }`}>
+                            <Bell className={`w-3.5 h-3.5 ${notif.read ? 'text-muted-foreground' : 'text-primary'}`} />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-medium text-card-foreground line-clamp-2">{notif.message}</p>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">{formatDateTime(notif.createdAt)}</p>
+                            <p className={`text-xs font-medium line-clamp-3 ${notif.read ? 'text-muted-foreground' : 'text-card-foreground'}`}>
+                              {notif.message}
+                            </p>
+                            {notif.details && (
+                              <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">{notif.details}</p>
+                            )}
+                            <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(notif.createdAt)}</p>
                           </div>
                           {!notif.read && (
                             <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1.5 shadow-lg shadow-blue-500/50"></div>
