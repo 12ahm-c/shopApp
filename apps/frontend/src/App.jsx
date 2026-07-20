@@ -4,6 +4,7 @@ import useAuthStore from './stores/authStore';
 import useLanguageStore from './stores/languageStore';
 import useSettingsStore from './stores/settingsStore';
 import { authApi } from './api/auth';
+import { registerFCMToken, onForegroundMessage } from './lib/firebase';
 import { Loader2 } from 'lucide-react';
 
 import Login from './pages/Login';
@@ -75,6 +76,19 @@ export default function App() {
           useLanguageStore.getState().setLanguage(settings.language);
         }
       });
+
+      registerFCMToken();
+
+      const unsubscribe = onForegroundMessage((payload) => {
+        if (payload.notification) {
+          new Notification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: '/icons/icon-192.png'
+          });
+        }
+      });
+
+      return () => unsubscribe();
     }
   }, [user, fetchSettings]);
 

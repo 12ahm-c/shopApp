@@ -157,7 +157,10 @@ const resources = {
         unreadOnly: "Non lues seulement",
         markAllRead: "Tout marquer comme lu",
         noNotifications: "Aucune notification",
-        loadError: "Impossible de charger les notifications."
+        loadError: "Impossible de charger les notifications.",
+        pushEnableTitle: "Activez les notifications push",
+        pushEnableDescription: "Recevez des alertes importantes directement sur votre téléphone.",
+        pushEnableButton: "Activer"
       },
       pos: {
         invoiceGenerated: "Facture #{{number}} générée depuis le POS.",
@@ -540,7 +543,10 @@ const resources = {
         unreadOnly: "غير مقروءة فقط",
         markAllRead: "تحديد الكل كمقروء",
         noNotifications: "لا توجد إشعارات",
-        loadError: "تعذر تحميل الإشعارات."
+        loadError: "تعذر تحميل الإشعارات.",
+        pushEnableTitle: "فعّل إشعارات الدفع",
+        pushEnableDescription: "تلقى تنبيهات مهمة مباشرة على هاتفك.",
+        pushEnableButton: "تفعيل"
       },
       pos: {
         invoiceGenerated: "تم إنشاء الفاتورة رقم {{number}} من نقطة البيع.",

@@ -4,6 +4,8 @@ import { serializeNotification } from "../../utils/serializer";
 import { AppError } from "../../utils/AppError";
 import type { NotificationListQuery } from "./notification.validation";
 import { emitNotification } from "../../socket/notification.socket";
+import { sendPushToUser } from "../../utils/fcm";
+import { User } from "../user/user.model";
 
 export const notificationService = {
   async listNotifications(query: NotificationListQuery, userId: string) {
@@ -89,6 +91,24 @@ export const notificationService = {
     const dto = serializeNotification(notification);
     emitNotification(userId, dto);
 
+    sendPushToUser(userId, title, body, Object.fromEntries(
+      Object.entries(data).map(([k, v]) => [k, String(v)])
+    )).catch(() => {});
+
     return dto;
+  },
+
+  async registerToken(userId: string, token: string) {
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: { fcmTokens: token }
+    });
+    return { success: true };
+  },
+
+  async removeToken(userId: string, token: string) {
+    await User.findByIdAndUpdate(userId, {
+      $pull: { fcmTokens: token }
+    });
+    return { success: true };
   }
 };

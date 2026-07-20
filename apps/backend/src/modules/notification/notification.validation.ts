@@ -11,3 +11,15 @@ export const notificationListQuerySchema = z.object({
 });
 
 export type NotificationListQuery = z.infer<typeof notificationListQuerySchema>;
+
+export const registerTokenSchema = z.object({
+  token: z.string().min(1, "FCM token is required")
+});
+
+export type RegisterTokenBody = z.infer<typeof registerTokenSchema>;
+
+export const removeTokenSchema = z.object({
+  token: z.string().min(1, "FCM token is required")
+});
+
+export type RemoveTokenBody = z.infer<typeof removeTokenSchema>;

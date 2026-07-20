@@ -1,11 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Bell, CheckCheck, Filter, Loader2, SearchX } from 'lucide-react';
+import { Bell, CheckCheck, Filter, Loader2, SearchX, BellRing } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { notificationApi } from '../api/notification';
 import { formatDateTime } from '../lib/format';
+import { requestNotificationPermission } from '../lib/firebase';
 
 export default function Notifications() {
   const { t } = useTranslation();
+  const [pushPermission, setPushPermission] = useState(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      return Notification.permission;
+    }
+    return 'denied';
+  });
+  const [pushLoading, setPushLoading] = useState(false);
   const [filters, setFilters] = useState({
     unreadOnly: false,
     type: ''
@@ -115,8 +123,48 @@ export default function Notifications() {
     setFilters({ unreadOnly: false, type: '' });
   };
 
+  const handleEnablePush = async () => {
+    setPushLoading(true);
+    try {
+      const result = await requestNotificationPermission();
+      if (result) {
+        setPushPermission('granted');
+      }
+    } catch {
+      setPushPermission('denied');
+    } finally {
+      setPushLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {pushPermission !== 'granted' && 'Notification' in window && (
+        <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
+              <BellRing className="h-5 w-5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-text-primary">
+                {t('notification.pushEnableTitle')}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t('notification.pushEnableDescription')}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleEnablePush}
+              disabled={pushLoading}
+              className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors disabled:opacity-50"
+            >
+              {pushLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <BellRing className="h-4 w-4" />}
+              {t('notification.pushEnableButton')}
+            </button>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-text-primary">

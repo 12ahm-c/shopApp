@@ -36,6 +36,7 @@ export interface UserDocument {
   salary: number;
   attendance: AttendanceEntry[];
   refreshTokens: RefreshTokenEntry[];
+  fcmTokens: string[];
   createdAt: Date;
   updatedAt: Date;
   lastActiveAt?: Date;

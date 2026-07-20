@@ -17,5 +17,14 @@ export const env = {
   clientName: process.env.CLIENT_NAME ?? "default",
   mongodbUri: () => getRequiredEnv("MONGODB_URI"),
   jwtSecret: () => getRequiredEnv("JWT_SECRET"),
-  jwtRefreshSecret: () => getRequiredEnv("JWT_REFRESH_SECRET")
+  jwtRefreshSecret: () => getRequiredEnv("JWT_REFRESH_SECRET"),
+  firebaseServiceAccountJson: (): Record<string, string> | null => {
+    const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+    if (!raw || raw === "{}") return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
 };

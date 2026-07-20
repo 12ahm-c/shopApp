@@ -1,5 +1,17 @@
-const CACHE_NAME = 'shopmanager-v3';
-const STATIC_CACHE = 'shopmanager-static-v3';
+importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
+
+firebase.initializeApp({
+  apiKey: "AIzaSy placeholder",
+  projectId: "shopmanager-placeholder",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:placeholder"
+});
+
+const messaging = firebase.messaging();
+
+const CACHE_NAME = 'shopmanager-v4';
+const STATIC_CACHE = 'shopmanager-static-v4';
 const API_CACHE = 'shopmanager-api-v1';
 
 const PRECACHE_URLS = [
@@ -101,6 +113,39 @@ self.addEventListener('fetch', (event) => {
         return response;
       });
       return cached || fetched;
+    })
+  );
+});
+
+messaging.onBackgroundMessage((payload) => {
+  const title = payload.notification?.title || 'ShopManager';
+  const options = {
+    body: payload.notification?.body || '',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    data: payload.data || {},
+    tag: 'shopmanager-notification',
+    renotify: true
+  };
+
+  self.registration.showNotification(title, options);
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const url = event.notification?.data?.url || '/admin';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.focus();
+          client.navigate(url);
+          return;
+        }
+      }
+      return self.clients.openWindow(url);
     })
   );
 });

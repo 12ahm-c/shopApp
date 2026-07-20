@@ -30,6 +30,7 @@ const userSchema = new Schema<UserDocument>(
     salary: { type: Number, default: 0, min: 0 },
     attendance: { type: [attendanceSchema], default: [] },
     refreshTokens: { type: [refreshTokenSchema], default: [], select: false },
+    fcmTokens: { type: [String], default: [] },
     lastActiveAt: { type: Date }
   },
   { timestamps: true }
