@@ -7,8 +7,8 @@ import { saleApi } from '../../api/sale';
 import useCartStore from '../../stores/cartStore';
 import { formatPhoneNumber } from '../../lib/utils';
 import { 
-  Search, Plus, Minus, Trash2, ShoppingCart, CreditCard, Banknote, 
-  Smartphone, Wallet, User, CheckCircle2, Loader2, RefreshCcw, Package, ReceiptText
+  Search, Plus, Minus, Trash2, ShoppingCart, 
+  User, CheckCircle2, Loader2, RefreshCcw, Package, ReceiptText
 } from 'lucide-react';
 import { formatMoney } from '../../lib/format';
 import Receipt from '../../components/Receipt';
@@ -22,13 +22,13 @@ const paymentLabels = {
   masrafi: 'payment.masrafi'
 };
 
-const paymentIcons = {
-  cash: Banknote,
-  card: CreditCard,
-  bankily: Smartphone,
-  alsadd: Wallet,
-  bimbank: Smartphone,
-  masrafi: Wallet
+const paymentImages = {
+  cash: '/icons/cash.svg',
+  card: '/icons/card.svg',
+  bankily: '/icons/2.jpeg',
+  alsadd: '/icons/3.jpeg',
+  bimbank: '/icons/4.jpeg',
+  masrafi: '/icons/1.jpeg'
 };
 
 const PAYMENT_METHODS = ['cash', 'card', 'bankily', 'alsadd', 'bimbank', 'masrafi'];
@@ -56,6 +56,7 @@ export default function POS() {
   const [receiptData, setReceiptData] = useState(null);
 
   const productsLoaded = useRef(false);
+  const [editingPrice, setEditingPrice] = useState({ id: null, value: '' });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -324,8 +325,14 @@ export default function POS() {
                     <input
                       type="number"
                       min="0"
-                      value={item.unitPrice}
-                      onChange={(e) => setUnitPrice(item.productId, Math.max(0, parseInt(e.target.value) || 0))}
+                      value={editingPrice.id === item.productId ? editingPrice.value : item.unitPrice}
+                      onFocus={() => setEditingPrice({ id: item.productId, value: '' })}
+                      onChange={(e) => setEditingPrice({ id: item.productId, value: e.target.value })}
+                      onBlur={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        setUnitPrice(item.productId, Math.max(0, val));
+                        setEditingPrice({ id: null, value: '' });
+                      }}
                       className="w-16 sm:w-20 text-sm font-semibold text-primary bg-transparent border border-surface-border rounded-lg px-2 py-1.5 focus:outline-none tabular-nums"
                     />
                     <span className="text-xs text-muted-foreground">MRU</span>
@@ -369,18 +376,22 @@ export default function POS() {
 
           <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-3 gap-1.5 sm:gap-2 mb-3">
             {PAYMENT_METHODS.map((method) => {
-              const Icon = paymentIcons[method];
+              const imgSrc = paymentImages[method];
               return (
                 <button
                   key={method}
                   onClick={() => setPaymentMethod(method)}
-                  className={`py-2.5 px-1 flex flex-col items-center justify-center gap-1 rounded-xl border transition-all ${
+                  className={`py-2.5 px-1 flex flex-col items-center justify-center gap-1.5 rounded-xl border transition-all ${
                     paymentMethod === method 
-                      ? 'bg-primary/10 border-primary/30 text-primary' 
+                      ? 'bg-primary/10 border-primary/30 text-primary ring-2 ring-primary/20' 
                       : 'bg-card border-surface-border text-muted-foreground hover:border-surface-border'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <img 
+                    src={imgSrc} 
+                    alt={t(paymentLabels[method])}
+                    className="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-lg"
+                  />
                   <span className="text-[10px] sm:text-xs font-medium">{t(paymentLabels[method])}</span>
                 </button>
               );

@@ -12,6 +12,7 @@ const createQueryString = (params = {}) => {
   if (params.to) searchParams.append('to', params.to);
   if (params.employeeId) searchParams.append('employeeId', params.employeeId);
   if (params.customerId) searchParams.append('customerId', params.customerId);
+  if (params.paymentMethod) searchParams.append('paymentMethod', params.paymentMethod);
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : '';
 };

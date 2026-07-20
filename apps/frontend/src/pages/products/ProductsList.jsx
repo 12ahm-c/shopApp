@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { productApi } from '../../api/product';
 import useAuthStore from '../../stores/authStore';
 import useProductStore from '../../stores/productStore';
+import { formatMoney } from '../../lib/format';
 import { Search, Plus, Filter, AlertTriangle, Loader2, Package, Eye } from 'lucide-react';
 
 export default function ProductsList() {
@@ -160,7 +161,7 @@ export default function ProductsList() {
                       </div>
                     </div>
                     <span className="text-sm font-bold text-primary shrink-0 tabular-nums">
-                      {product.price.toLocaleString()} MRU
+                      {formatMoney(product.price)}
                     </span>
                   </Link>
                 );
@@ -175,6 +176,7 @@ export default function ProductsList() {
                 <th className="px-3 sm:px-6 py-4">{t('productPage.productName')}</th>
                 <th className="px-3 sm:px-6 py-4 hidden sm:table-cell">{t('productPage.category')}</th>
                 <th className="px-3 sm:px-6 py-4 text-right">{t('productPage.price')}</th>
+                <th className="px-3 sm:px-6 py-4 text-right hidden md:table-cell">{t('productPage.costPrice')}</th>
                 <th className="px-3 sm:px-6 py-4 text-right">{t('productPage.stock')}</th>
                 <th className="px-3 sm:px-6 py-4 text-center">{t('table.actions')}</th>
               </tr>
@@ -182,13 +184,13 @@ export default function ProductsList() {
             <tbody className="divide-y divide-surface-border">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="px-3 sm:px-6 py-12 text-center">
+                  <td colSpan="6" className="px-3 sm:px-6 py-12 text-center">
                     <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
                   </td>
                 </tr>
               ) : products.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-3 sm:px-6 py-12 text-center text-muted-foreground">
+                  <td colSpan="6" className="px-3 sm:px-6 py-12 text-center text-muted-foreground">
                     {t('productPage.noProductsMatch')}
                   </td>
                 </tr>
@@ -207,7 +209,10 @@ export default function ProductsList() {
                         {product.category}
                       </td>
                       <td className="px-3 sm:px-6 py-4 text-right font-medium text-text-primary whitespace-nowrap tabular-nums">
-                        {product.price.toLocaleString()}
+                        {formatMoney(product.price).replace(' MRU', '')}
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 text-right font-medium text-text-primary whitespace-nowrap tabular-nums hidden md:table-cell">
+                        {formatMoney(product.costPrice ?? 0).replace(' MRU', '')}
                       </td>
                       <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium border ${

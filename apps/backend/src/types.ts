@@ -49,6 +49,7 @@ export interface SaleItem {
   name: string;
   quantity: number;
   unitPrice: number;
+  costPrice: number;
   total: number;
 }
 

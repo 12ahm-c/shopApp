@@ -88,7 +88,19 @@ const resources = {
         noStockAlerts: "Aucune alerte stock.",
         threshold: "Seuil",
         remaining: "restants",
-        loadError: "Impossible de charger le tableau de bord."
+        loadError: "Impossible de charger le tableau de bord.",
+        greeting: {
+          morning: "Bonjour, {{name}}",
+          afternoon: "Bonjour, {{name}}",
+          evening: "Bonsoir, {{name}}"
+        },
+        welcomeBack: "Voici un résumé de votre magasin aujourd'hui.",
+        quickActions: "Actions rapides",
+        profits: "Bénéfice net",
+        paymentMethods: "Modes de paiement",
+        transactions: "transactions",
+        viewDetails: "Voir les détails",
+        noPaymentData: "Aucune donnée de paiement."
       },
       invoice: {
         title: "Factures",
@@ -103,6 +115,7 @@ const resources = {
         allEmployees: "Tous les employés",
         reset: "Réinitialiser",
         noInvoices: "Aucune facture trouvée.",
+        allPaymentMethods: "Tous les modes",
         backTo: "Retour aux factures",
         invoiceNumber: "Facture #{{number}}",
         cancel: "Annuler",
@@ -272,6 +285,7 @@ const resources = {
         name: "Nom du produit",
         category: "Catégorie",
         price: "Prix (MRU)",
+        costPrice: "Prix d'achat (MRU)",
         initialQuantity: "Quantité initiale",
         lowStockThreshold: "Seuil d'alerte stock faible",
         updateProduct: "Mettre à jour le produit",
@@ -457,7 +471,19 @@ const resources = {
         noStockAlerts: "لا توجد تنبيهات مخزون.",
         threshold: "الحد الأدنى",
         remaining: "متبقي",
-        loadError: "تعذر تحميل لوحة القيادة."
+        loadError: "تعذر تحميل لوحة القيادة.",
+        greeting: {
+          morning: "صباح الخير، {{name}}",
+          afternoon: "مساء الخير، {{name}}",
+          evening: "مساء الخير، {{name}}"
+        },
+        welcomeBack: "إليك ملخص متجرك اليوم.",
+        quickActions: "إجراءات سريعة",
+        profits: "صافي الربح",
+        paymentMethods: "طرق الدفع",
+        transactions: "معاملة",
+        viewDetails: "عرض التفاصيل",
+        noPaymentData: "لا توجد بيانات دفع."
       },
       invoice: {
         title: "الفواتير",
@@ -472,6 +498,7 @@ const resources = {
         allEmployees: "جميع الموظفين",
         reset: "إعادة تعيين",
         noInvoices: "لم يتم العثور على فاتورة.",
+        allPaymentMethods: "جميع الطرق",
         backTo: "العودة إلى الفواتير",
         invoiceNumber: "الفاتورة رقم {{number}}",
         cancel: "إلغاء",
@@ -641,6 +668,7 @@ const resources = {
         name: "اسم المنتج",
         category: "الفئة",
         price: "السعر (MRU)",
+        costPrice: "سعر الشراء (MRU)",
         initialQuantity: "الكمية الأولية",
         lowStockThreshold: "حد التنبيه للمخزون المنخفض",
         updateProduct: "تحديث المنتج",

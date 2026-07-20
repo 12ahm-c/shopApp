@@ -29,6 +29,16 @@ export const mockDashboardApi = {
     const todaySales = sales.data.reduce((sum, sale) => sum + sale.totalAmount, 0);
     const outstandingDebt = customers.data.reduce((sum, customer) => sum + customer.totalDebt, 0);
 
+    const paymentMethodMap = {};
+    sales.data.forEach(sale => {
+      const method = sale.paymentMethod || 'cash';
+      if (!paymentMethodMap[method]) {
+        paymentMethodMap[method] = { method, count: 0, total: 0 };
+      }
+      paymentMethodMap[method].count += 1;
+      paymentMethodMap[method].total += sale.totalAmount;
+    });
+
     return createEnvelope({
       stats: {
         todaySales,
@@ -39,11 +49,13 @@ export const mockDashboardApi = {
         lowStockCount: lowStockProducts.meta.total,
         totalCustomers: customers.meta.total,
         outstandingDebt,
-        totalEmployees: employees.meta.total
+        totalEmployees: employees.meta.total,
+        netProfit: todaySales
       },
       recentSales: sales.data,
       lowStockProducts: lowStockProducts.data,
-      recentActivity: activity.data
+      recentActivity: activity.data,
+      paymentMethodStats: Object.values(paymentMethodMap)
     });
   },
 

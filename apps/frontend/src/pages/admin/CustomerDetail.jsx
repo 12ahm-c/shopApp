@@ -5,6 +5,7 @@ import { customerApi } from '../../api/customer';
 import { Loader2, ArrowLeft, Trash2, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPhoneNumber } from '../../lib/utils';
+import { formatMoney } from '../../lib/format';
 
 export default function CustomerDetail() {
   const { id } = useParams();
@@ -56,7 +57,7 @@ export default function CustomerDetail() {
         <div className="bg-card p-6 rounded-2xl border border-surface-border">
           <h3 className="text-sm font-medium text-muted-foreground">{t('customersPage.totalDebtLabel')}</h3>
           <p className={`text-3xl font-bold mt-2 tabular-nums ${customer.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
-            {customer.totalDebt.toLocaleString()} <span className="text-lg">MRU</span>
+            {formatMoney(customer.totalDebt)}
           </p>
         </div>
         <div className="bg-card p-6 rounded-2xl border border-surface-border flex items-center gap-4">
@@ -98,9 +99,9 @@ export default function CustomerDetail() {
                 </div>
                 <div className="text-right">
                   <p className={`font-medium tabular-nums ${tx.type === 'increase' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                    {tx.type === 'increase' ? '+' : '-'}{tx.amount.toLocaleString()} MRU
+                    {tx.type === 'increase' ? '+' : '-'}{formatMoney(tx.amount).replace(' MRU', '')}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">{t('customersPage.balance')}: {tx.newTotalDebt.toLocaleString()} MRU</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">{t('customersPage.balance')}: {formatMoney(tx.newTotalDebt).replace(' MRU', '')}</p>
                 </div>
               </div>
             ))

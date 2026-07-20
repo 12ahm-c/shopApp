@@ -18,6 +18,7 @@ export default function ProductForm() {
     name: '',
     category: '',
     price: '',
+    costPrice: '',
     quantity: '',
     alertThreshold: 5
   });
@@ -32,6 +33,7 @@ export default function ProductForm() {
               name: res.data.name,
               category: res.data.category,
               price: res.data.price,
+              costPrice: res.data.costPrice ?? 0,
               quantity: res.data.quantity,
               alertThreshold: res.data.alertThreshold
             });
@@ -60,6 +62,7 @@ export default function ProductForm() {
       const payload = {
         ...formData,
         price: parseInt(formData.price, 10),
+        costPrice: parseInt(formData.costPrice, 10) || 0,
         quantity: parseInt(formData.quantity, 10),
         alertThreshold: parseInt(formData.alertThreshold, 10)
       };
@@ -148,6 +151,18 @@ export default function ProductForm() {
                 value={formData.price} 
                 onChange={handleChange} 
                 required
+                className="!tabular-nums"
+              />
+            </label>
+
+            <label className="block space-y-2">
+              <span className="text-sm font-medium text-text-secondary">{t('productPage.costPrice')}</span>
+              <input 
+                type="number" 
+                name="costPrice" 
+                min="0"
+                value={formData.costPrice} 
+                onChange={handleChange} 
                 className="!tabular-nums"
               />
             </label>

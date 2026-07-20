@@ -5,12 +5,14 @@ const localeMap = {
   ar: 'ar-MR'
 };
 
+const numberFormatOptions = { numberingSystem: 'latn' };
+
 export function getLocale() {
   return localeMap[i18n.language] || 'fr-FR';
 }
 
 export function formatMoney(amount, currency = 'MRU') {
-  const formatter = new Intl.NumberFormat(getLocale());
+  const formatter = new Intl.NumberFormat(getLocale(), numberFormatOptions);
   return `${formatter.format(Number(amount || 0))} ${currency}`;
 }
 
@@ -25,6 +27,6 @@ export function formatDate(isoDate) {
 }
 
 export function formatNumber(amount) {
-  const formatter = new Intl.NumberFormat(getLocale());
+  const formatter = new Intl.NumberFormat(getLocale(), numberFormatOptions);
   return formatter.format(Number(amount || 0));
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { CalendarDays, Eye, Filter, Loader2, ReceiptText, SearchX } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { employeeApi } from '../api/employee';
@@ -23,11 +23,24 @@ export default function Invoices() {
   const { t } = useTranslation();
   const role = useAuthStore((state) => state.role);
   const isAdmin = role === 'admin';
+  const [searchParams] = useSearchParams();
+
   const [filters, setFilters] = useState({
     from: '',
     to: '',
-    employeeId: ''
+    employeeId: '',
+    paymentMethod: searchParams.get('paymentMethod') || ''
   });
+
+  useEffect(() => {
+    const pm = searchParams.get('paymentMethod') || '';
+    setFilters(prev => {
+      if (prev.paymentMethod !== pm) {
+        return { ...prev, paymentMethod: pm };
+      }
+      return prev;
+    });
+  }, [searchParams]);
   const [invoicesState, setInvoicesState] = useState({
     status: 'loading',
     data: [],
@@ -43,7 +56,8 @@ export default function Invoices() {
     limit: 20,
     from: toStartOfDay(filters.from),
     to: toEndOfDay(filters.to),
-    employeeId: isAdmin ? filters.employeeId : ''
+    employeeId: isAdmin ? filters.employeeId : '',
+    paymentMethod: filters.paymentMethod || ''
   }), [filters, isAdmin]);
 
   const loadInvoices = useCallback(async () => {
@@ -103,7 +117,7 @@ export default function Invoices() {
   };
 
   const resetFilters = () => {
-    setFilters({ from: '', to: '', employeeId: '' });
+    setFilters({ from: '', to: '', employeeId: '', paymentMethod: '' });
   };
 
   const totalVisible = invoicesState.data.reduce((sum, invoice) => sum + invoice.totalAmount, 0);
@@ -132,7 +146,7 @@ export default function Invoices() {
           <Filter className="h-4 w-4" />
           {t('invoice.filters')}
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <label className="block space-y-1">
             <span className="text-xs font-medium text-text-secondary">{t('invoice.from')}</span>
             <input
@@ -173,6 +187,24 @@ export default function Invoices() {
               </select>
             </label>
           )}
+
+          <label className="block space-y-1">
+            <span className="text-xs font-medium text-text-secondary">{t('invoice.paymentMethod')}</span>
+            <select
+              name="paymentMethod"
+              value={filters.paymentMethod}
+              onChange={handleFilterChange}
+              className="max-w-[200px]"
+            >
+              <option value="">{t('invoice.allPaymentMethods')}</option>
+              <option value="cash">{t('payment.cash')}</option>
+              <option value="card">{t('payment.card')}</option>
+              <option value="bankily">{t('payment.bankily')}</option>
+              <option value="alsadd">{t('payment.alsadd')}</option>
+              <option value="bimbank">{t('payment.bimbank')}</option>
+              <option value="masrafi">{t('payment.masrafi')}</option>
+            </select>
+          </label>
         </div>
         <div className="mt-4 flex justify-end">
           <button

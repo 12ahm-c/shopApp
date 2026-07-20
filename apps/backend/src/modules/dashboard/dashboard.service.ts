@@ -5,6 +5,7 @@ import { Product } from "../product/product.model";
 import { Customer } from "../customer/customer.model";
 import { User } from "../user/user.model";
 import { Notification } from "../notification/notification.model";
+import { Expense } from "../expense/expense.model";
 import { serializeSale } from "../../utils/serializer";
 
 const startOfDay = (): Date => {
@@ -33,7 +34,10 @@ export const dashboardService = {
       employeeCount,
       recentSales,
       lowStockProducts,
-      recentActivity
+      recentActivity,
+      monthlyExpenses,
+      monthlyCOGS,
+      paymentMethodStats
     ] = await Promise.all([
       Sale.aggregate([
         { $match: { createdAt: { $gte: todayStart }, isDeleted: false } },
@@ -59,13 +63,28 @@ export const dashboardService = {
       Sale.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(10).lean(),
       Product.find({ $expr: { $lte: ["$quantity", "$alertThreshold"] } }).limit(10).lean(),
       mongoose.connection.collection("activity_logs")
-        .find().sort({ timestamp: -1 }).limit(10).toArray()
+        .find().sort({ timestamp: -1 }).limit(10).toArray(),
+      Expense.aggregate([
+        { $match: { date: { $gte: monthStart } } },
+        { $group: { _id: null, total: { $sum: "$amount" } } }
+      ]),
+      Sale.aggregate([
+        { $match: { createdAt: { $gte: monthStart }, isDeleted: false } },
+        { $unwind: "$items" },
+        { $group: { _id: null, total: { $sum: { $multiply: ["$items.quantity", "$items.costPrice"] } } } }
+      ]),
+      Sale.aggregate([
+        { $match: { createdAt: { $gte: monthStart }, isDeleted: false } },
+        { $group: { _id: "$paymentMethod", count: { $sum: 1 }, total: { $sum: "$totalAmount" } } }
+      ])
     ]);
 
     const today = todaySales[0] ?? { total: 0, count: 0 };
     const monthly = monthlySales[0] ?? { total: 0, count: 0 };
     const products = productStats[0] ?? { totalProducts: 0, lowStockCount: 0 };
     const customers = customerStats[0] ?? { totalCustomers: 0, outstandingDebt: 0 };
+    const expenses = monthlyExpenses[0] ?? { total: 0 };
+    const cogs = monthlyCOGS[0] ?? { total: 0 };
 
     return {
       stats: {
@@ -77,7 +96,10 @@ export const dashboardService = {
         lowStockCount: products.lowStockCount,
         totalCustomers: customers.totalCustomers,
         outstandingDebt: customers.outstandingDebt,
-        totalEmployees: employeeCount
+        totalEmployees: employeeCount,
+        totalExpenses: expenses.total,
+        totalCOGS: cogs.total,
+        netProfit: monthly.total - cogs.total - expenses.total
       },
       recentSales: (recentSales as any[]).map((s) => serializeSale(s as any)),
       lowStockProducts: lowStockProducts.map((p: any) => ({
@@ -85,6 +107,7 @@ export const dashboardService = {
         name: p.name,
         category: p.category,
         price: p.price,
+        costPrice: p.costPrice,
         quantity: p.quantity,
         alertThreshold: p.alertThreshold,
         createdAt: p.createdAt.toISOString(),
@@ -98,6 +121,11 @@ export const dashboardService = {
         details: l.details,
         amount: l.amount,
         timestamp: l.timestamp.toISOString()
+      })),
+      paymentMethodStats: paymentMethodStats.map((s: any) => ({
+        method: s._id,
+        count: s.count,
+        total: s.total
       }))
     };
   },

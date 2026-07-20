@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { productApi } from '../../api/product';
 import useAuthStore from '../../stores/authStore';
+import { formatMoney } from '../../lib/format';
 import { Loader2, ArrowLeft, Edit, Trash2, AlertTriangle, Calendar } from 'lucide-react';
 
 export default function ProductDetail() {
@@ -117,12 +118,20 @@ export default function ProductDetail() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         {/* Price Card */}
         <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
           <span className="text-sm font-medium text-muted-foreground">{t('productPage.unitPrice')}</span>
           <div className="text-3xl font-bold text-text-primary mt-2 tabular-nums">
-            {product.price.toLocaleString()} <span className="text-lg font-medium text-muted-foreground">MRU</span>
+            {formatMoney(product.price)}
+          </div>
+        </div>
+
+        {/* Cost Price Card */}
+        <div className="bg-card p-5 rounded-2xl border border-surface-border flex flex-col justify-between">
+          <span className="text-sm font-medium text-muted-foreground">{t('productPage.costPrice')}</span>
+          <div className="text-3xl font-bold text-text-primary mt-2 tabular-nums">
+            {formatMoney(product.costPrice ?? 0)}
           </div>
         </div>
         

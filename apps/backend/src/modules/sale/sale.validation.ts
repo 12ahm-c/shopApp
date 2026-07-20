@@ -19,7 +19,8 @@ export const saleListQuerySchema = z.object({
   from: z.string().datetime().optional(),
   to: z.string().datetime().optional(),
   employeeId: z.string().regex(/^[a-f0-9]{24}$/, "Invalid employeeId").optional(),
-  customerId: z.string().regex(/^[a-f0-9]{24}$/, "Invalid customerId").optional()
+  customerId: z.string().regex(/^[a-f0-9]{24}$/, "Invalid customerId").optional(),
+  paymentMethod: z.enum(["cash", "card", "bankily", "alsadd", "bimbank", "masrafi"]).optional()
 });
 
 export const objectIdParamSchema = z.object({

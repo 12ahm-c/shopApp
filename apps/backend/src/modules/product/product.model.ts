@@ -4,6 +4,7 @@ export interface ProductDocument extends Document {
   name: string;
   category: string;
   price: number;
+  costPrice: number;
   quantity: number;
   alertThreshold: number;
   createdAt: Date;
@@ -15,6 +16,7 @@ const productSchema = new Schema<ProductDocument>(
     name: { type: String, required: true, trim: true, minlength: 2, maxlength: 100, unique: true },
     category: { type: String, required: true, trim: true, minlength: 2, maxlength: 50 },
     price: { type: Number, required: true, min: 0 },
+    costPrice: { type: Number, required: true, min: 0 },
     quantity: { type: Number, required: true, min: 0 },
     alertThreshold: { type: Number, default: 5, min: 0 }
   },

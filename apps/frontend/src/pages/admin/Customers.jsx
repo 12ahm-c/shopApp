@@ -4,6 +4,7 @@ import { customerApi } from '../../api/customer';
 import { Plus, Search, Loader2, X, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPhoneNumber } from '../../lib/utils';
+import { formatMoney } from '../../lib/format';
 import BottomSheet from '../../components/ui/BottomSheet';
 
 export default function Customers() {
@@ -108,7 +109,7 @@ export default function Customers() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium text-text-primary text-sm">{customer.name}</div>
                     <span className={`font-medium text-sm tabular-nums ${customer.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
-                      {customer.totalDebt.toLocaleString()} MRU
+                       {formatMoney(customer.totalDebt)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -165,7 +166,7 @@ export default function Customers() {
                     <td className="px-6 py-4 text-text-secondary">{formatPhoneNumber(customer.phone) || '-'}</td>
                     <td className="px-6 py-4 text-right whitespace-nowrap">
                       <span className={`font-medium tabular-nums ${customer.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
-                        {customer.totalDebt.toLocaleString()}
+                        {formatMoney(customer.totalDebt).replace(' MRU', '')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right whitespace-nowrap">
@@ -301,7 +302,7 @@ function ManageDebtModal({ customer, onClose, onSubmit }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="p-3 bg-card rounded-xl border border-surface-border mb-4">
         <span className="text-sm text-muted-foreground block mb-1">{t('customersPage.currentDebt')}</span>
-        <span className="text-xl font-bold text-text-primary tabular-nums">{customer.totalDebt.toLocaleString()} MRU</span>
+        <span className="text-xl font-bold text-text-primary tabular-nums">{formatMoney(customer.totalDebt)}</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3">

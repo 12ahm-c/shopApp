@@ -80,6 +80,7 @@ export const saleService = {
           name: "",
           quantity: item.quantity,
           unitPrice: item.unitPrice,
+          costPrice: 0,
           total
         };
       });
@@ -87,12 +88,14 @@ export const saleService = {
       const productNames = await Product.find({
         _id: { $in: input.items.map((i) => i.productId) }
       })
-        .select("name")
+        .select("name costPrice")
         .lean();
 
-      const nameMap = new Map(productNames.map((p) => [p._id.toString(), p.name]));
+      const productMap = new Map(productNames.map((p) => [p._id.toString(), p]));
       for (const item of itemsData) {
-        item.name = nameMap.get(item.productId) ?? "Unknown";
+        const product = productMap.get(item.productId);
+        item.name = product?.name ?? "Unknown";
+        item.costPrice = product?.costPrice ?? 0;
       }
 
       const totalAmount = itemsData.reduce((sum, item) => sum + item.total, 0);
@@ -184,6 +187,10 @@ export const saleService = {
 
     if (query.customerId) {
       filter.customerId = new Types.ObjectId(query.customerId);
+    }
+
+    if (query.paymentMethod) {
+      filter.paymentMethod = query.paymentMethod;
     }
 
     const skip = (query.page - 1) * query.limit;

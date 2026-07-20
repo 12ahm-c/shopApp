@@ -12,7 +12,8 @@ import {
   TrendingUp,
   TrendingDown,
   Wallet,
-  ShoppingCart
+  ShoppingCart,
+  BarChart3
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -172,6 +173,83 @@ function ActivityList({ activity }) {
   );
 }
 
+const paymentMethodImages = {
+  cash: '/icons/cash.svg',
+  card: '/icons/card.svg',
+  bankily: '/icons/2.jpeg',
+  alsadd: '/icons/3.jpeg',
+  bimbank: '/icons/4.jpeg',
+  masrafi: '/icons/1.jpeg'
+};
+
+const paymentMethodLabels = {
+  cash: 'payment.cash',
+  card: 'payment.card',
+  bankily: 'payment.bankily',
+  alsadd: 'payment.alsadd',
+  bimbank: 'payment.bimbank',
+  masrafi: 'payment.masrafi'
+};
+
+function PaymentMethodStats({ paymentMethodStats }) {
+  const { t } = useTranslation();
+  const paymentStats = paymentMethodStats ?? [];
+
+  if (!paymentStats.length) {
+    return (
+      <div className="p-8 text-center">
+        <BarChart3 className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
+        <p className="text-sm text-muted-foreground">{t('dashboard.noPaymentData')}</p>
+      </div>
+    );
+  }
+
+  const totalAmount = paymentStats.reduce((sum, s) => sum + s.total, 0);
+
+  return (
+    <div className="divide-y divide-surface-border">
+      {paymentStats.map((item) => {
+        const percentage = totalAmount > 0 ? ((item.total / totalAmount) * 100).toFixed(1) : 0;
+        return (
+          <div key={item.method} className="px-4 py-3.5">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <img 
+                  src={paymentMethodImages[item.method]} 
+                  alt={t(paymentMethodLabels[item.method])}
+                  className="w-9 h-9 object-contain rounded-lg shrink-0"
+                />
+                <div className="min-w-0">
+                  <p className="font-medium text-sm text-text-primary">{t(paymentMethodLabels[item.method])}</p>
+                  <p className="text-xs text-muted-foreground">{item.count} {t('dashboard.transactions')}</p>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="font-bold text-sm text-text-primary tabular-nums">{formatMoney(item.total)}</p>
+                <p className="text-[10px] text-muted-foreground">{percentage}%</p>
+              </div>
+            </div>
+            <div className="mt-2 h-1.5 bg-accent rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-primary rounded-full transition-all" 
+                style={{ width: `${percentage}%` }} 
+              />
+            </div>
+            <div className="mt-2 flex justify-end">
+              <Link
+                to={`/invoices?paymentMethod=${item.method}`}
+                className="text-xs font-medium text-primary hover:opacity-80 transition-opacity"
+              >
+                {t('dashboard.viewDetails')} →
+              </Link>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { t } = useTranslation();
   const { role, user } = useAuthStore();
@@ -278,8 +356,24 @@ export default function Dashboard() {
               <StatCard icon={CreditCard} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" trend="up" trendValue="+8%" />
               <StatCard icon={Users} label={t('dashboard.customers')} value={stats.totalCustomers} tone="blue" />
               <StatCard icon={Activity} label={t('dashboard.clientDebts')} value={formatMoney(stats.outstandingDebt)} tone="rose" />
-              <StatCard icon={TrendingUp} label={t('dashboard.profits')} value={formatMoney(stats.monthlySales - (stats.totalExpenses || 0))} tone="emerald" />
+              <StatCard icon={TrendingUp} label={t('dashboard.profits')} value={formatMoney(stats.netProfit || 0)} tone={stats.netProfit >= 0 ? 'emerald' : 'rose'} />
             </div>
+          )}
+
+          {/* Payment Method Stats */}
+          {isAdmin && (
+            <section className="bg-card rounded-2xl border border-surface-border overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-surface-border">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-primary" />
+                  <h2 className="font-semibold text-text-primary">{t('dashboard.paymentMethods')}</h2>
+                </div>
+                <Link className="text-sm font-medium text-primary hover:opacity-80 transition-opacity" to="/invoices">
+                  {t('dashboard.viewAll')}
+                </Link>
+              </div>
+              <PaymentMethodStats paymentMethodStats={dashboardState.data?.paymentMethodStats} />
+            </section>
           )}
 
           {/* Quick Actions */}

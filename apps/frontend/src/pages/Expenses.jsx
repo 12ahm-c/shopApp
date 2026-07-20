@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { expenseApi } from '../api/expense';
 import { Plus, Search, Loader2, X, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { formatDate } from '../lib/format';
+import { formatDate, formatMoney } from '../lib/format';
 import BottomSheet from '../components/ui/BottomSheet';
 
 const CATEGORY_LABELS = {
@@ -105,7 +105,7 @@ export default function Expenses() {
         {filteredExpenses.length > 0 && (
           <div className="px-4 py-3 border-b border-surface-border">
             <span className="text-sm text-muted-foreground">
-              {t('expenses.totalExpenses')}: <strong className="text-text-primary tabular-nums">{totalAmount.toLocaleString()} MRU</strong>
+              {t('expenses.totalExpenses')}: <strong className="text-text-primary tabular-nums">{formatMoney(totalAmount)}</strong>
             </span>
           </div>
         )}
@@ -127,7 +127,7 @@ export default function Expenses() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium text-text-primary text-sm">{expense.description}</div>
                     <span className="font-medium text-rose-600 dark:text-rose-400 text-sm tabular-nums">
-                      -{expense.amount.toLocaleString()}
+                      -{formatMoney(expense.amount).replace(' MRU', '')}
                     </span>
                   </div>
                   <div className="flex items-center justify-between mb-2">
@@ -204,7 +204,7 @@ export default function Expenses() {
                     </td>
                     <td className="px-6 py-4 text-text-secondary">{expense.paidByName}</td>
                     <td className="px-6 py-4 text-right font-medium text-rose-600 dark:text-rose-400 tabular-nums">
-                      -{expense.amount.toLocaleString()}
+                      -{formatMoney(expense.amount).replace(' MRU', '')}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">

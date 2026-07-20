@@ -37,6 +37,7 @@ export const serializeProduct = (product: ProductDocument) => ({
   name: product.name,
   category: product.category,
   price: product.price,
+  costPrice: product.costPrice,
   quantity: product.quantity,
   alertThreshold: product.alertThreshold,
   createdAt: product.createdAt.toISOString(),
@@ -70,6 +71,7 @@ export const serializeSale = (sale: SaleDocument) => ({
     name: item.name,
     quantity: item.quantity,
     unitPrice: item.unitPrice,
+    costPrice: item.costPrice,
     total: item.total
   })),
   totalAmount: sale.totalAmount,

@@ -4,6 +4,7 @@ import { supplierApi } from '../../api/supplier';
 import { Plus, Search, Loader2, X, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPhoneNumber } from '../../lib/utils';
+import { formatMoney } from '../../lib/format';
 import BottomSheet from '../../components/ui/BottomSheet';
 
 export default function Suppliers() {
@@ -103,7 +104,7 @@ export default function Suppliers() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium text-text-primary text-sm">{supplier.name}</div>
                     <span className={`font-medium text-sm tabular-nums ${supplier.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
-                      {supplier.totalDebt.toLocaleString()} MRU
+                       {formatMoney(supplier.totalDebt)}
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground mb-2">{supplier.address || '-'}</div>
@@ -162,7 +163,7 @@ export default function Suppliers() {
                     <td className="px-6 py-4 text-text-secondary">{formatPhoneNumber(supplier.phone) || '-'}</td>
                     <td className="px-6 py-4 text-right">
                       <span className={`font-medium tabular-nums ${supplier.totalDebt > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-text-primary'}`}>
-                        {supplier.totalDebt.toLocaleString()}
+                        {formatMoney(supplier.totalDebt).replace(' MRU', '')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -293,7 +294,7 @@ function ManageDebtModal({ supplier, onClose, onSubmit }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="p-3 bg-card rounded-xl border border-surface-border mb-4">
         <span className="text-sm text-muted-foreground block mb-1">{t('suppliersPage.currentDebt', { name: supplier.name })}</span>
-        <span className="text-xl font-bold text-text-primary tabular-nums">{supplier.totalDebt.toLocaleString()} MRU</span>
+        <span className="text-xl font-bold text-text-primary tabular-nums">{formatMoney(supplier.totalDebt)}</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3">

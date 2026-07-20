@@ -4,6 +4,7 @@ export const createProductSchema = z.object({
   name: z.string().min(2).max(100),
   category: z.string().min(2).max(50),
   price: z.number().int().min(1),
+  costPrice: z.number().int().min(0).default(0),
   quantity: z.number().int().min(0),
   alertThreshold: z.number().int().min(0).optional().default(5)
 });
@@ -13,6 +14,7 @@ export const updateProductSchema = z
     name: z.string().min(2).max(100).optional(),
     category: z.string().min(2).max(50).optional(),
     price: z.number().int().min(1).optional(),
+    costPrice: z.number().int().min(0).optional(),
     quantity: z.number().int().min(0).optional(),
     alertThreshold: z.number().int().min(0).optional()
   })
