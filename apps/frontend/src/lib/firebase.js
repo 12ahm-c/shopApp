@@ -12,6 +12,18 @@ const firebaseConfig = {
 };
 
 let messaging = null;
+let swRegistration = null;
+
+async function getSWRegistration() {
+  if (swRegistration) return swRegistration;
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return null;
+  try {
+    swRegistration = await navigator.serviceWorker.register('/sw.js');
+    return swRegistration;
+  } catch {
+    return null;
+  }
+}
 
 function getMessagingInstance() {
   if (messaging) return messaging;
@@ -39,8 +51,10 @@ export async function retrieveFCMToken() {
   if (!msg) return null;
 
   try {
+    const registration = await getSWRegistration();
     const token = await getToken(msg, {
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      serviceWorkerRegistration: registration || undefined
     });
     return token;
   } catch {

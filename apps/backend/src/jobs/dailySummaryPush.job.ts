@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { notificationService } from "../modules/notification/notification.service";
-import { sendPushToAllAdmins, isPushEnabled } from "../utils/fcm";
 import { User } from "../modules/user/user.model";
 import { log } from "../utils/logger";
 
@@ -61,17 +60,9 @@ export const dailySummaryPushJob = async (): Promise<void> => {
       );
     }
 
-    if (isPushEnabled()) {
-      await sendPushToAllAdmins(
-        "ملخص اليوم 📊",
-        `مبيعات: ${summary.totalSales} MRU | فواتير: ${summary.orderCount} | صافي: ${finalProfit} MRU`,
-        { url: "/admin" }
-      );
-    }
-
     log("info", "Daily summary push job completed", {
       totalSales: summary.totalSales,
-      orderCount: summary.count,
+      orderCount: summary.orderCount,
       netProfit: finalProfit
     });
   } catch (error) {

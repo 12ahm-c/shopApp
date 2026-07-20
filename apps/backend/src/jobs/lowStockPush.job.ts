@@ -1,5 +1,4 @@
 import { notificationService } from "../modules/notification/notification.service";
-import { sendPushToAllAdmins, isPushEnabled } from "../utils/fcm";
 import { Product } from "../modules/product/product.model";
 import { User } from "../modules/user/user.model";
 import { log } from "../utils/logger";
@@ -41,14 +40,6 @@ export const lowStockPushJob = async (): Promise<void> => {
             threshold: p.alertThreshold
           }))
         }
-      );
-    }
-
-    if (isPushEnabled()) {
-      await sendPushToAllAdmins(
-        `⚠️ ${lowStockProducts.length} منتجات قاربت النفاد`,
-        productList + moreText,
-        { url: "/products" }
       );
     }
 

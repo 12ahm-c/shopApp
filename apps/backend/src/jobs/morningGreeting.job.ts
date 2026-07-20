@@ -1,5 +1,4 @@
 import { notificationService } from "../modules/notification/notification.service";
-import { sendPushToAllAdmins, isPushEnabled } from "../utils/fcm";
 import { User } from "../modules/user/user.model";
 import { StoreSettings } from "../modules/storeSettings/settings.model";
 import { log } from "../utils/logger";
@@ -21,14 +20,6 @@ export const morningGreetingJob = async (): Promise<void> => {
         title,
         body,
         { type: "morning_greeting" }
-      );
-    }
-
-    if (isPushEnabled()) {
-      await sendPushToAllAdmins(
-        `صباح التوفيق! ☀️`,
-        `مرحباً بك في ${storeName}. نتمنى لك يوماً موفقاً.`,
-        { url: "/admin" }
       );
     }
 

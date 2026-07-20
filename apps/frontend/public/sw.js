@@ -1,18 +1,8 @@
-importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
-
-firebase.initializeApp({
-  apiKey: "AIzaSy placeholder",
-  projectId: "shopmanager-placeholder",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:placeholder"
-});
-
-const messaging = firebase.messaging();
-
-const CACHE_NAME = 'shopmanager-v4';
-const STATIC_CACHE = 'shopmanager-static-v4';
+const CACHE_NAME = 'shopmanager-v5';
+const STATIC_CACHE = 'shopmanager-static-v5';
 const API_CACHE = 'shopmanager-api-v1';
+
+const FIREBASE_CONFIG = __FIREBASE_CONFIG__;
 
 const PRECACHE_URLS = [
   '/',
@@ -20,11 +10,7 @@ const PRECACHE_URLS = [
   '/favicon.svg',
   '/manifest.json',
   '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/assets/index-7mgEUFkH.css',
-  '/assets/index-DxTt9cc3.js',
-  '/assets/jsx-runtime-CzJJwKrs.js',
-  '/assets/i18n-CDCZXDX_.js'
+  '/icons/icon-512.png'
 ];
 
 function isStaticAsset(url) {
@@ -117,35 +103,40 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || 'ShopManager';
-  const options = {
-    body: payload.notification?.body || '',
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
-    data: payload.data || {},
-    tag: 'shopmanager-notification',
-    renotify: true
-  };
+if (FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== 'placeholder') {
+  importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
+  importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-  self.registration.showNotification(title, options);
-});
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const messaging = firebase.messaging();
 
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
+  messaging.onBackgroundMessage((payload) => {
+    const title = payload.notification?.title || 'ShopManager';
+    const options = {
+      body: payload.notification?.body || '',
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      data: payload.data || {},
+      tag: 'shopmanager-notification',
+      renotify: true
+    };
+    self.registration.showNotification(title, options);
+  });
 
-  const url = event.notification?.data?.url || '/admin';
-
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
-      for (const client of clients) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
-          client.focus();
-          client.navigate(url);
-          return;
+  self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = event.notification?.data?.url || '/admin';
+    event.waitUntil(
+      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+        for (const client of clients) {
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            client.focus();
+            client.navigate(url);
+            return;
+          }
         }
-      }
-      return self.clients.openWindow(url);
-    })
-  );
-});
+        return self.clients.openWindow(url);
+      })
+    );
+  });
+}
