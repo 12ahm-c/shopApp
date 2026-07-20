@@ -161,15 +161,11 @@
             }, 500);
           }
         }
-        // Use DOMContentLoaded for faster splash removal on Safari
-        // Fall back to load event if DOMContentLoaded already fired
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(hideSplash, 800);
-          });
-        } else {
-          setTimeout(hideSplash, 800);
-        }
+        // Fallback: if React hasn't mounted after 3 seconds, remove splash anyway
+        setTimeout(function() {
+          var splash = document.getElementById('splash-screen');
+          if (splash) hideSplash();
+        }, 3000);
       })();
     </script>
   </body>
