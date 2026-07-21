@@ -171,7 +171,7 @@ export default function ShellLayout() {
         </header>
 
         {/* ========== MOBILE MAIN ========== */}
-        <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-5 scrollbar-hide">
+        <main className="md:hidden flex-1 min-h-0 overflow-y-auto p-5 pb-24 scrollbar-hide">
           <Outlet />
         </main>
 
@@ -240,7 +240,7 @@ export default function ShellLayout() {
         </main>
 
         {/* ========== BOTTOM TAB BAR ========== */}
-        <nav className="md:hidden shrink-0 z-40 safe-area-bottom">
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 safe-area-bottom">
           <div className="bg-card/95 backdrop-blur-xl border-t border-border">
             <div className="flex items-center h-16 px-2">
               {mainNavItems.map((item) => {
