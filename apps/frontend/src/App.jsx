@@ -72,7 +72,10 @@ export default function App() {
   useEffect(() => {
     if (user) {
       fetchSettings().then(settings => {
-        if (settings?.language) {
+        const hasLocalLang = (() => {
+          try { return !!localStorage.getItem('shopmanager_language'); } catch { return false; }
+        })();
+        if (!hasLocalLang && settings?.language) {
           useLanguageStore.getState().setLanguage(settings.language);
         }
       });

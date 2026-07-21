@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../stores/authStore';
 import useSettingsStore from '../stores/settingsStore';
+import useLanguageStore from '../stores/languageStore';
 import useThemeStore from '../stores/themeStore';
 import { authApi } from '../api/auth';
 import { Loader2, Eye, EyeOff, Store, Globe, Sun, Moon } from 'lucide-react';
@@ -12,6 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const { settings, fetchSettings } = useSettingsStore();
+  const { language, setLanguage } = useLanguageStore();
   const { theme, toggleTheme } = useThemeStore();
   const storeName = settings?.storeName || t('store_name');
   const storeLogo = settings?.storeLogo || null;
@@ -28,9 +30,9 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleLanguage = useCallback(() => {
-    const newLang = i18n.language === 'fr' ? 'ar' : 'fr';
-    i18n.changeLanguage(newLang);
-  }, [i18n]);
+    const newLang = language === 'fr' ? 'ar' : 'fr';
+    setLanguage(newLang);
+  }, [language, setLanguage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
