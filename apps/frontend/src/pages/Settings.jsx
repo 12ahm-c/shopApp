@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import useAuthStore from '../stores/authStore';
 import useSettingsStore from '../stores/settingsStore';
 import { authApi } from '../api/auth';
-import { User, Shield, Phone, KeyRound, Save, Loader2, Store, Globe, MapPin, ReceiptText, Wallet, Camera, X, Image } from 'lucide-react';
+import { User, Shield, Phone, KeyRound, Save, Loader2, Store, Globe, MapPin, ReceiptText, Wallet, Camera, X, Image as ImageIcon } from 'lucide-react';
+import SignaturePad from '../components/SignaturePad';
 
 export default function Settings() {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ export default function Settings() {
   const [currencyOverride, setCurrencyOverride] = useState(null);
   const [languageOverride, setLanguageOverride] = useState(null);
   const [invoiceFooterOverride, setInvoiceFooterOverride] = useState(null);
+  const [invoiceSignatureOverride, setInvoiceSignatureOverride] = useState(null);
   const [storeLogoOverride, setStoreLogoOverride] = useState(null);
 
   const displayName = nameOverride ?? user?.name ?? '';
@@ -35,6 +37,7 @@ export default function Settings() {
   const displayCurrency = currencyOverride ?? storeSettings?.currency ?? 'MRU';
   const displayLanguage = languageOverride ?? storeSettings?.language ?? 'fr';
   const displayInvoiceFooter = invoiceFooterOverride ?? storeSettings?.invoiceFooter ?? '';
+  const displayInvoiceSignature = invoiceSignatureOverride ?? storeSettings?.invoiceSignature ?? '';
   const displayStoreLogo = storeLogoOverride ?? storeSettings?.storeLogo ?? null;
 
   const handleLogoUpload = (e) => {
@@ -108,6 +111,7 @@ export default function Settings() {
           currency: currencyOverride ?? storeSettings?.currency ?? 'MRU',
           language: languageOverride ?? storeSettings?.language ?? 'fr',
           invoiceFooter: invoiceFooterOverride ?? storeSettings?.invoiceFooter ?? '',
+          invoiceSignature: invoiceSignatureOverride ?? storeSettings?.invoiceSignature ?? '',
           storeLogo: storeLogoOverride !== null ? storeLogoOverride : storeSettings?.storeLogo ?? ''
         });
         setStoreNameOverride(null);
@@ -116,6 +120,7 @@ export default function Settings() {
         setCurrencyOverride(null);
         setLanguageOverride(null);
         setInvoiceFooterOverride(null);
+        setInvoiceSignatureOverride(null);
         setStoreLogoOverride(null);
       }
 
@@ -244,7 +249,7 @@ export default function Settings() {
                           </>
                         ) : (
                           <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                            <Image className="w-6 h-6" />
+                            <ImageIcon className="w-6 h-6" />
                             <span className="text-[10px]">{t('settingsPage.upload')}</span>
                           </div>
                         )}
@@ -353,6 +358,16 @@ export default function Settings() {
                           className="!pl-10 !resize-none"
                         />
                       </div>
+                    </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-sm font-medium text-text-secondary">
+                        {t('settingsPage.invoiceSignature')}
+                      </label>
+                      <SignaturePad
+                        value={displayInvoiceSignature}
+                        onChange={(val) => setInvoiceSignatureOverride(val)}
+                      />
                     </div>
                   </div>
                 </div>

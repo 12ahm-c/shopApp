@@ -41,6 +41,37 @@ const useCartStore = create((set, get) => ({
     });
   },
 
+  // Add item with specific quantity (for product picker)
+  addItemWithQuantity: (product, qty) => {
+    set((state) => {
+      if (qty < 1 || product.quantity < 1) return state;
+      const safeQty = Math.min(qty, product.quantity);
+      const existing = state.cartItems.find(item => item.productId === product._id);
+
+      if (existing) {
+        const newQty = Math.min(existing.quantity + safeQty, product.quantity);
+        return {
+          cartItems: state.cartItems.map(item =>
+            item.productId === product._id
+              ? { ...item, quantity: newQty, total: newQty * item.unitPrice }
+              : item
+          )
+        };
+      }
+
+      return {
+        cartItems: [...state.cartItems, {
+          productId: product._id,
+          name: product.name,
+          unitPrice: product.price,
+          quantity: safeQty,
+          total: safeQty * product.price,
+          maxStock: product.quantity
+        }]
+      };
+    });
+  },
+
   // Decrease quantity or remove if 1
   removeItem: (productId) => {
     set((state) => {

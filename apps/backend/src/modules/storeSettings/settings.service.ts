@@ -12,9 +12,14 @@ export const settingsService = {
   },
 
   async updateSettings(input: UpdateSettingsInput) {
+    const { storeLogo, ...rest } = input;
+    const update: Record<string, unknown> = rest;
+    if (storeLogo !== undefined) {
+      update.logoUrl = storeLogo;
+    }
     const settings = await StoreSettings.findOneAndUpdate(
       {},
-      { $set: input },
+      { $set: update },
       { returnDocument: "after", upsert: true, runValidators: true }
     );
     return serializeSettings(settings);

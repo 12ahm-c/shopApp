@@ -7,6 +7,7 @@ export interface StoreSettingsDocument extends Document {
   logoUrl: string;
   currency: string;
   invoiceFooter: string;
+  invoiceSignature: string;
   theme: "light" | "dark";
   language: "ar" | "fr";
 }
@@ -18,6 +19,7 @@ const settingsSchema = new Schema<StoreSettingsDocument>({
   logoUrl: { type: String, default: "" },
   currency: { type: String, default: "MRU" },
   invoiceFooter: { type: String, default: "Merci de votre visite !" },
+  invoiceSignature: { type: String, default: "" },
   theme: { type: String, enum: ["light", "dark"], default: "light" },
   language: { type: String, enum: ["ar", "fr"], default: "fr" }
 }, { timestamps: true });

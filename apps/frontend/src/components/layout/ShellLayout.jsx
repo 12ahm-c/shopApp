@@ -12,7 +12,6 @@ import {
   Globe,
   Store,
   Package,
-  ReceiptText,
   ShoppingCart,
   Sun,
   Moon,
@@ -27,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { notificationApi } from '../../api/notification';
 import { formatDateTime } from '../../lib/format';
+import { isMini } from '../../config/appMode';
 
 const ToastContext = createContext(null);
 export function useToast() { return useContext(ToastContext); }
@@ -111,23 +111,33 @@ export default function ShellLayout() {
     setLanguage(newLang);
   };
 
-  const mainNavItems = [
-    { to: role === 'admin' ? '/admin' : '/employee', icon: LayoutDashboard, label: t('dashboard.title') },
-    { to: '/products', icon: Package, label: t('products') },
-    { to: '/pos', icon: ShoppingCart, label: t('pos.title') },
-    { to: '/invoices', icon: ReceiptText, label: t('invoices') },
-  ];
+  const mainNavItems = isMini
+    ? [
+        { to: '/pos', icon: ShoppingCart, label: t('pos.title') },
+        { to: '/products', icon: Package, label: t('products') },
+      ]
+    : [
+        { to: role === 'admin' ? '/admin' : '/employee', icon: LayoutDashboard, label: t('dashboard.title') },
+        { to: '/products', icon: Package, label: t('products') },
+        { to: '/pos', icon: ShoppingCart, label: t('pos.title') },
+      ];
 
-  const moreNavItems = [
-    { to: '/settings', icon: Settings, label: t('settings') },
-    { to: '/activity-logs', icon: Activity, label: t('activityLog.title') },
-    ...(role === 'admin' ? [
-      { to: '/admin/customers', icon: Users, label: t('customers') },
-      { to: '/admin/suppliers', icon: Truck, label: t('suppliers') },
-      { to: '/employees', icon: User, label: t('employees') },
-      { to: '/expenses', icon: Wallet, label: t('expenses.title') },
-    ] : []),
-  ];
+  const moreNavItems = isMini
+    ? [
+        { to: '/purchases', icon: Package, label: t('purchasesPage.title') },
+        { to: '/settings', icon: Settings, label: t('settings') },
+      ]
+    : [
+        { to: '/settings', icon: Settings, label: t('settings') },
+        { to: '/activity-logs', icon: Activity, label: t('activityLog.title') },
+        ...(role === 'admin' ? [
+          { to: '/purchases', icon: Package, label: t('purchasesPage.title') },
+          { to: '/admin/customers', icon: Users, label: t('customers') },
+          { to: '/admin/suppliers', icon: Truck, label: t('suppliers') },
+          { to: '/employees', icon: User, label: t('employees') },
+          { to: '/expenses', icon: Wallet, label: t('expenses.title') },
+        ] : []),
+      ];
 
   const isMoreActive = moreNavItems.some(item => location.pathname === item.to);
 

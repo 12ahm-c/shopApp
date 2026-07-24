@@ -13,6 +13,7 @@ import { notificationRoutes } from "./modules/notification/notification.routes";
 import { settingsRoutes } from "./modules/storeSettings/settings.routes";
 import { dashboardRoutes } from "./modules/dashboard/dashboard.routes";
 import { expenseRoutes } from "./modules/expense/expense.routes";
+import { purchaseRoutes } from "./modules/purchase/purchase.routes";
 import { requestIdMiddleware } from "./middlewares/requestId.middleware";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 
@@ -39,6 +40,7 @@ export const createApp = () => {
   app.use("/v1/notifications", notificationRoutes);
   app.use("/v1/settings", settingsRoutes);
   app.use("/v1/expenses", expenseRoutes);
+  app.use("/v1/purchases", purchaseRoutes);
   app.use("/v1/dashboard", dashboardRoutes);
 
   app.use(notFoundHandler);

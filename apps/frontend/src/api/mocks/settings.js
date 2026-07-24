@@ -5,9 +5,10 @@ let mockSettings = {
   storeName: "ShopManager Store",
   storeAddress: "Nouakchott, Mauritanie",
   storePhone: "36123456",
-  logoUrl: "", // Optional logo URL
+  logoUrl: "",
   currency: "MRU",
   invoiceFooter: "Merci de votre visite !",
+  invoiceSignature: "",
   theme: "light",
   language: "fr"
 };

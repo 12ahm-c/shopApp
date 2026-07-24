@@ -3,6 +3,7 @@ import type { ProductDocument } from "../modules/product/product.model";
 import type { CustomerDocument } from "../modules/customer/customer.model";
 import type { SupplierDocument } from "../modules/supplier/supplier.model";
 import type { SaleDocument } from "../modules/sale/sale.model";
+import type { PurchaseDocument } from "../modules/purchase/purchase.model";
 import type { StoreSettingsDocument } from "../modules/storeSettings/settings.model";
 import type { ActivityLogDocument } from "../modules/activityLog/activityLog.model";
 import type { NotificationDocument } from "../modules/notification/notification.model";
@@ -100,9 +101,10 @@ export const serializeSettings = (settings: StoreSettingsDocument) => ({
   storeName: settings.storeName,
   storeAddress: settings.storeAddress,
   storePhone: settings.storePhone,
-  logoUrl: settings.logoUrl,
+  storeLogo: settings.logoUrl,
   currency: settings.currency,
   invoiceFooter: settings.invoiceFooter,
+  invoiceSignature: settings.invoiceSignature,
   theme: settings.theme,
   language: settings.language
 });
@@ -140,4 +142,22 @@ export const serializeNotification = (notif: NotificationDocument) => ({
   readAt: notif.readAt ? notif.readAt.toISOString() : null,
   data: notif.data,
   createdAt: notif.createdAt.toISOString()
+});
+
+export const serializePurchase = (purchase: PurchaseDocument) => ({
+  _id: purchase._id.toString(),
+  purchaseNumber: purchase.purchaseNumber,
+  supplierId: purchase.supplierId.toString(),
+  supplierName: purchase.supplierName,
+  items: purchase.items.map((item) => ({
+    productId: item.productId.toString(),
+    name: item.name,
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+    total: item.total
+  })),
+  totalAmount: purchase.totalAmount,
+  notes: purchase.notes,
+  createdAt: purchase.createdAt.toISOString(),
+  updatedAt: purchase.updatedAt.toISOString()
 });

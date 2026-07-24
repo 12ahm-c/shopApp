@@ -2,7 +2,7 @@ const CACHE_NAME = 'shopmanager-v5';
 const STATIC_CACHE = 'shopmanager-static-v5';
 const API_CACHE = 'shopmanager-api-v1';
 
-const FIREBASE_CONFIG = __FIREBASE_CONFIG__;
+const FIREBASE_CONFIG = typeof __FIREBASE_CONFIG__ !== 'undefined' ? __FIREBASE_CONFIG__ : null;
 
 const PRECACHE_URLS = [
   '/',

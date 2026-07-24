@@ -9,10 +9,10 @@ import { Loader2 } from 'lucide-react';
 
 import Login from './pages/Login';
 import ShellLayout from './components/layout/ShellLayout';
+import { isMini } from './config/appMode';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ActivityLogs = lazy(() => import('./pages/ActivityLogs'));
-const Invoices = lazy(() => import('./pages/Invoices'));
 const InvoiceDetail = lazy(() => import('./pages/InvoiceDetail'));
 const Notifications = lazy(() => import('./pages/Notifications'));
 const Employees = lazy(() => import('./pages/admin/Employees'));
@@ -26,6 +26,7 @@ const ProductsList = lazy(() => import('./pages/products/ProductsList'));
 const ProductForm = lazy(() => import('./pages/products/ProductForm'));
 const ProductDetail = lazy(() => import('./pages/products/ProductDetail'));
 const POS = lazy(() => import('./pages/pos/POS'));
+const PurchasesPage = lazy(() => import('./pages/purchases/PurchasesPage'));
 const PublicInvoice = lazy(() => import('./pages/PublicInvoice'));
 
 function PageLoader() {
@@ -44,8 +45,14 @@ function RoleGuard({ children, allowedRoles }) {
   return children;
 }
 
+function FullModeGuard({ children }) {
+  if (isMini) return <Navigate to="/pos" replace />;
+  return children;
+}
+
 function RootRedirect() {
   const role = useAuthStore(state => state.role);
+  if (isMini) return <Navigate to="/pos" replace />;
   return <Navigate to={role === 'admin' ? '/admin' : '/pos'} replace />;
 }
 
@@ -126,45 +133,44 @@ export default function App() {
             <Route path="/dashboard" element={<RootRedirect />} />
             <Route 
               path="/admin" 
-              element={<RoleGuard allowedRoles={['admin']}><Dashboard /></RoleGuard>} 
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><Dashboard /></RoleGuard></FullModeGuard>} 
             />
             <Route 
               path="/employee" 
-              element={<RoleGuard allowedRoles={['employee']}><Dashboard /></RoleGuard>} 
+              element={<FullModeGuard><RoleGuard allowedRoles={['employee']}><Dashboard /></RoleGuard></FullModeGuard>} 
             />
             
             <Route 
               path="/employees" 
-              element={<RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard>} 
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard></FullModeGuard>} 
             />
             <Route 
               path="/admin/employees" 
-              element={<RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard>} 
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard></FullModeGuard>} 
             />
-            <Route path="/activity-logs" element={<ActivityLogs />} />
-            <Route path="/invoices" element={<Invoices />} />
-            <Route path="/invoices/:id" element={<InvoiceDetail />} />
-            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/activity-logs" element={<FullModeGuard><ActivityLogs /></FullModeGuard>} />
+            <Route path="/invoices/:id" element={<FullModeGuard><InvoiceDetail /></FullModeGuard>} />
+            <Route path="/notifications" element={<FullModeGuard><Notifications /></FullModeGuard>} />
             <Route path="/settings" element={<Settings />} />
             <Route 
               path="/admin/customers" 
-              element={<RoleGuard allowedRoles={['admin']}><Customers /></RoleGuard>} 
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><Customers /></RoleGuard></FullModeGuard>} 
             />
             <Route 
               path="/admin/customers/:id" 
-              element={<RoleGuard allowedRoles={['admin']}><CustomerDetail /></RoleGuard>} 
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><CustomerDetail /></RoleGuard></FullModeGuard>} 
             />
             <Route 
               path="/admin/suppliers" 
-              element={<RoleGuard allowedRoles={['admin']}><Suppliers /></RoleGuard>} 
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><Suppliers /></RoleGuard></FullModeGuard>} 
             />
             <Route
               path="/admin/suppliers/:id"
-              element={<RoleGuard allowedRoles={['admin']}><SupplierDetail /></RoleGuard>}
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><SupplierDetail /></RoleGuard></FullModeGuard>}
             />
             <Route
               path="/expenses"
-              element={<RoleGuard allowedRoles={['admin']}><Expenses /></RoleGuard>}
+              element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><Expenses /></RoleGuard></FullModeGuard>}
             />
 
             <Route path="/products" element={<ProductsList />} />
@@ -179,6 +185,11 @@ export default function App() {
             />
 
             <Route path="/pos" element={<POS />} />
+
+            <Route
+              path="/purchases"
+              element={<RoleGuard allowedRoles={['admin']}><PurchasesPage /></RoleGuard>}
+            />
           </Route>
           
           <Route path="*" element={<Navigate to="/" replace />} />
