@@ -645,7 +645,7 @@ function POSTab() {
                 className="!px-4 !py-2.5"
               />
               {showCustomerDropdown && customers.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-surface border border-surface-border shadow-2xl rounded-xl overflow-hidden">
+                <div className="absolute z-10 w-full mt-1 bg-card border border-surface-border shadow-2xl rounded-xl overflow-hidden">
                   {customers.map(c => (
                     <button
                       key={c._id}

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { notificationService } from "../modules/notification/notification.service";
 import { Product } from "../modules/product/product.model";
 import { User } from "../modules/user/user.model";
+import { notifText } from "./notifText";
 import { log } from "../utils/logger";
 
 export const stagnantProductsJob = async (): Promise<void> => {
@@ -24,6 +25,7 @@ export const stagnantProductsJob = async (): Promise<void> => {
     if (stagnantProducts.length === 0) return;
 
     const admins = await User.find({ role: "admin" }).lean();
+    const t = await notifText();
 
     for (const admin of admins) {
       const productList = stagnantProducts
@@ -37,8 +39,8 @@ export const stagnantProductsJob = async (): Promise<void> => {
       await notificationService.createNotification(
         admin._id.toString(),
         "stagnant_products",
-        `📦 منتجات راكدة (${stagnantProducts.length})`,
-        `لم تُبع خلال 30 يوماً: ${productList}${moreText}. يُنصح بمراجعة الأسعار أو الترويج لها.`,
+        t.stagnantTitle(stagnantProducts.length),
+        t.stagnantBody(productList, moreText),
         {
           type: "stagnant_products",
           productCount: stagnantProducts.length,

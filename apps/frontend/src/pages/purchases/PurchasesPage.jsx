@@ -243,7 +243,7 @@ function PurchaseForm({ onSuccess }) {
               className="!px-4 !py-2.5"
             />
             {showSupplierDropdown && (
-              <div className="absolute z-10 w-full mt-1 bg-surface border border-surface-border shadow-2xl rounded-xl overflow-hidden">
+              <div className="absolute z-10 w-full mt-1 bg-card border border-surface-border shadow-2xl rounded-xl overflow-hidden">
                 {filteredSuppliers.length === 0 && (
                   <div className="px-4 py-3 text-xs text-muted-foreground">
                     {t('purchasesPage.noResults')}
@@ -331,7 +331,7 @@ function PurchaseForm({ onSuccess }) {
             className="!pl-10 w-full text-sm"
           />
           {showProductDropdown && productSearch && (
-            <div className="absolute z-10 w-full mt-1 bg-surface border border-surface-border shadow-2xl rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+            <div className="absolute z-10 w-full mt-1 bg-card border border-surface-border shadow-2xl rounded-xl overflow-hidden max-h-48 overflow-y-auto">
               {searchingProducts ? (
                 <div className="flex items-center justify-center py-4">
                   <Loader2 className="w-5 h-5 animate-spin text-primary" />

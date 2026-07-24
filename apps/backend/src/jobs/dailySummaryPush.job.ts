@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { notificationService } from "../modules/notification/notification.service";
 import { User } from "../modules/user/user.model";
+import { notifText } from "./notifText";
 import { log } from "../utils/logger";
 
 export const dailySummaryPushJob = async (): Promise<void> => {
@@ -56,21 +57,14 @@ export const dailySummaryPushJob = async (): Promise<void> => {
     const totalExpenses = expenses[0]?.total || 0;
 
     const admins = await User.find({ role: "admin" }).lean();
+    const t = await notifText();
 
     for (const admin of admins) {
-      const title = "📊 تقرير اليوم";
-      const body = [
-        `💰 إجمالي المبيعات: ${summary.totalSales} MRU`,
-        `🧾 عدد الفواتير: ${summary.orderCount}`,
-        `🏆 أكثر منتج مبيعاً: ${topProductName}`,
-        `💸 المصروفات: ${totalExpenses} MRU`
-      ].join("\n");
-
       await notificationService.createNotification(
         admin._id.toString(),
         "daily_summary",
-        title,
-        body,
+        t.dailySummaryTitle(),
+        t.dailySummaryBody(summary.totalSales, summary.orderCount, topProductName, totalExpenses),
         {
           type: "daily_summary_push",
           totalSales: summary.totalSales,

@@ -23,7 +23,7 @@ export default function BottomSheet({ isOpen, onClose, title, children }) {
       />
       <div
         ref={sheetRef}
-        className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-3xl shadow-xl max-h-[85vh] flex flex-col animate-slide-up"
+        className="absolute bottom-0 left-0 right-0 bg-card rounded-t-3xl shadow-xl max-h-[85vh] flex flex-col animate-slide-up"
       >
         <div className="flex items-center justify-center pt-3 pb-2 px-4">
           <div className="w-10 h-1 rounded-full bg-surface-border" />

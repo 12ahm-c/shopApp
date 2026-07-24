@@ -1,6 +1,7 @@
 import { notificationService } from "../modules/notification/notification.service";
 import { Product } from "../modules/product/product.model";
 import { User } from "../modules/user/user.model";
+import { notifText } from "./notifText";
 import { log } from "../utils/logger";
 
 export const outOfStockJob = async (): Promise<void> => {
@@ -9,8 +10,9 @@ export const outOfStockJob = async (): Promise<void> => {
 
     if (outOfStockProducts.length === 0) return;
 
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const admins = await User.find({ role: "admin" }).lean();
+    const t = await notifText();
 
     for (const admin of admins) {
       for (const prod of outOfStockProducts) {
@@ -18,7 +20,7 @@ export const outOfStockJob = async (): Promise<void> => {
           admin._id.toString(),
           "out_of_stock",
           prod._id.toString(),
-          oneHourAgo
+          oneDayAgo
         );
 
         if (existing) continue;
@@ -26,8 +28,8 @@ export const outOfStockJob = async (): Promise<void> => {
         await notificationService.createNotification(
           admin._id.toString(),
           "out_of_stock",
-          `🚫 نفاد المخزون: ${prod.name}`,
-          `المنتج "${prod.name}" نفد بالكامل. يرجى إعادة التخزين ASAP.`,
+          t.outOfStockTitle(prod.name),
+          t.outOfStockBody(prod.name),
           { productId: prod._id.toString() }
         );
       }
