@@ -16,7 +16,6 @@ export default function ProductForm() {
   
   const [formData, setFormData] = useState({
     name: '',
-    category: '',
     price: '',
     costPrice: '',
     quantity: '',
@@ -31,7 +30,6 @@ export default function ProductForm() {
           if (isActive) {
             setFormData({
               name: res.data.name,
-              category: res.data.category,
               price: res.data.price,
               costPrice: res.data.costPrice ?? 0,
               quantity: res.data.quantity,
@@ -61,6 +59,7 @@ export default function ProductForm() {
     try {
       const payload = {
         ...formData,
+        category: "Général",
         price: parseInt(formData.price, 10),
         costPrice: parseInt(formData.costPrice, 10) || 0,
         quantity: parseInt(formData.quantity, 10),
@@ -120,26 +119,6 @@ export default function ProductForm() {
                 minLength={2}
                 maxLength={100}
               />
-            </label>
-
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-text-secondary">{t('productPage.category')} *</span>
-              <input 
-                type="text" 
-                name="category" 
-                list="categories"
-                value={formData.category} 
-                onChange={handleChange} 
-                required
-                minLength={2}
-                maxLength={50}
-              />
-              <datalist id="categories">
-                <option value="Épicerie" />
-                <option value="Électronique" />
-                <option value="Vêtements" />
-                <option value="Autre" />
-              </datalist>
             </label>
 
             <label className="block space-y-2">
