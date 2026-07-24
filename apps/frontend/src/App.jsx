@@ -149,7 +149,7 @@ export default function App() {
               element={<FullModeGuard><RoleGuard allowedRoles={['admin']}><Employees /></RoleGuard></FullModeGuard>} 
             />
             <Route path="/activity-logs" element={<FullModeGuard><ActivityLogs /></FullModeGuard>} />
-            <Route path="/invoices/:id" element={<FullModeGuard><InvoiceDetail /></FullModeGuard>} />
+            <Route path="/invoices/:id" element={<InvoiceDetail />} />
             <Route path="/notifications" element={<FullModeGuard><Notifications /></FullModeGuard>} />
             <Route path="/settings" element={<Settings />} />
             <Route 

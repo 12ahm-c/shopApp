@@ -59,7 +59,7 @@ export default function InvoiceDetail() {
       if (!response.success) {
         throw new Error(response.error?.message || t('invoice.cancelError'));
       }
-      navigate('/invoices');
+      navigate('/pos');
     } catch (error) {
       setCancelState({
         status: 'error',
@@ -79,7 +79,7 @@ export default function InvoiceDetail() {
   if (invoiceState.status === 'error') {
     return (
       <div className="space-y-4">
-        <Link to="/invoices" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary">
+        <Link to="/pos" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary">
           <ArrowLeft className="h-4 w-4" />
           {t('invoice.backTo')}
         </Link>
@@ -96,7 +96,7 @@ export default function InvoiceDetail() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/invoices" className="rounded-xl p-2 text-muted-foreground hover:bg-accent">
+          <Link to="/pos" className="rounded-xl p-2 text-muted-foreground hover:bg-accent">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Loader2, Printer } from 'lucide-react';
 import { invoiceApi } from '../api/invoice';
 import Receipt from '../components/Receipt';
 
@@ -42,8 +42,15 @@ export default function PublicInvoice() {
   if (error) {
     return (
       <div className="min-h-dvh flex items-center justify-center bg-background p-6">
-        <div className="text-center text-muted-foreground">
-          <p className="text-sm">{error}</p>
+        <div className="text-center space-y-4">
+          <p className="text-sm text-muted-foreground">{error}</p>
+          <Link
+            to="/pos"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            العودة للتطبيق
+          </Link>
         </div>
       </div>
     );
@@ -51,6 +58,22 @@ export default function PublicInvoice() {
 
   return (
     <div className="min-h-dvh bg-background p-4 sm:p-6">
+      <div className="max-w-2xl mx-auto mb-4 flex items-center justify-between no-print">
+        <Link
+          to="/pos"
+          className="inline-flex items-center gap-2 rounded-xl bg-secondary px-4 py-2.5 text-sm font-medium text-secondary-foreground hover:bg-secondary/80 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          العودة للتطبيق
+        </Link>
+        <button
+          onClick={() => window.print()}
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all active:scale-[0.98]"
+        >
+          <Printer className="w-4 h-4" />
+          طباعة
+        </button>
+      </div>
       <Receipt data={invoice} showActions={false} />
     </div>
   );
