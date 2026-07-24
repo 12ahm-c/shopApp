@@ -1,6 +1,6 @@
 import mongoose, { Schema, type Model, type Document } from "mongoose";
 
-export type NotificationType = "low_stock" | "daily_summary" | "debt_updated" | "invoice_deleted";
+export type NotificationType = "low_stock" | "daily_summary" | "debt_updated" | "invoice_deleted" | "morning_greeting" | "out_of_stock" | "stagnant_products";
 
 export interface NotificationDocument extends Document {
   userId: mongoose.Types.ObjectId;
@@ -17,7 +17,7 @@ const notificationSchema = new Schema<NotificationDocument>({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   type: {
     type: String,
-    enum: ["low_stock", "daily_summary", "debt_updated", "invoice_deleted"],
+    enum: ["low_stock", "daily_summary", "debt_updated", "invoice_deleted", "morning_greeting", "out_of_stock", "stagnant_products"],
     required: true
   },
   title: { type: String, required: true },

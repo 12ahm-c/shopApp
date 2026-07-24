@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
-import { Types } from "mongoose";
 import { notificationService } from "../modules/notification/notification.service";
-import { Product } from "../modules/product/product.model";
 import { User } from "../modules/user/user.model";
 import { log } from "../utils/logger";
 
@@ -26,8 +24,8 @@ export const dailySummaryJob = async (): Promise<void> => {
       await notificationService.createNotification(
         admin._id.toString(),
         "daily_summary",
-        "Résumé quotidien",
-        `Hier: ${summary.count} ventes pour un total de ${summary.total} MRU.`,
+        "📊 ملخص الأمس",
+        `الأمس: ${summary.count} فواتير بإجمالي ${summary.total} MRU.`,
         { date: yesterday.toISOString().split("T")[0], totalSales: summary.total, orderCount: summary.count }
       );
     }

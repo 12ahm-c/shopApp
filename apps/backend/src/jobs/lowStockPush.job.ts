@@ -15,8 +15,8 @@ export const lowStockPushJob = async (): Promise<void> => {
 
     const productList = lowStockProducts
       .slice(0, 5)
-      .map((p) => `${p.name} (${p.quantity})`)
-      .join(", ");
+      .map((p) => `${p.name} (بقي ${p.quantity})`)
+      .join("، ");
     const moreText = lowStockProducts.length > 5
       ? ` و ${lowStockProducts.length - 5} منتجات أخرى`
       : "";

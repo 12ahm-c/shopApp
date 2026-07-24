@@ -11,12 +11,12 @@ export const morningGreetingJob = async (): Promise<void> => {
     const admins = await User.find({ role: "admin" }).lean();
 
     for (const admin of admins) {
-      const title = `صباح التوفيق، ${admin.name}! ☀️`;
-      const body = `مرحباً بك في ${storeName}. نتمنى لك يوماً موفقاً. استخدم التطبيق لإدارة عملك بسهولة.`;
+      const title = `صباح الخير، ${admin.name}! ☀️`;
+      const body = `مرحباً بك في ${storeName}. نتمنى لك يوماً موفقاً. استخدم التطبيق لإدارة مبيعاتك ومشترياتك بسهولة.`;
 
       await notificationService.createNotification(
         admin._id.toString(),
-        "daily_summary",
+        "morning_greeting",
         title,
         body,
         { type: "morning_greeting" }
