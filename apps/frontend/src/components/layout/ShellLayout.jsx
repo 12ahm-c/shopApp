@@ -115,6 +115,7 @@ export default function ShellLayout() {
     ? [
         { to: '/pos', icon: ShoppingCart, label: t('pos.title') },
         { to: '/products', icon: Package, label: t('products') },
+        { to: '/purchases', icon: Truck, label: t('purchasesPage.title') },
       ]
     : [
         { to: role === 'admin' ? '/admin' : '/employee', icon: LayoutDashboard, label: t('dashboard.title') },
@@ -124,7 +125,6 @@ export default function ShellLayout() {
 
   const moreNavItems = isMini
     ? [
-        { to: '/purchases', icon: Package, label: t('purchasesPage.title') },
         { to: '/settings', icon: Settings, label: t('settings') },
       ]
     : [
