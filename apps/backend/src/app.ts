@@ -25,7 +25,11 @@ export const createApp = () => {
   app.use(express.json({ limit: '10mb' }));
 
   app.get("/health", (_req, res) => {
-    res.json({ success: true, data: { status: "ok" }, error: null, meta: null });
+    res.json({
+      status: "ok",
+      uptime: process.uptime(),
+      time: new Date().toISOString()
+    });
   });
 
   app.use("/v1/auth", authRoutes);
