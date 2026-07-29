@@ -142,10 +142,6 @@ export default function NewPurchase() {
   };
 
   const handleSubmit = async () => {
-    if (!selectedSupplier) {
-      setError(t('purchasesPage.selectSupplier'));
-      return;
-    }
     if (items.length === 0) {
       setError(t('purchasesPage.emptyItems'));
       return;
@@ -156,7 +152,7 @@ export default function NewPurchase() {
     setSuccess(false);
     try {
       await purchaseApi.createPurchase({
-        supplierId: selectedSupplier._id,
+        supplierId: selectedSupplier?._id || undefined,
         items: items.map((item) => ({
           productId: item.productId || undefined,
           name: item.name,
@@ -200,7 +196,7 @@ export default function NewPurchase() {
         <div className="space-y-2">
           <label className="text-sm font-medium text-text-secondary flex items-center gap-2">
             <Store className="w-4 h-4" />
-            {t('purchasesPage.supplier')} *
+            {t('purchasesPage.supplier')}
           </label>
           <div className="relative">
             <input
@@ -412,7 +408,7 @@ export default function NewPurchase() {
         {/* Submit */}
         <button
           onClick={handleSubmit}
-          disabled={saving || !selectedSupplier || items.length === 0}
+          disabled={saving || items.length === 0}
           className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-70 active:scale-[0.98]"
         >
           {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}

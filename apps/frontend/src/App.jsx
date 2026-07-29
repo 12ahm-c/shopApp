@@ -28,6 +28,7 @@ const ProductDetail = lazy(() => import('./pages/products/ProductDetail'));
 const POS = lazy(() => import('./pages/pos/POS'));
 const PurchasesPage = lazy(() => import('./pages/purchases/PurchasesPage'));
 const PublicInvoice = lazy(() => import('./pages/PublicInvoice'));
+const MiniDashboard = lazy(() => import('./pages/MiniDashboard'));
 
 function PageLoader() {
   return (
@@ -46,13 +47,13 @@ function RoleGuard({ children, allowedRoles }) {
 }
 
 function FullModeGuard({ children }) {
-  if (isMini) return <Navigate to="/pos" replace />;
+  if (isMini) return <Navigate to="/mini-dashboard" replace />;
   return children;
 }
 
 function RootRedirect() {
   const role = useAuthStore(state => state.role);
-  if (isMini) return <Navigate to="/pos" replace />;
+  if (isMini) return <Navigate to="/mini-dashboard" replace />;
   return <Navigate to={role === 'admin' ? '/admin' : '/pos'} replace />;
 }
 
@@ -185,6 +186,7 @@ export default function App() {
             />
 
             <Route path="/pos" element={<POS />} />
+            <Route path="/mini-dashboard" element={<MiniDashboard />} />
 
             <Route
               path="/purchases"

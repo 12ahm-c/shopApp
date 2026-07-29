@@ -10,8 +10,8 @@ export interface PurchaseItem {
 
 export interface PurchaseDocument extends Document {
   purchaseNumber: string;
-  supplierId: mongoose.Types.ObjectId;
-  supplierName: string;
+  supplierId?: mongoose.Types.ObjectId;
+  supplierName?: string;
   items: PurchaseItem[];
   totalAmount: number;
   notes: string;
@@ -29,8 +29,8 @@ const purchaseItemSchema = new Schema<PurchaseItem>({
 
 const purchaseSchema = new Schema<PurchaseDocument>({
   purchaseNumber: { type: String, required: true, unique: true },
-  supplierId: { type: Schema.Types.ObjectId, ref: "Supplier", required: true },
-  supplierName: { type: String, required: true },
+  supplierId: { type: Schema.Types.ObjectId, ref: "Supplier", required: false },
+  supplierName: { type: String, required: false },
   items: { type: [purchaseItemSchema], required: true, min: 1 },
   totalAmount: { type: Number, required: true, min: 0 },
   notes: { type: String, default: "" }

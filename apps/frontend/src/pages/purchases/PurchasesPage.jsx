@@ -145,10 +145,6 @@ function PurchaseForm({ onSuccess }) {
   };
 
   const handleSubmit = async () => {
-    if (!selectedSupplier) {
-      setError(t('purchasesPage.selectSupplier'));
-      return;
-    }
     if (items.length === 0) {
       setError(t('purchasesPage.emptyItems'));
       return;
@@ -159,7 +155,7 @@ function PurchaseForm({ onSuccess }) {
     setSuccess(false);
     try {
       await purchaseApi.createPurchase({
-        supplierId: selectedSupplier._id,
+        supplierId: selectedSupplier?._id || undefined,
         items: items.map((item) => ({
           productId: item.productId || undefined,
           name: item.name,
@@ -446,7 +442,7 @@ function PurchaseForm({ onSuccess }) {
 
       <button
         onClick={handleSubmit}
-        disabled={saving || !selectedSupplier || items.length === 0}
+        disabled={saving || items.length === 0}
         className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-2xl font-semibold shadow-lg shadow-blue-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm active:scale-[0.98]"
       >
         {saving ? (

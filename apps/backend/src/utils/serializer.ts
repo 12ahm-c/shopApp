@@ -147,8 +147,8 @@ export const serializeNotification = (notif: NotificationDocument) => ({
 export const serializePurchase = (purchase: PurchaseDocument) => ({
   _id: purchase._id.toString(),
   purchaseNumber: purchase.purchaseNumber,
-  supplierId: purchase.supplierId.toString(),
-  supplierName: purchase.supplierName,
+  supplierId: purchase.supplierId?.toString() ?? null,
+  supplierName: purchase.supplierName ?? null,
   items: purchase.items.map((item) => ({
     productId: item.productId.toString(),
     name: item.name,

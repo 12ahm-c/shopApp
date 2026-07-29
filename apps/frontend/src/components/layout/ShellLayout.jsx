@@ -113,6 +113,7 @@ export default function ShellLayout() {
 
   const mainNavItems = isMini
     ? [
+        { to: '/mini-dashboard', icon: LayoutDashboard, label: t('dashboard.title') },
         { to: '/pos', icon: ShoppingCart, label: t('pos.title') },
         { to: '/products', icon: Package, label: t('products') },
         { to: '/purchases', icon: Truck, label: t('purchasesPage.title') },

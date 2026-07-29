@@ -10,7 +10,7 @@ export const createPurchaseItemSchema = z.object({
 });
 
 export const createPurchaseSchema = z.object({
-  supplierId: z.string().regex(objectIdRegex, "Invalid supplier ID"),
+  supplierId: z.string().regex(objectIdRegex, "Invalid supplier ID").optional(),
   items: z.array(createPurchaseItemSchema).min(1, "At least one item is required"),
   notes: z.string().max(500).optional()
 });

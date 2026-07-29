@@ -13,11 +13,6 @@ export const purchaseService = {
     session.startTransaction();
 
     try {
-      const supplier = await Supplier.findById(input.supplierId).session(session);
-      if (!supplier) {
-        throw new AppError(404, "NOT_FOUND", "Supplier not found");
-      }
-
       const purchaseNumber = await getNextPurchaseNumber();
 
       const items = [];
@@ -68,10 +63,22 @@ export const purchaseService = {
         totalAmount += itemTotal;
       }
 
+      let supplierId: mongoose.Types.ObjectId | undefined;
+      let supplierName: string | undefined;
+
+      if (input.supplierId) {
+        const supplier = await Supplier.findById(input.supplierId).session(session);
+        if (!supplier) {
+          throw new AppError(404, "NOT_FOUND", "Supplier not found");
+        }
+        supplierId = supplier._id;
+        supplierName = supplier.name;
+      }
+
       const purchase = new Purchase({
         purchaseNumber,
-        supplierId: supplier._id,
-        supplierName: supplier.name,
+        supplierId,
+        supplierName,
         items,
         totalAmount,
         notes: input.notes || ""
@@ -130,8 +137,8 @@ export const purchaseService = {
       data: purchases.map((p) => ({
         _id: p._id.toString(),
         purchaseNumber: p.purchaseNumber,
-        supplierId: p.supplierId.toString(),
-        supplierName: p.supplierName,
+        supplierId: p.supplierId?.toString() ?? null,
+        supplierName: p.supplierName ?? null,
         items: p.items.map((item) => ({
           productId: item.productId.toString(),
           name: item.name,
@@ -162,8 +169,8 @@ export const purchaseService = {
     return {
       _id: purchase._id.toString(),
       purchaseNumber: purchase.purchaseNumber,
-      supplierId: purchase.supplierId.toString(),
-      supplierName: purchase.supplierName,
+      supplierId: purchase.supplierId?.toString() ?? null,
+      supplierName: purchase.supplierName ?? null,
       items: purchase.items.map((item) => ({
         productId: item.productId.toString(),
         name: item.name,
