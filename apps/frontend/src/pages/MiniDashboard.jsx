@@ -3,10 +3,8 @@ import {
   CreditCard,
   ReceiptText,
   Loader2,
-  TrendingUp,
   Wallet,
-  Package,
-  AlertTriangle
+  Package
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -88,14 +86,10 @@ export default function MiniDashboard() {
       {stats && (
         <>
           <div className="grid grid-cols-2 gap-3">
+            <StatCard icon={Package} label={t('dashboard.stockProducts')} value={stats.totalProducts} tone="slate" />
+            <StatCard icon={Wallet} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" />
             <StatCard icon={CreditCard} label={t('dashboard.todaySales')} value={formatMoney(stats.todaySales)} tone="blue" />
             <StatCard icon={ReceiptText} label={t('dashboard.todayInvoices')} value={stats.todayOrders} tone="cyan" />
-            <StatCard icon={Wallet} label={t('dashboard.monthlySales')} value={formatMoney(stats.monthlySales)} tone="emerald" />
-            {isAdmin ? (
-              <StatCard icon={AlertTriangle} label={t('dashboard.lowStock')} value={stats.lowStockCount} tone="amber" />
-            ) : (
-              <StatCard icon={TrendingUp} label={t('dashboard.profits')} value={formatMoney(stats.netProfit || 0)} tone="emerald" />
-            )}
           </div>
 
           <Link
