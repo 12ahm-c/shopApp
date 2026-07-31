@@ -1,6 +1,6 @@
 {
-  "name": "ShopManager",
-  "short_name": "ShopManager",
+  "name": "تيسير",
+  "short_name": "تيسير",
   "description": "Shop inventory and sales management",
   "start_url": "/",
   "display": "standalone",

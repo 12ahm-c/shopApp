@@ -111,7 +111,7 @@ if (FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== 'pla
   const messaging = firebase.messaging();
 
   messaging.onBackgroundMessage((payload) => {
-    const title = payload.notification?.title || 'ShopManager';
+    const title = payload.notification?.title || 'تيسير';
     const options = {
       body: payload.notification?.body || '',
       icon: '/icons/icon-192.png',
